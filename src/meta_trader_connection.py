@@ -80,3 +80,19 @@ plt.legend(loc='upper left')
 plt.title('NVDA ticks')
 plt.show()
 plt.close()
+
+# sending orders
+# request = {
+#     'action': mt5.TRADE_ACTION_DEAL,
+#     'symbol': symbol,
+#     'volume': lot,
+#     'type': mt5.ORDER_TYPE_BUY,
+#     'sl': price + 0.002,
+#     'tp': price - 0.005,
+#     'deviation': deviation,
+#     'magic': 202003,
+#     'comment': 'My First Robot',
+#     'type_time': mt5.ORDER_TIME_GTC,
+#     'type_filling': mt5.ORDER_FILLING_IOC
+# }
+# mt5.order_send(request)
