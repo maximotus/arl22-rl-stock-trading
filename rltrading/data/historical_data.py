@@ -38,3 +38,5 @@ for i in range(buckets):
 chart = Chart(candles=candles, title="ISIN: " + ISIN)
 chart.set_name(ISIN)
 chart.draw()
+
+client.market_data.venues.get
