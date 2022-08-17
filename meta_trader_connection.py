@@ -53,11 +53,6 @@ for prop in symbol_info_dict:
     print("  {}={}".format(prop, symbol_info_dict[prop]))
 live_data_bmw = mt5.copy_ticks_from("BMW.de", now, 1000, mt5.COPY_TICKS_ALL)
 
-
-print("live data nvda_ticks(", len(live_data_nvda), ")")
-for val in live_data_nvda[:10]:
-    print(val)
-
 # get 1000 ticks of the Nvidia symbol (i.e. NVDA) starting from a certain timestamp (date and time)
 nvda_ticks = mt5.copy_ticks_from(
     "NVDA", datetime(2022, 1, 12, 20, tzinfo=utc), 1000, mt5.COPY_TICKS_ALL
