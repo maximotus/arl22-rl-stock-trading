@@ -9,7 +9,7 @@ import pandas as pd
 import pytz
 import MetaTrader5 as mt5
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from pandas.plotting import register_matplotlib_converters
 
 register_matplotlib_converters()
@@ -23,6 +23,40 @@ print(mt5.terminal_info())
 print(mt5.version())
 
 utc = pytz.timezone("Etc/UTC")
+
+# get live data
+# define timeframe from now (+1 because the market time ist somehow utc+1
+now = pytz.utc.localize(datetime.now()) + timedelta(hours=1)
+before = now - timedelta(minutes=5)
+
+# copy data of specified timeframe from MetaTrader5
+live_data_bmw = mt5.copy_ticks_range("BMW.de", before, now, mt5.COPY_TICKS_ALL)
+
+# convert data to a pandas DataFrame and format the time
+live_data_bmw_frame = pd.DataFrame(live_data_bmw)
+live_data_bmw_frame['time'] = pd.to_datetime(live_data_bmw_frame['time'], unit='s')
+live_data_bmw_frame['time'] = pd.to_datetime(live_data_bmw_frame['time'], format='%Y-%m-%d-%H-%M-%S')
+
+# plot the live data
+plt.plot(live_data_bmw_frame["time"], live_data_bmw_frame["ask"], "r-", label="ask")
+plt.plot(live_data_bmw_frame["time"], live_data_bmw_frame["bid"], "b-", label="bid")
+plt.legend(loc="upper left")
+plt.title(f"BMW ticks from {before} to {now}")
+plt.show()
+plt.close()
+
+# get current / latest symbol information
+live_info_bmw = mt5.symbol_info('BMW.de')
+print(live_info_bmw)
+symbol_info_dict = mt5.symbol_info("BMW.de")._asdict()
+for prop in symbol_info_dict:
+    print("  {}={}".format(prop, symbol_info_dict[prop]))
+live_data_bmw = mt5.copy_ticks_from("BMW.de", now, 1000, mt5.COPY_TICKS_ALL)
+
+
+print("live data nvda_ticks(", len(live_data_nvda), ")")
+for val in live_data_nvda[:10]:
+    print(val)
 
 # get 1000 ticks of the Nvidia symbol (i.e. NVDA) starting from a certain timestamp (date and time)
 nvda_ticks = mt5.copy_ticks_from(
@@ -52,9 +86,6 @@ eurgbp_rates = mt5.copy_rates_from_pos("EURGBP", mt5.TIMEFRAME_M1, 0, 1000)
 eurcad_rates = mt5.copy_rates_range(
     "EURCAD", mt5.TIMEFRAME_M1, datetime(2020, 1, 27, 13), datetime(2020, 1, 28, 13)
 )
-
-# close connection to MetaTrader5
-mt5.shutdown()
 
 # access data
 print("nvda_ticks(", len(nvda_ticks), ")")
@@ -110,3 +141,6 @@ plt.close()
 #     'type_filling': mt5.ORDER_FILLING_IOC
 # }
 # mt5.order_send(request)
+
+# close connection to MetaTrader5
+mt5.shutdown()
