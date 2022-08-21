@@ -34,8 +34,10 @@ live_data_bmw = mt5.copy_ticks_range("BMW.de", before, now, mt5.COPY_TICKS_ALL)
 
 # convert data to a pandas DataFrame and format the time
 live_data_bmw_frame = pd.DataFrame(live_data_bmw)
-live_data_bmw_frame['time'] = pd.to_datetime(live_data_bmw_frame['time'], unit='s')
-live_data_bmw_frame['time'] = pd.to_datetime(live_data_bmw_frame['time'], format='%Y-%m-%d-%H-%M-%S')
+live_data_bmw_frame["time"] = pd.to_datetime(live_data_bmw_frame["time"], unit="s")
+live_data_bmw_frame["time"] = pd.to_datetime(
+    live_data_bmw_frame["time"], format="%Y-%m-%d-%H-%M-%S"
+)
 
 # plot the live data
 plt.plot(live_data_bmw_frame["time"], live_data_bmw_frame["ask"], "r-", label="ask")
@@ -46,7 +48,7 @@ plt.show()
 plt.close()
 
 # get current / latest symbol information
-live_info_bmw = mt5.symbol_info('BMW.de')
+live_info_bmw = mt5.symbol_info("BMW.de")
 print(live_info_bmw)
 symbol_info_dict = mt5.symbol_info("BMW.de")._asdict()
 for prop in symbol_info_dict:

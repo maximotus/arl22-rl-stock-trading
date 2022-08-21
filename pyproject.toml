@@ -15,6 +15,14 @@ paho-mqtt = "^1.6.1"
 plotly = "^5.9.0"
 dash = "^2.6.1"
 plotext = "^5.0.2"
+MetaTrader5 = "^5.0.37"
+matplotlib = "^3.5.3"
+Nasdaq-Data-Link = "^1.0.3"
+beautifulsoup4 = "^4.11.1"
+lxml = "^4.9.1"
+finnhub-python = "^2.4.14"
+tqdm = "^4.64.0"
+ipykernel = "^6.15.1"
 
 [tool.poetry.dev-dependencies]
 
