@@ -13,10 +13,17 @@
 # table = soup.find('table')
 # print(table)
 
-
-from http import client
+import pandas as pd
 import finnhub as fh
 
 
 finnhub_client = fh.Client(api_key="cc0uvnaad3ifk6takpvg")
-print(finnhub_client.stock_social_sentiment('GME'))
+print(finnhub_client.stock_social_sentiment("GME"))
+
+
+def get_social_sentiment(symbol: str, fh_client: fh.Client) -> pd.DataFrame:
+    pass
+
+
+if __name__ == "__main__":
+    pass

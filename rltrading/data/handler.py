@@ -36,6 +36,7 @@ _DEFAULT_TO = datetime(
     second=59,
 )
 
+
 def get_data(
     symbol: str, from_: datetime = _DEFAULT_FROM, to: datetime = _DEFAULT_TO
 ) -> pd.DataFrame:
@@ -44,16 +45,18 @@ def get_data(
     trading_days = __get_trading_days(symbol, from_, to)
 
     ohlc_df = __get_ohlc_data(symbol, trading_days)
-    times = ohlc_df['time'].tolist()
-    
+    times = ohlc_df["time"].tolist()
+
     tick_lookback = __get_tick_lookback(times)
     ticks_df = __get_tick_data(symbol, tick_lookback, times)
-    
+
     merged = ohlc_df.merge(ticks_df)
     return merged
 
 
-def __get_ohlc_data(symbol: str, trading_days: List[Tuple[datetime, datetime]]) -> pd.DataFrame:
+def __get_ohlc_data(
+    symbol: str, trading_days: List[Tuple[datetime, datetime]]
+) -> pd.DataFrame:
     ohlc_data = []
     ohlc_columns = []
     for start, end in tqdm(trading_days):
@@ -61,25 +64,29 @@ def __get_ohlc_data(symbol: str, trading_days: List[Tuple[datetime, datetime]]) 
         end = pytz.utc.localize(end)
 
         rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_M1, start, end)
-        
+
         ohlc_columns = pd.DataFrame(rates).columns.tolist()
         ohlc_data.extend(list(map(list, rates)))
-    
+
     ohlc_df = pd.DataFrame(ohlc_data, columns=ohlc_columns).drop_duplicates()
     return ohlc_df
 
 
-def __get_tick_data(symbol: str, tick_lookback: int, stamps: int) -> pd.DataFrame:    
+def __get_tick_data(symbol: str, tick_lookback: int, stamps: int) -> pd.DataFrame:
     data_frames = []
     for time in tqdm(stamps):
-        ticks = mt5.copy_ticks_range(symbol, time - tick_lookback, time, mt5.COPY_TICKS_ALL)
+        ticks = mt5.copy_ticks_range(
+            symbol, time - tick_lookback, time, mt5.COPY_TICKS_ALL
+        )
         ticks_df = pd.DataFrame(ticks)
-        ticks_df['time'] = time
+        ticks_df["time"] = time
         data_frames.append(ticks_df)
 
     ticks_df = pd.concat(data_frames)
-    ticks_df = ticks_df.groupby(['time']).describe().reset_index()
-    ticks_df.columns = ['_'.join(col) if col[1] != '' else col[0] for col in ticks_df.columns.values]
+    ticks_df = ticks_df.groupby(["time"]).describe().reset_index()
+    ticks_df.columns = [
+        "_".join(col) if col[1] != "" else col[0] for col in ticks_df.columns.values
+    ]
     return ticks_df
 
 
@@ -91,7 +98,7 @@ def __get_trading_days(
     symbol, from_: datetime, to: datetime
 ) -> List[Tuple[datetime, datetime]]:
     trading_days = __get_raw_trading_days(symbol, from_, to)
-    
+
     start_end = []
     for day in trading_days:
         dt = datetime.fromtimestamp(day)
