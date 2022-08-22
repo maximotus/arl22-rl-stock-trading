@@ -23,6 +23,7 @@ lxml = "^4.9.1"
 finnhub-python = "^2.4.14"
 tqdm = "^4.64.0"
 ipykernel = "^6.15.1"
+PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
 
