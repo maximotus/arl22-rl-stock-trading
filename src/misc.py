@@ -32,8 +32,6 @@ def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
     base_path : string
         The base path of the experiment directory.
     """
-    valid_modes = ["train", "eval", "gen"]
-
     if pretrained_path is not None:
         base_path = pretrained_path.replace("train", run_mode, 1)
     else:
@@ -41,11 +39,9 @@ def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
         now = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         base_path = os.path.join(exp_path, run_mode, config_name, now)
 
-    paths = [os.path.join(base_path, "results")]
-    if run_mode in valid_modes[0:2]:
-        paths.append(os.path.join(base_path, "stats"))
-    if run_mode == valid_modes[0]:
-        paths.append(os.path.join(base_path, "model"))
+    paths = [os.path.join(base_path, "results"),
+             os.path.join(base_path, "stats"),
+             os.path.join(base_path, "model")]
 
     for path in paths:
         if not os.path.exists(path):
