@@ -14,7 +14,7 @@ def main():
 
     logger = setup_logger(experiment_path, log_lvl, log_fmt)
     logger.info("Successfully read the given configuration file, created experiment directory and set up logger.")
-    logger.info('Starting experiment in mode ' + mode + ' using configuration ' + configuration_file)
+    logger.info("Starting experiment in mode " + mode + " using configuration " + configuration_file)
 
     # TODO depending on mode, start training or evaluation
     raise NotImplementedError
