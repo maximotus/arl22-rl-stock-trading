@@ -9,6 +9,14 @@ from datetime import datetime
 
 
 def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
+    """
+
+    :param conf_file:
+    :param exp_path:
+    :param pretrained_path:
+    :param run_mode:
+    :return:
+    """
     valid_modes = ["train", "eval", "gen"]
 
     if pretrained_path is not None:
@@ -38,6 +46,8 @@ def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
 def parse_config(argv):
     """
     Parses the configuration file located at the path that is given with the first command line argument.
+
+    If the required command line argument is missing, the program stops.
 
     Parameters
     ----------
