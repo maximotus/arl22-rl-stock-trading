@@ -1,8 +1,38 @@
 import logging
 import os
+import shutil
 import sys
 
 import yaml as yaml
+
+from datetime import datetime
+
+
+def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
+    valid_modes = ["train", "eval", "gen"]
+
+    if pretrained_path is not None:
+        base_path = pretrained_path.replace("train", run_mode, 1)
+    else:
+        config_name = conf_file[10:-5]
+        now = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+        base_path = os.path.join(exp_path, run_mode, config_name, now)
+
+    paths = [os.path.join(base_path, "results")]
+    if run_mode in valid_modes[0:2]:
+        paths.append(os.path.join(base_path, "stats"))
+    if run_mode == valid_modes[0]:
+        paths.append(os.path.join(base_path, "model"))
+
+    for path in paths:
+        if not os.path.exists(path):
+            os.makedirs(path)
+            print("Created directory", path)
+
+    shutil.copy2(conf_file, base_path)
+    print("Copied config file", conf_file, "to", base_path)
+
+    return base_path
 
 
 def parse_config(argv):
@@ -11,8 +41,8 @@ def parse_config(argv):
         with open(config_path, "r") as stream:
             conf = yaml.safe_load(stream)
     except IndexError:
-        print('Missing command line argument for the path to the configuration file. '
-              'Please use this program like this: main.py PATH_TO_CONFIG_YAML_FILE')
+        print("Missing command line argument for the path to the configuration file. "
+              "Please use this program like this: main.py PATH_TO_CONFIG_YAML_FILE")
         sys.exit()
 
     return config_path, conf
@@ -20,7 +50,7 @@ def parse_config(argv):
 
 def setup_logger(path, lvl=0, fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"):
     """
-    Sets up a global logger accessible via logging.getLogger('root').
+    Sets up a global logger accessible via logging.getLogger("root").
 
     The registered logger will stream its outputs to the console as well as
     to a file out.log in the specified directory.
@@ -35,13 +65,8 @@ def setup_logger(path, lvl=0, fmt="%(asctime)s - %(levelname)s - %(module)s - %(
         Format string representing the format of the logs.
     """
     log_path = os.path.join(path, "out.log")
-
-    fmt = "%(asctime)s - %(levelname)s - %(module)s - %(message)s" if fmt is None else fmt
     formatter = logging.Formatter(fmt=fmt)
-
     root_logger = logging.getLogger()
-
-    lvl = 0 if lvl is None else lvl
     root_logger.setLevel(lvl)
 
     file_handler = logging.FileHandler(log_path)
