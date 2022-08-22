@@ -64,11 +64,8 @@ def get_social_sentiment_alternatives(
     finnhub_api_key = os.getenv("FINNHUB_API_KEY", None)
     fh_client = fh.Client(api_key=finnhub_api_key)
 
-    # from_ = (_from - lookback).strftime("%Y-%m-%d")
-    # to_ = to.strftime("%Y-%m-%d")
     all_sentiments = []
     for day in days:
-        # from_ = datetime.fromtimestamp(day).strftime("%Y-%m-%d")
         social_sentiment = fh_client.stock_social_sentiment(symbol, _from=day)
 
         sentiment_data_frames = []
