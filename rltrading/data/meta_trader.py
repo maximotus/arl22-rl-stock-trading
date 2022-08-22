@@ -117,9 +117,8 @@ def __get_trading_days(
 
     start_end = []
     for day in trading_days:
-        dt = datetime.fromtimestamp(day)
-        start = datetime(dt.year, dt.month, dt.day, 0, 0, 1)
-        end = datetime(dt.year, dt.month, dt.day, 23, 59, 59)
+        start = datetime(day.year, day.month, day.day, 0, 0, 1)
+        end = datetime(day.year, day.month, day.day, 23, 59, 59)
         start_end.append((start, end))
     return start_end
 
@@ -127,10 +126,16 @@ def __get_trading_days(
 def __get_raw_trading_days(symbol: str, from_: datetime, to: datetime) -> List[int]:
     from_ = pytz.utc.localize(from_)
     to = pytz.utc.localize(to)
-    rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_D1, from_, to)
+    rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_H12, from_, to)
     trading_days = rates["time"]
+    trading_days = np.unique(list(map(__int_to_date, trading_days)))
     sorted(trading_days)
     return trading_days
+
+
+def __int_to_date(stamp) -> datetime:
+    dt = datetime.fromtimestamp(stamp)
+    return datetime(dt.year, dt.month, dt.day)
 
 
 def __init_mt5():
