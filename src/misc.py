@@ -10,12 +10,27 @@ from datetime import datetime
 
 def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
     """
+    Creates a directory for all the outputs of the experiment (i.e. program execution).
 
-    :param conf_file:
-    :param exp_path:
-    :param pretrained_path:
-    :param run_mode:
-    :return:
+    The directory is of shape exp_path/run_mode/config_name/timestamp_now/ (= base_path) with
+    subdirectories /model, /results and /stats.
+    Also makes a snapshot of the configuration file and saves it to the created experiment directory.
+
+    Parameters
+    ----------
+    conf_file : string
+        Path / name of the configuration file.
+    exp_path : string
+        Path of the experiment directory.
+    pretrained_path : string
+        Path of any pretrained model.
+    run_mode : string
+        Run mode (has to be in [train, eval]).
+
+    Returns
+    -------
+    base_path : string
+        The base path of the experiment directory.
     """
     valid_modes = ["train", "eval", "gen"]
 
@@ -91,7 +106,7 @@ def setup_logger(path, lvl=0, fmt="%(asctime)s - %(levelname)s - %(module)s - %(
 
     Returns
     -------
-    Logger
+    root_logger : Logger
         The root logger.
     """
     log_path = os.path.join(path, "out.log")
