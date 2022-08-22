@@ -3,18 +3,15 @@ log_level: 20 # CRITICAL = 50, ERROR = 40, WARNING = 30, INFO = 20, DEBUG = 10, 
 device: cpu # (cuda / cpu / auto)
 experiment_path: ..\experiments
 epochs: 500
-num_imgs: 20 # how many randomly generated images should be saved
-predefined_images: {max: [0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,1,0,0,1,0,1,0,0,0,0,1,0,0,0,0,0,0,0,1], daniel: [0,1,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,1,0,1,0,1,0,0,1,0,0,0,0,0,0,0,1]}
 
 frequencies:
   save_freq: 1 # (i.e. how often should the model checkpoint be saved, in epochs)
-  gen_freq: 1 # (i.e. how often should test images be generated, in epochs)
+  eval_freq: 1
 
 dataloader:
   dataset: celebA
   size_fraction: 50000
   batch_size: 1
-  image_size: 64
 
 model:
   name: CDCGAN
