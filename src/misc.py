@@ -36,6 +36,21 @@ def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
 
 
 def parse_config(argv):
+    """
+    Parses the configuration file located at the path that is given with the first command line argument.
+
+    Parameters
+    ----------
+    argv : list[string]
+        Command line arguments.
+
+    Returns
+    -------
+    config_path : string
+        The path to the configuration file.
+    conf : dict
+        The dictionary representing the configuration.
+    """
     try:
         config_path = argv[1]
         with open(config_path, "r") as stream:
@@ -63,6 +78,11 @@ def setup_logger(path, lvl=0, fmt="%(asctime)s - %(levelname)s - %(module)s - %(
         One of CRITICAL = 50, ERROR = 40, WARNING = 30, INFO = 20, DEBUG = 10, NOTSET = 0.
     fmt : string
         Format string representing the format of the logs.
+
+    Returns
+    -------
+    Logger
+        The root logger.
     """
     log_path = os.path.join(path, "out.log")
     formatter = logging.Formatter(fmt=fmt)
