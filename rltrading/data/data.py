@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Iterable, List
+from typing import Iterable, List, Tuple
 from pydantic import BaseModel, PrivateAttr
 
 import pytz
@@ -71,3 +71,35 @@ class Data(BaseModel):
         self._data_frame = self._data_frame.sort_values(["time"])
         for _, value in self._data_frame.iterrows():
             yield value.tolist()
+
+    def __len__(self: "Data") -> int:
+        """Get the number of observations.
+
+        Parameters
+        ----------
+        self : Data
+            An instance of the Data class (itself).
+
+        Returns
+        -------
+        int
+            The number of observations.
+        """
+        return len(self._data_frame)
+
+    @property
+    def shape(self: "Data") -> Tuple[int, int]:
+        """Get the number of observations and
+        the number of data points per observation.
+
+        Parameters
+        ----------
+        self : Data
+            An instance of the Data class (itself).
+
+        Returns
+        -------
+        Tuple[int, int]
+            Number of observations, Number of datapoints per observation
+        """
+        return self._data_frame.shape
