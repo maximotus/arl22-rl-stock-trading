@@ -122,6 +122,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "cudf"
+version = "0.6.1.post1"
+description = ""
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "cycler"
 version = "0.11.0"
 description = "Composable style cycles"
@@ -992,7 +1000,7 @@ watchdog = ["watchdog"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "0de38d88b4f2df78e1886093b9ca4f630bda5f2448301a8b142c90d9de9004f7"
+content-hash = "0a99030ce8d9ed7bced7ed6ab8c996387e0936a672da318ee4d6c2a612204e3e"
 
 [metadata.files]
 appnope = [
@@ -1181,6 +1189,9 @@ click = [
 colorama = [
     {file = "colorama-0.4.5-py2.py3-none-any.whl", hash = "sha256:854bf444933e37f5824ae7bfc1e98d5bce2ebe4160d46b5edf346a89358e99da"},
     {file = "colorama-0.4.5.tar.gz", hash = "sha256:e6c6b4334fc50988a639d9b98aa429a0b57da6e17b9a44f0451f930b6967b7a4"},
+]
+cudf = [
+    {file = "cudf-0.6.1.post1.tar.gz", hash = "sha256:62d58b923a9a28732780630d8dec5295e565e0b58500c1f6db286eaf4fba0e66"},
 ]
 cycler = [
     {file = "cycler-0.11.0-py3-none-any.whl", hash = "sha256:3a27e95f763a428a739d2add979fa7494c912a32c17c4c38c4d5f082cad165a3"},
