@@ -76,7 +76,7 @@ def get_social_sentiment(
         sentiment_df = sentiment_df.fillna(value=0.0)
         sentiment_df = sentiment_df.sort_values(["time"])
     else:
-        sentiment_df = pd.DataFrame()
+        sentiment_df = pd.DataFrame(columns=["time"])
     return sentiment_df
 
 
