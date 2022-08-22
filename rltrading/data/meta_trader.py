@@ -10,21 +10,13 @@ import MetaTrader5 as mt5
 from tqdm import tqdm
 
 
-# _DEFAULT_FROM = datetime(
-#     year=2018,
-#     month=1,
-#     day=1,
-#     hour=0,
-#     minute=0,
-#     second=0,
-# )
 _DEFAULT_FROM = datetime(
-    year=2022,
-    month=8,
-    day=17,
+    year=2018,
+    month=1,
+    day=1,
     hour=0,
     minute=0,
-    second=0,
+    second=1,
 )
 
 _DEFAULT_TO = datetime(
@@ -45,16 +37,23 @@ def get_stock_data(
     Parameters
     ----------
     symbol : str
-        _description_
+        The symbol of the asset to fetch the data for.
     from_ : datetime, optional
-        _description_, by default _DEFAULT_FROM
+        The datetime object from where the data should be fetched,
+        by default it is the ``2018-01-01 00:00:01``.
+        The first element in the resulting ``pd.DataFrame`` will be the
+        first data point available after the given ``from_`` value.
     to : datetime, optional
-        _description_, by default _DEFAULT_TO
+        The datetime object to when the data should be fetched, 
+        by default it is the ``2022-12-31 23:59:59``.
+        The last element in the resulting ``pd.DataFrame`` will be the
+        last data point available before the given ``from_`` value.
 
     Returns
     -------
     pd.DataFrame
-        _description_
+        A ``pd.DataFrame`` containing all observations between the given ``from_``
+        and ``to`` ``datetime``.
     """
     __init_mt5()
 

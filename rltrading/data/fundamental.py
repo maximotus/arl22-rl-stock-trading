@@ -11,6 +11,24 @@ import finnhub as fh
 def get_social_sentiment(
     symbol: str, _from: datetime, to: datetime, lookback: timedelta
 ) -> pd.DataFrame:
+    """
+
+    Parameters
+    ----------
+    symbol : str
+        _description_
+    _from : datetime
+        _description_
+    to : datetime
+        _description_
+    lookback : timedelta
+        _description_
+
+    Returns
+    -------
+    pd.DataFrame
+        _description_
+    """
     load_dotenv()
     finnhub_api_key = os.getenv("FINNHUB_API_KEY", None)
     fh_client = fh.Client(api_key=finnhub_api_key)
