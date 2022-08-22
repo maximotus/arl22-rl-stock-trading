@@ -1,1 +1,1 @@
-from rltrading.data import get_data
+from rltrading.data import Data

@@ -9,7 +9,7 @@ import finnhub as fh
 
 
 def get_social_sentiment(
-    symbol: str, _from: datetime, to: datetime, lookback: timedelta
+    api_key: str, symbol: str, _from: datetime, to: datetime, lookback: timedelta
 ) -> pd.DataFrame:
     """Fetches social sentiment scores for ``reddit`` and ``twitter``
     in a given timeframe.
@@ -19,6 +19,8 @@ def get_social_sentiment(
 
     Parameters
     ----------
+    api_key: str
+        The API key used to access the ``Finnhub`` database.
     symbol : str
         The symbol of the asset to fetch the data for.
     _from : datetime
@@ -34,9 +36,7 @@ def get_social_sentiment(
         A dataframe containing the social sentiment
         data for ``reddit`` and ``twitter``.
     """
-    load_dotenv()
-    finnhub_api_key = os.getenv("FINNHUB_API_KEY", None)
-    fh_client = fh.Client(api_key=finnhub_api_key)
+    fh_client = fh.Client(api_key=api_key)
 
     from_ = (_from - lookback).strftime("%Y-%m-%d")
     to_ = to.strftime("%Y-%m-%d")
@@ -127,7 +127,3 @@ def get_social_sentiment_alternatives(
 
     sentiments_df = pd.concat(all_sentiments)
     return sentiments_df
-
-
-if __name__ == "__main__":
-    get_social_sentiment("AAPL", 1660892400, 1660892800)

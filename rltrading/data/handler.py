@@ -4,17 +4,17 @@ import calendar
 import numpy as np
 import pandas as pd
 
-from rltrading.data.fundamental import (
-    get_social_sentiment,
-)
-from rltrading.data.meta_trader import get_stock_data
+from rltrading.data.fundamental import get_social_sentiment
+from rltrading.data.meta_trader import get_asset_data
 
 
 def get_data(
-    symbol: str, _from: datetime, to: datetime, lookback: timedelta
+    fh_key: str, symbol: str, _from: datetime, to: datetime, lookback: timedelta
 ) -> pd.DataFrame:
-    meta_trader_data = get_stock_data(symbol, _from, to)
-    social_sentiment = get_social_sentiment(symbol, _from, to, lookback=lookback)
+    meta_trader_data = get_asset_data(symbol, _from, to)
+    social_sentiment = get_social_sentiment(
+        fh_key, symbol, _from, to, lookback=lookback
+    )
     times = meta_trader_data["time"].values
     social_sentiment = __aggregate_social_sentiment(social_sentiment, times, lookback)
     total = meta_trader_data.merge(social_sentiment, how="left")
@@ -60,25 +60,3 @@ def __substract_time(timestamp: int, lookback: timedelta) -> int:
     return calendar.timegm(
         (datetime.fromtimestamp(timestamp) - lookback).utctimetuple()
     )
-
-
-if __name__ == "__main__":
-    _from = datetime(
-        year=2022,
-        month=8,
-        day=10,
-        hour=0,
-        minute=0,
-        second=0,
-    )
-
-    to = datetime(
-        year=2022,
-        month=12,
-        day=31,
-        hour=23,
-        minute=59,
-        second=59,
-    )
-    lookback = timedelta(days=1)
-    get_data("GME", _from, to, lookback)
