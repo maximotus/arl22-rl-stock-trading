@@ -40,7 +40,8 @@ def __aggregate_social_sentiment(
     total_sentiments = pd.concat(intermediates)
     total_sentiments = total_sentiments.groupby(["time"]).describe().reset_index()
     total_sentiments.columns = [
-        "_".join(col) if col[1] != "" else col[0] for col in total_sentiments.columns.values
+        "_".join(col) if col[1] != "" else col[0]
+        for col in total_sentiments.columns.values
     ]
     return total_sentiments
 

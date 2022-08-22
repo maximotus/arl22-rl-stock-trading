@@ -39,9 +39,11 @@ def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
         now = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         base_path = os.path.join(exp_path, run_mode, config_name, now)
 
-    paths = [os.path.join(base_path, "results"),
-             os.path.join(base_path, "stats"),
-             os.path.join(base_path, "model")]
+    paths = [
+        os.path.join(base_path, "results"),
+        os.path.join(base_path, "stats"),
+        os.path.join(base_path, "model"),
+    ]
 
     for path in paths:
         if not os.path.exists(path):
@@ -77,14 +79,18 @@ def parse_config(argv):
         with open(config_path, "r") as stream:
             conf = yaml.safe_load(stream)
     except IndexError:
-        print("Missing command line argument for the path to the configuration file. "
-              "Please use this program like this: main.py PATH_TO_CONFIG_YAML_FILE")
+        print(
+            "Missing command line argument for the path to the configuration file. "
+            "Please use this program like this: main.py PATH_TO_CONFIG_YAML_FILE"
+        )
         sys.exit()
 
     return config_path, conf
 
 
-def setup_logger(path, lvl=0, fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"):
+def setup_logger(
+    path, lvl=0, fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"
+):
     """
     Sets up a global logger accessible via logging.getLogger("root").
 

@@ -44,7 +44,7 @@ def get_stock_data(
         The first element in the resulting ``pd.DataFrame`` will be the
         first data point available after the given ``from_`` value.
     to : datetime, optional
-        The datetime object to when the data should be fetched, 
+        The datetime object to when the data should be fetched,
         by default it is the ``2022-12-31 23:59:59``.
         The last element in the resulting ``pd.DataFrame`` will be the
         last data point available before the given ``from_`` value.

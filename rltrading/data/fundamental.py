@@ -11,23 +11,28 @@ import finnhub as fh
 def get_social_sentiment(
     symbol: str, _from: datetime, to: datetime, lookback: timedelta
 ) -> pd.DataFrame:
-    """
+    """Fetches social sentiment scores for ``reddit`` and ``twitter``
+    in a given timeframe.
+
+    The timeframe has a lower bound of: ``_from - lookback`` and an
+    upper bound of ``to``.
 
     Parameters
     ----------
     symbol : str
-        _description_
+        The symbol of the asset to fetch the data for.
     _from : datetime
-        _description_
+        From when the data should be fetched for.
     to : datetime
-        _description_
+        To when the data should be fetched for.
     lookback : timedelta
-        _description_
+        An additional lookback.
 
     Returns
     -------
     pd.DataFrame
-        _description_
+        A dataframe containing the social sentiment
+        data for ``reddit`` and ``twitter``.
     """
     load_dotenv()
     finnhub_api_key = os.getenv("FINNHUB_API_KEY", None)
