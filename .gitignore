@@ -160,5 +160,7 @@ cython_debug/
 #.idea/
 
 experiments/data/*/**
+# if the experiments/config/template.yaml file is used as config, the following should be ignored
+experiments/results
 
 !experiments/data/example/AAPL.csv
