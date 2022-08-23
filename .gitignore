@@ -159,4 +159,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-experiments
+experiments/data/*/**
+# if the experiments/config/template.yaml file is used as config, the following should be ignored
+experiments/results
+
+!experiments/data/example/AAPL.csv
