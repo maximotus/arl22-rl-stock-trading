@@ -3,7 +3,7 @@ logger:
   level: 20 # CRITICAL = 50, ERROR = 40, WARNING = 30, INFO = 20, DEBUG = 10, NOTSET = 0
   format: "%(asctime)s - %(levelname)s - %(module)s - %(message)s"
 device: cpu # (cuda / cpu / auto)
-experiment_path: ..\experiments
+experiment_path: .\results
 epochs: 500
 
 frequencies:
