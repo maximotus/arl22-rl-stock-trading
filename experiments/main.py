@@ -5,11 +5,13 @@ from misc import setup_logger, parse_config, create_experiment_dir
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--conf",
-                        type=str,
-                        metavar="PATH_TO_CONF_FILE",
-                        required=True,
-                        help='relative or absolute path to the configuration file')
+    parser.add_argument(
+        "--conf",
+        type=str,
+        metavar="PATH_TO_CONF_FILE",
+        required=True,
+        help="relative or absolute path to the configuration file",
+    )
     args = parser.parse_args()
 
     configuration_file = args.conf
