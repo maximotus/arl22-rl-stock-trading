@@ -1,7 +1,6 @@
 import logging
 import os
 import shutil
-import sys
 
 import yaml as yaml
 
