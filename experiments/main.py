@@ -12,11 +12,19 @@ def main():
         required=True,
         help="relative or absolute path to the configuration file",
     )
+    parser.add_argument(
+        "--finnhub-key",
+        type=str,
+        metavar="FINNHUB_API_KEY",
+        required=True,
+        help="api key for https://finnhub.io/, get it here: https://finnhub.io/register",
+    )
     args = parser.parse_args()
 
     configuration_file = args.conf
-    configuration = parse_config(configuration_file)
+    finnhub_api_key = args.finnhub_key
 
+    configuration = parse_config(configuration_file)
     mode = configuration.get("mode")
     log_lvl = configuration.get("logger").get("level")
     log_fmt = configuration.get("logger").get("format")
@@ -39,6 +47,7 @@ def main():
     )
 
     # TODO depending on mode, start training or evaluation
+    # use configuration and finnhub_api_key
     raise NotImplementedError
 
 
