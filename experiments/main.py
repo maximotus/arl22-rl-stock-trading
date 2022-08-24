@@ -1,11 +1,30 @@
-import sys
+import argparse
 
 from misc import setup_logger, parse_config, create_experiment_dir
 
 
 def main():
-    configuration_file, configuration = parse_config(sys.argv)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--conf",
+        type=str,
+        metavar="PATH_TO_CONF_FILE",
+        required=True,
+        help="relative or absolute path to the configuration file",
+    )
+    parser.add_argument(
+        "--finnhub-key",
+        type=str,
+        metavar="FINNHUB_API_KEY",
+        required=True,
+        help="api key for https://finnhub.io/, get it here: https://finnhub.io/register",
+    )
+    args = parser.parse_args()
 
+    configuration_file = args.conf
+    finnhub_api_key = args.finnhub_key
+
+    configuration = parse_config(configuration_file)
     mode = configuration.get("mode")
     log_lvl = configuration.get("logger").get("level")
     log_fmt = configuration.get("logger").get("format")
@@ -28,6 +47,7 @@ def main():
     )
 
     # TODO depending on mode, start training or evaluation
+    # use configuration and finnhub_api_key
     raise NotImplementedError
 
 

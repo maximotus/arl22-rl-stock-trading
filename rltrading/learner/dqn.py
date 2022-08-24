@@ -12,7 +12,7 @@ class DQN(nn.Module):
         self.fc3 = nn.Linear(fc2_dims, n_actions)
         self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
         self.loss = nn.MSELoss()
-        self.device = torch.device("cude:0" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.to(self.device)
 
     def forward(self, state):
