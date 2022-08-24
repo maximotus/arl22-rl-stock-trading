@@ -1,4 +1,4 @@
-# arl22-rl-stock-training
+# arl22-rl-stock-trading
 
 ## Poetry
 
