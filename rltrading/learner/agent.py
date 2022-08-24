@@ -12,12 +12,12 @@ class Agent:
     def __init__(
         self: "Agent",
         gym_env: gym.Env,
-        rl_model_id,
-        policy_id,
-        verbose,
-        epochs,
-        log_interval,
-        save_path,
+        rl_model_id: str,
+        policy_id: str,
+        verbose: int,
+        epochs: int,
+        log_interval: int,
+        save_path: str,
     ):
         # validity checking
         if rl_model_id not in rl_models.keys():
