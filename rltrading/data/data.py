@@ -60,7 +60,7 @@ class Data(BaseModel):
         """
         self._data_frame = pd.read_csv(path)
 
-    def observations(self: "Data") -> Iterable[List[float]]:
+    def observations(self: "Data", columns: List[str] = None) -> Iterable[List[float]]:
         """Iterate over all observations.
 
         Yields
@@ -68,8 +68,12 @@ class Data(BaseModel):
         data : List[float]
             The data of the current observation as a list of floats.
         """
-        self._data_frame = self._data_frame.sort_values(["time"])
-        for _, value in self._data_frame.iterrows():
+        if columns is not None:
+            reduced_df = self._data_frame[columns]
+        else:
+            reduced_df = self._data_frame
+        reduced_df = reduced_df.sort_values(["time"])
+        for _, value in reduced_df.iterrows():
             yield value.tolist()
 
     def __len__(self: "Data") -> int:
