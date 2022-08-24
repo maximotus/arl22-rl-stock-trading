@@ -1,84 +1,78 @@
-from typing import Optional, Union
-from rltrading.data.data import Data
-
 import gym
-from gym.core import ObsType, ActType
-from gym.spaces import Tuple
-
 import pandas as pd
+import numpy as np
+
+from rltrading.data.data import Data
 
 
 class Environment(gym.Env):
+    BUY_ACTION = 1
+    SELL_ACTION = -1
+    HOLD_ACTION = 0
 
     """
     Specify how many shares of a given stock and how much money the agent has
     """
-    def __init__(self, shares, money):
-
-        Data = Data()
-        Data.fetch()
-        self.data = pd.read_csv("../Data/Data.csv")
-
+    def __init__(self, shares: int, money: float, data: Data):        
+        self.data = data
         self.state = [0, 0, 0, 0, 0, 0, 0] #TODO
-        self.money = pd.DataFrame({"Money": [money]})
-        self.action = pd.DataFrame({"Action": []})
+        self.money = np.asarray([money], dtype=float)
+        self.action = np.asarray([], dtype=float)
         self.shares = shares
         self.portfolio_value = 0
         self.time = 0
 
     def reset(self):
         self.time = 0
-        self.money = pd.DataFrame({"Money": [0]})
+        self.money = np.asarray([0])
         self.shares = 0
         self.portfolio_value = 0
 
-
     def step(self, action: float):
+        curr_money = self.money[self.time]
+        curr_observation = self.data.item(self.time)
+        curr_close = curr_observation.value("close")
+        
         #Buy
-        if action > 0:
-            amount_of_shares = int(action * self.money["Money"][self.time] / self.data["close"][self.time])
-            costs = self.data["close"][self.time] * amount_of_shares
-            self.money.loc[len(self.money.index)] = self.money["Money"][self.time] - costs
+        if action > self.HOLD_ACTION:
+            amount_of_shares = int(action * curr_money / curr_close)
+            costs = curr_close * amount_of_shares
+            self.money = np.append(self.money, (curr_money - costs))
             self.shares += amount_of_shares
-            self.action.loc[len(self.action.index)] = 1
+            self.action = np.append(self.action, self.BUY_ACTION)
 
         #Sell
-        if action < 0:
-            amount_of_shares = int(action * self.portfolio_value / self.data["close"][self.time]) * -1
-            gain = self.data["close"][self.time] * amount_of_shares
+        if action < self.HOLD_ACTION:
+            amount_of_shares = int(action * self.portfolio_value / curr_close) * -1
+            gain = curr_close * amount_of_shares
             if amount_of_shares <= self.shares:
-                self.money.loc[len(self.money.index)] = self.money["Money"][self.time] + gain
+                self.money.loc[len(self.money.index)] = curr_money + gain
+                self.money = np.append(self.money, (curr_money + gain))
                 self.shares -= amount_of_shares
-                self.action.loc[len(self.action.index)] = -1
+                self.action = np.append(self.action, self.SELL_ACTION)
 
         #Hold
-        if action == 0:
-            self.action.loc[len(self.action.index)] = 0
-
+        if action == self.HOLD_ACTION:
+            self.action = np.append(self.action, self.HOLD_ACTION)
 
         self.time += 1
+        next_money = self.money[self.time]
+        next_observation = self.data.item(self.time)
 
-        self.portfolio_value = self.shares * self.data["close"][self.time]
+        self.portfolio_value = self.shares * next_observation.value("close")
 
-        self.state = [self.data["open"][self.time],
-                    self.data["close"][self.time],
-                    self.data["high"][self.time],
-                    self.shares,
-                    self.portfolio_value,
-                    self.money["Money"][self.time],
-                    self.action]
-
-        if self.time == self.data.shape[0]-1:
-            done = True
-        else:
-            done = False
+        next_money = self.money[self.time]
+        next_observation = self.data.item(self.time)
+        self.state = [*next_observation.all(), self.shares, self.portfolio_value, next_money, self.action]
 
         info = {"Round: ", self.time}
+        self.reward = (self.money[self.time] - self.money[self.time - 1]) / self.money[self.time - 1]
 
-        self.reward = (self.money["Money"][self.time] - self.money["Money"][self.time - 1]) / self.money["Money"][self.time - 1]
-
+        done = self.data.has_next(self.time)
         return self.state, self.reward, done, info
-
+    
+    def render(self):
+        pass
 
     def getObsStateSize(self):
         return len(self.state)

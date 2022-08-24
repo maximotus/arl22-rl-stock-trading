@@ -1,5 +1,7 @@
+import os
 from datetime import datetime, timedelta
-from typing import Iterable, List, Tuple
+from pathlib import Path
+from typing import Iterable, List, Tuple, Optional
 from pydantic import BaseModel, PrivateAttr
 
 import pytz
@@ -8,16 +10,45 @@ import pandas as pd
 from rltrading.data.handler import get_data
 
 
+class Config(BaseModel):
+    symbol: Optional[str]
+    from_: Optional[datetime]
+    to: Optional[datetime]
+    lookback: Optional[timedelta]
+    finnhub_api_key: Optional[str]
+
+
+class Observation(BaseModel):
+    _data: pd.Series = PrivateAttr()
+    
+    def value(self: "Observation", key: str) -> float:
+        """_summary_
+
+        Parameters
+        ----------
+        self : Observation
+            _description_
+        key : str
+            _description_
+
+        Returns
+        -------
+        float
+            _description_
+        """
+        return self._data[key].item()
+
+    def all(self: "Observation") -> List[float]:
+        return self._data.tolist()
+
+
 class Data(BaseModel):
-    symbol: str
-    from_: datetime
-    to: datetime
-    lookback: timedelta
-    finnhub_api_key: str
-
+    _symbol: str = PrivateAttr(default_factory=None)
     _data_frame: pd.DataFrame = PrivateAttr(default_factory=pd.DataFrame)
+    
+    # _curr_pos: int = PrivateAttr(default_factory=0)
 
-    def fetch(self: "Data", store: str = True, path: str = None):
+    def fetch(self: "Data", config: Config, path: Optional[str], store: str = True):
         """Fetch the data via the ``MetaTrader5`` and the ``Finnhub API``.
 
         Parameters
@@ -34,21 +65,21 @@ class Data(BaseModel):
                 "The path can not be 'None' if the 'store' "
                 + "parameter is set to 'True'"
             )
-
-        start = pytz.utc.localize(self.from_)
-        end = pytz.utc.localize(self.to)
+        self._symbol = config.symbol
+        start = pytz.utc.localize(config.from_)
+        end = pytz.utc.localize(config.to)
         self._data_frame = get_data(
-            self.finnhub_api_key,
-            symbol=self.symbol,
+            fh_key=config.finnhub_api_key,
+            symbol=config.symbol,
             _from=start,
             to=end,
-            lookback=self.lookback,
+            lookback=config.lookback,
         )
 
         if store and (path is not None):
             self._data_frame.to_csv(path, index=False)
 
-    def load(self: "Data", path: str):
+    def load(self: "Data", symbol: str, dir_path: str):
         """Load the data from a previously fetched ``pd.DataFrame``.
 
         Parameters
@@ -58,23 +89,87 @@ class Data(BaseModel):
         path : str
             Path to the ``.csv`` file containing the ``pd.DataFrame``.
         """
-        self._data_frame = pd.read_csv(path)
+        self._symbol = symbol
+        full_path = os.path.join(dir_path, f"{symbol}.csv")
+        self._data_frame = pd.read_csv(Path(full_path))
 
-    def observations(self: "Data", columns: List[str] = None) -> Iterable[List[float]]:
-        """Iterate over all observations.
+    # def observations(self: "Data", columns: List[str] = None) -> Iterable[List[float]]:
+    #     """Iterate over all observations.
 
-        Yields
-        ------
-        data : List[float]
-            The data of the current observation as a list of floats.
+    #     Yields
+    #     ------
+    #     data : List[float]
+    #         The data of the current observation as a list of floats.
+    #     """
+    #     if columns is not None:
+    #         reduced_df = self._data_frame[columns]
+    #     else:
+    #         reduced_df = self._data_frame
+    #     reduced_df = reduced_df.sort_values(["time"])
+    #     for _, value in reduced_df.iterrows():
+    #         yield value.tolist()
+
+    def get_attributes(self: "Data") -> List[str]:
+        """_summary_
+
+        Parameters
+        ----------
+        self : Data
+            _description_
+
+        Returns
+        -------
+        List[str]
+            _description_
         """
-        if columns is not None:
-            reduced_df = self._data_frame[columns]
-        else:
-            reduced_df = self._data_frame
-        reduced_df = reduced_df.sort_values(["time"])
-        for _, value in reduced_df.iterrows():
-            yield value.tolist()
+        return self._data_frame.columns.values.tolist()
+    
+    def reduce_attributes(self: "Data", selection: List[str]):
+        """_summary_
+
+        Parameters
+        ----------
+        self : Data
+            _description_
+        selection : List[str]
+            _description_
+        """
+        self._data_frame = self._data_frame[selection]
+        
+    def item(self: "Data", time_step: int) -> Observation:
+        """_summary_
+
+        Parameters
+        ----------
+        self : Data
+            _description_
+        index : int
+            _description_
+
+        Returns
+        -------
+        List[float]
+            _description_
+        """
+        observation = Observation(_data=self._data_frame.iloc[time_step])
+        return observation
+    
+    def has_next(self: "Data", time_step: int) -> bool:
+        """_summary_
+
+        Parameters
+        ----------
+        self : Data
+            _description_
+        index : int
+            _description_
+
+        Returns
+        -------
+        bool
+            _description_
+        """
+        return time_step < (len(self) - 1)
 
     def __len__(self: "Data") -> int:
         """Get the number of observations.
