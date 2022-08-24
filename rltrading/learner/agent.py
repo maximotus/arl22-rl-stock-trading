@@ -4,17 +4,33 @@ import torch
 import torch.nn as nn
 
 from typing import Tuple
+from rltrading.learner.dqn import DQN
 
 from rltrading.learner.replayMemory import ReplayMemory, Transition
 
 class Agent:
-	def __init__(self, replay_memory: ReplayMemory, neural_net: nn.Module, env: gym.Env, gamma: float, epsilon: float, batch_size: int = 128):
-		self.replay_memory = replay_memory
-		self.neural_net = neural_net
+	def __init__(
+		self, 
+		env: gym.Env, 
+		learning_rate: float, 
+		gamma: float, 
+		epsilon: float, 
+		input_dims: int,
+		fc1_dims: int,
+		fc2_dims: int,
+		batch_size: int = 128,
+		replay_memory_size: int = 10000, 
+	) -> None:
+
+		self.replay_memory = ReplayMemory(replay_memory_size)
 
 		# gym environment
 		self.env = env
 		self.state = self.env.reset()
+		n_actions = self.env.action_space.n 
+
+		self.neural_net = DQN(learning_rate, input_dims, fc1_dims, fc2_dims, n_actions)
+		self.target_nn = DQN(learning_rate, input_dims, fc1_dims, fc2_dims, n_actions)
 
 		# RL parameters
 		self.gamma = gamma
@@ -66,7 +82,12 @@ class Agent:
 		next_state_batch = torch.cat(batch.next_state)
 		reward_batch = torch.cat(batch.reward)
 
-		state_action_values = self.neural_net.forward(state_batch)
+		state_action_values = self.neural_net(state_batch).gather(1, action_batch)
+
+		next_state_values = torch.zeros(self.batch_size)	
+
+		expected_state_action_values = (next_state_values * self.gamma) + reward_batch
+
 		
 
 
