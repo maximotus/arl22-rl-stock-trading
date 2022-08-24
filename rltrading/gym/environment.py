@@ -1,5 +1,4 @@
 import gym
-import pandas as pd
 import numpy as np
 
 from rltrading.data.data import Data
@@ -13,9 +12,10 @@ class Environment(gym.Env):
     """
     Specify how many shares of a given stock and how much money the agent has
     """
-    def __init__(self, shares: int, money: float, data: Data):        
+
+    def __init__(self: "Environment", shares: int, money: float, data: Data):
         self.data = data
-        self.state = [0, 0, 0, 0, 0, 0, 0] #TODO
+        self.state = [0, 0, 0, 0, 0, 0, 0]  # TODO
         self.money = np.asarray([money], dtype=float)
         self.action = np.asarray([], dtype=float)
         self.shares = shares
@@ -32,8 +32,8 @@ class Environment(gym.Env):
         curr_money = self.money[self.time]
         curr_observation = self.data.item(self.time)
         curr_close = curr_observation.value("close")
-        
-        #Buy
+
+        # Buy
         if action > self.HOLD_ACTION:
             amount_of_shares = int(action * curr_money / curr_close)
             costs = curr_close * amount_of_shares
@@ -41,7 +41,7 @@ class Environment(gym.Env):
             self.shares += amount_of_shares
             self.action = np.append(self.action, self.BUY_ACTION)
 
-        #Sell
+        # Sell
         if action < self.HOLD_ACTION:
             amount_of_shares = int(action * self.portfolio_value / curr_close) * -1
             gain = curr_close * amount_of_shares
@@ -51,7 +51,7 @@ class Environment(gym.Env):
                 self.shares -= amount_of_shares
                 self.action = np.append(self.action, self.SELL_ACTION)
 
-        #Hold
+        # Hold
         if action == self.HOLD_ACTION:
             self.action = np.append(self.action, self.HOLD_ACTION)
 
@@ -63,14 +63,22 @@ class Environment(gym.Env):
 
         next_money = self.money[self.time]
         next_observation = self.data.item(self.time)
-        self.state = [*next_observation.all(), self.shares, self.portfolio_value, next_money, self.action]
+        self.state = [
+            *next_observation.all(),
+            self.shares,
+            self.portfolio_value,
+            next_money,
+            self.action,
+        ]
 
         info = {"Round: ", self.time}
-        self.reward = (self.money[self.time] - self.money[self.time - 1]) / self.money[self.time - 1]
+        self.reward = (self.money[self.time] - self.money[self.time - 1]) / self.money[
+            self.time - 1
+        ]
 
         done = self.data.has_next(self.time)
         return self.state, self.reward, done, info
-    
+
     def render(self):
         pass
 
