@@ -36,10 +36,7 @@ aapl_data = Data(
     finnhub_api_key=fh_key,
 )
 aapl_data.load(path=path)
-loaded_obs = [
-    observation
-    for observation in aapl_data.observations()
-]
+loaded_obs = [observation for observation in aapl_data.observations()]
 
 # print("Fetched data is equal to loaded data: ", np.allclose(fetched_obs, loaded_obs))
 print("Length: ", len(aapl_data))
