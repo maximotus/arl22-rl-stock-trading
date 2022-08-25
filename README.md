@@ -1,11 +1,18 @@
 # arl22-rl-stock-trading
 
-## Poetry
+## Setup
 
 Use poetry as the package manager. Install it using e.g.:
 
 ```bash
 pip install poetry
+```
+
+## Usage
+
+```bash
+poetry install
+python experiments/main.py --conf ./config/template-dqn.yaml --finnhub-key FINNHUB_API_KEY
 ```
 
 ## Data
