@@ -1,6 +1,9 @@
 import gym
 import numpy as np
 
+from numpy import inf
+from gym.vector.utils import spaces
+
 from rltrading.data.data import Data
 
 
@@ -14,8 +17,6 @@ class Environment(gym.Env):
     """
 
     def __init__(self: "Environment", shares: int, money: float, data: Data):
-        self.action_space = spaces.Box(low=[-1], high=[1], dtype=float)
-        self.observation_space = spaces.Box(shape=(len(self.state), 1))
         self.data = data
         self.state = [0, 0, 0, 0, 0, 0, 0]  # TODO
         self.money = np.asarray([money], dtype=float)
@@ -23,6 +24,8 @@ class Environment(gym.Env):
         self.shares = shares
         self.portfolio_value = 0
         self.time = 0
+        self.action_space = spaces.Box(low=np.array([-1]), high=np.array([1]), dtype=float)
+        self.observation_space = spaces.Box(low=-inf, high=inf, shape=(len(self.state), 1), dtype=float)
 
     def reset(self):
         self.time = 0
