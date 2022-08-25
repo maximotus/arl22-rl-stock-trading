@@ -23,6 +23,7 @@ agent:
   save_path: "./result_dqn_trading"
   epochs: 100
   log_interval: 5
+  seed: null
 
   # define model with its specific parameters
   model:
@@ -37,4 +38,17 @@ agent:
       gamma: 0.99
       train_freq: 4
       gradient_steps: 1
-      # add more configurable model-depending parameters here
+      exploration_fraction: 0.1
+      exploration_initial_eps: 1.0
+      exploration_final_eps: 0.05
+      n_steps: 2048
+      n_epochs: 10
+      gae_lambda: 0.95
+      clip_range: 0.2
+      clip_range_vf: null
+      normalize_advantage: true
+      ent_coef: 0.0
+      vf_coef: 0.5
+      target_kl: null
+      rms_prop_eps: 0.00005
+      use_rms_prop: true
