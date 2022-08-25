@@ -1,5 +1,6 @@
 import argparse
 
+from experiment import TrainExperiment
 from misc import setup_logger, parse_config, create_experiment_dir
 
 
@@ -21,17 +22,20 @@ def main():
     )
     args = parser.parse_args()
 
+    # read configuration file and finnhub api key, also merge them
     configuration_file = args.conf
     finnhub_api_key = args.finnhub_key
-
     configuration = parse_config(configuration_file)
+    configuration[finnhub_api_key] = finnhub_api_key
+
+    # experiment setup
     mode = configuration.get("mode")
     log_lvl = configuration.get("logger").get("level")
     log_fmt = configuration.get("logger").get("format")
     experiment_path = create_experiment_dir(
         configuration_file,
         configuration.get("experiment_path"),
-        configuration.get("model").get("pretrained_path"),
+        configuration.get("agent").get("model").get("pretrained_path"),
         mode,
     )
 
@@ -40,14 +44,12 @@ def main():
         "Successfully read the given configuration file, created experiment directory and set up logger."
     )
     logger.info(
-        "Starting experiment in mode "
-        + mode
-        + " using configuration "
-        + configuration_file
+        f"Starting experiment in mode {mode} using configuration {configuration_file}"
     )
 
     if mode == "train":
-        raise NotImplementedError
+        exp = TrainExperiment(configuration)
+        exp.conduct()
 
     if mode == "eval":
         raise NotImplementedError

@@ -1,33 +1,40 @@
-mode: "train" # (train / eval)
+mode: train # (train / eval)
 logger:
   level: 20 # CRITICAL = 50, ERROR = 40, WARNING = 30, INFO = 20, DEBUG = 10, NOTSET = 0
   format: "%(asctime)s - %(levelname)s - %(module)s - %(message)s"
-experiment_path: ".\results"
+experiment_path: .\results
 
 gym_environment:
   shares: 2
   money: 100000
   data:
-    path: ".\data"
-    symbols: ["AAPL"]
-    attributes: ["time", "open", "close", "low", "high"]
+    path: .\data\example
+    symbol: AAPL
+    attributes: [ "time", "open", "close", "low", "high" ]
+    n_peers: -1 # -1 all, 0 none, n > 0 else TODO implement
+    social_lookback: 1 # n > 0 in days
+    start: "2022-08-18 01:00:00"
+    end: "2022-08-18 23:59:59"
 
 agent:
-  policy: "MlpPolicy"
-  device: "cpu" # (cuda / cpu / auto)
+  policy: MlpPolicy
+  device: cpu # (cuda / cpu / auto)
   verbose: 0 # 0 none, 1 training information, 2 debug
   save_path: "./result_dqn_trading"
+  epochs: 100
+  log_interval: 5
 
   # define model with its specific parameters
   model:
-    name: "DQN"
-    pretrained_path: # empty if start from scratch
-    learning_rate: 0.0005 # TODO
-    buffer_size: 50000 # TODO
-    learning_starts: 50000 # TODO
-    batch_size: 32 # TODO
-    tau: 1.0 # TODO
-    gamma: 0.99 # TODO
-    train_freq: 4 # TODO
-    gradient_steps: 1 # TODO
-    # add more configurable model-depending parameters here
+    name: DQN
+    pretrained_path: # empty if start from scratch TODO implement
+    specific_parameters:
+      learning_rate: 0.0005 # TODO implement
+      buffer_size: 50000 # TODO implement
+      learning_starts: 50000 # TODO implement
+      batch_size: 32 # TODO implement
+      tau: 1.0 # TODO implement
+      gamma: 0.99 # TODO implement
+      train_freq: 4 # TODO implement
+      gradient_steps: 1 # TODO implement
+      # add more configurable model-depending parameters here
