@@ -92,6 +92,7 @@ class Agent:
             if done:
                 obs = self.gym_env.reset()
 
+
 # proving that the above should work (can be removed if the env is debugged and everything works)
 # if __name__ == "__main__":
 #     env = gym.make("CartPole-v0")
