@@ -26,7 +26,6 @@ def main():
     configuration_file = args.conf
     finnhub_api_key = args.finnhub_key
     configuration = parse_config(configuration_file)
-    configuration[finnhub_api_key] = finnhub_api_key
 
     # experiment setup
     mode = configuration.get("mode")
@@ -38,6 +37,10 @@ def main():
         configuration.get("agent").get("model").get("pretrained_path"),
         mode,
     )
+
+    # overwrite overall experiment path with the newly created base_path of the experiment and add finnhub api key
+    configuration["experiment_path"] = experiment_path
+    configuration["finnhub_api_key"] = finnhub_api_key
 
     logger = setup_logger(experiment_path, log_lvl, log_fmt)
     logger.info(
