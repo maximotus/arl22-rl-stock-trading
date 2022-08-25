@@ -161,7 +161,7 @@ cython_debug/
 .vscode/
 
 experiments/data/*/**
-# if the experiments/config/template.yaml file is used as config, the following should be ignored
+# if the experiments/config/template-*.yaml files are used as config, the following should be ignored
 experiments/results
 results/
 

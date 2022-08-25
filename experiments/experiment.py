@@ -15,7 +15,7 @@ class TrainExperiment:
 
     An instance of this class reads the necessary fields of a given configuration (dict) and initializes
     the gym environment, the data and the machine learning agent that should learn a policy in the environment.
-    The corresponding configurable attributes are described in ./config/template.yaml.
+    The corresponding configurable attributes are described in ./config/template-*.yaml.
     """
 
     def __init__(self, config: dict):
@@ -64,31 +64,19 @@ class TrainExperiment:
         logger.info(f"Using gym environment with #shares={shares} and #money={money}")
 
         agent_config = config.get("agent")
-        policy_id = agent_config.get("policy")
-        device_name = agent_config.get("device")
-        verbose = agent_config.get("verbose")
-        save_path = agent_config.get("save_path")
         epochs = agent_config.get("epochs")
         log_interval = agent_config.get("log_interval")
+        save_path = agent_config.get("save_path")
 
         model_config = agent_config.get("model")
-        model_id = model_config.get("name")
-
-        specific_parameters_config = model_config.get("specific_parameters")
 
         agent = Agent(
             gym_env=gym,
-            rl_model_id=model_id,
-            policy_id=policy_id,
-            verbose=verbose,
             epochs=epochs,
             log_interval=log_interval,
             save_path=save_path,
-            device_name=device_name,
-            specific_parameters=specific_parameters_config,
+            model_config=model_config,
         )
-
-        logger.info(f"Using agent with {policy_id} and {model_id} model")
 
         self.gym = gym
         self.agent = agent

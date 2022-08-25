@@ -12,14 +12,10 @@ class Agent:
     def __init__(
         self: "Agent",
         gym_env: gym.Env,
-        rl_model_id: str,
-        policy_id: str,
-        verbose: int,
         epochs: int,
         log_interval: int,
         save_path: str,
-        device_name: str,
-        specific_parameters: dict,
+        model_config: dict,
     ):
         logger.info("Initializing agent...")
 
@@ -29,6 +25,7 @@ class Agent:
         self.save_path = save_path
 
         # initialize device if it is known
+        device_name = model_config.get("device")
         devices = ["cpu", "cuda", "auto"]
         if device_name not in devices:
             msg = f"Unknown device name: {device_name}"
@@ -47,6 +44,7 @@ class Agent:
         # from stable_baselines3.common.on_policy_algorithm.OnPolicyAlgorithm (PPO and A2C)
         # and only then regard the real model-specific parameters
         policy_ids = ["MlpPolicy", "CnnPolicy", "MultiInputPolicy"]
+        policy_id = model_config.get("policy")
         if policy_id not in policy_ids:
             msg = f"Unknown policy id: {policy_id}"
             logger.error(msg)
@@ -56,43 +54,42 @@ class Agent:
         rl_model_aliases = {
             "PPO": partial(
                 PPO,
-                n_steps=specific_parameters.get("n_steps"),
-                batch_size=specific_parameters.get("batch_size"),
-                n_epochs=specific_parameters.get("n_epochs"),
-                gae_lambda=specific_parameters.get("gae_lambda"),
-                clip_range=specific_parameters.get("clip_range"),
-                clip_range_vf=specific_parameters.get("clip_range_vf"),
-                normalize_advantage=specific_parameters.get("normalize_advantage "),
-                ent_coef=specific_parameters.get("ent_coef"),
-                vf_coef=specific_parameters.get("vf_coef"),
-                target_kl=specific_parameters.get("target_kl"),
+                n_steps=model_config.get("n_steps"),
+                batch_size=model_config.get("batch_size"),
+                n_epochs=model_config.get("n_epochs"),
+                gae_lambda=model_config.get("gae_lambda"),
+                clip_range=model_config.get("clip_range"),
+                clip_range_vf=model_config.get("clip_range_vf"),
+                normalize_advantage=model_config.get("normalize_advantage "),
+                ent_coef=model_config.get("ent_coef"),
+                vf_coef=model_config.get("vf_coef"),
+                target_kl=model_config.get("target_kl"),
             ),
             "A2C": partial(
                 A2C,
-                n_steps=specific_parameters.get("n_steps"),
-                gae_lambda=specific_parameters.get("gae_lambda"),
-                ent_coef=specific_parameters.get("ent_coef"),
-                vf_coef=specific_parameters.get("vf_coef"),
-                rms_prop_eps=specific_parameters.get("rms_prop_eps "),
-                useuse_rms_prop=specific_parameters.get("use_rms_prop"),
-                normalize_advantage=specific_parameters.get("normalize_advantage "),
+                n_steps=model_config.get("n_steps"),
+                gae_lambda=model_config.get("gae_lambda"),
+                ent_coef=model_config.get("ent_coef"),
+                vf_coef=model_config.get("vf_coef"),
+                rms_prop_eps=model_config.get("rms_prop_eps "),
+                use_rms_prop=model_config.get("use_rms_prop"),
+                normalize_advantage=model_config.get("normalize_advantage "),
             ),
             "DQN": partial(
                 DQN,
-                buffer_size=specific_parameters.get("buffer_size"),
-                learning_starts=specific_parameters.get("learning_starts"),
-                batch_size=specific_parameters.get("batch_size"),
-                tau=specific_parameters.get("tau"),
-                train_freq=specific_parameters.get("train_freq"),
-                gradient_steps=specific_parameters.get("gradient_steps"),
-                exploration_fraction=specific_parameters.get("exploration_fraction"),
-                exploration_initial_eps=specific_parameters.get(
-                    "exploration_initial_eps"
-                ),
-                exploration_final_eps=specific_parameters.get("exploration_final_eps"),
+                buffer_size=model_config.get("buffer_size"),
+                learning_starts=model_config.get("learning_starts"),
+                batch_size=model_config.get("batch_size"),
+                tau=model_config.get("tau"),
+                train_freq=model_config.get("train_freq"),
+                gradient_steps=model_config.get("gradient_steps"),
+                exploration_fraction=model_config.get("exploration_fraction"),
+                exploration_initial_eps=model_config.get("exploration_initial_eps"),
+                exploration_final_eps=model_config.get("exploration_final_eps"),
             ),
         }
 
+        rl_model_id = model_config.get("name")
         if rl_model_id not in rl_model_aliases.keys():
             msg = f"Unknown RL-Model: {rl_model_id}"
             logger.error(msg)
@@ -103,11 +100,11 @@ class Agent:
         self.model = rl_model_aliases[rl_model_id](
             policy=policy_id,
             env=self.gym_env,
-            verbose=verbose,
             device=device,
-            learning_rate=specific_parameters.get("learning_rate"),
-            gamma=specific_parameters.get("gamma"),
-            seed=specific_parameters.get("seed"),
+            verbose=model_config.get("verbose"),
+            learning_rate=model_config.get("learning_rate"),
+            gamma=model_config.get("gamma"),
+            seed=model_config.get("seed"),
         )
         logger.info(f"Using model {rl_model_id}")
 
