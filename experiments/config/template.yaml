@@ -29,12 +29,12 @@ agent:
     name: DQN
     pretrained_path: # empty if start from scratch TODO implement
     specific_parameters:
-      learning_rate: 0.0005 # TODO implement
-      buffer_size: 50000 # TODO implement
-      learning_starts: 50000 # TODO implement
-      batch_size: 32 # TODO implement
-      tau: 1.0 # TODO implement
-      gamma: 0.99 # TODO implement
-      train_freq: 4 # TODO implement
-      gradient_steps: 1 # TODO implement
+      learning_rate: 0.0005
+      buffer_size: 50000
+      learning_starts: 50000
+      batch_size: 32
+      tau: 1.0
+      gamma: 0.99
+      train_freq: 4
+      gradient_steps: 1
       # add more configurable model-depending parameters here
