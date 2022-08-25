@@ -4,9 +4,9 @@ import torch
 import torch.nn as nn
 
 from typing import Tuple
-from rltrading.learner.dqn import DQN
+from rltrading.learner.DQN.dqn import DQN
 
-from rltrading.learner.replayMemory import ReplayMemory, Transition
+from rltrading.learner.DQN.replayMemory import ReplayMemory, Transition
 
 class Agent:
 	def __init__(
