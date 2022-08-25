@@ -21,6 +21,8 @@ class Agent:
         device_name: str,
         specific_parameters: dict,
     ):
+        logger.info("Initializing agent...")
+
         self.gym_env = gym_env
         self.epochs = epochs
         self.log_interval = log_interval
@@ -29,12 +31,15 @@ class Agent:
         # initialize device if it is known
         devices = ["cpu", "cuda", "auto"]
         if device_name not in devices:
-            raise ValueError(f"Unknown device name: {device_name}")
+            msg = f"Unknown device name: {device_name}"
+            logger.error(msg)
+            raise ValueError(msg)
         device = (
             torch.device("cuda" if torch.cuda.is_available() else "cpu")
             if device_name == "auto"
             else torch.device(device_name)
         )
+        logger.info(f"Using device {device}")
 
         # initialize model if policy_id and model_id are known
         # one could improve the rl model aliasing by differentiating between
@@ -43,7 +48,10 @@ class Agent:
         # and only then regard the real model-specific parameters
         policy_ids = ["MlpPolicy", "CnnPolicy", "MultiInputPolicy"]
         if policy_id not in policy_ids:
-            raise ValueError(f"Unknown policy id: {policy_id}")
+            msg = f"Unknown policy id: {policy_id}"
+            logger.error(msg)
+            raise ValueError(msg)
+        logger.info(f"Using policy {policy_id}")
 
         rl_model_aliases = {
             "PPO": partial(
@@ -66,7 +74,9 @@ class Agent:
         }
 
         if rl_model_id not in rl_model_aliases.keys():
-            raise ValueError(f"Unknown RL-Model: {rl_model_id}")
+            msg = f"Unknown RL-Model: {rl_model_id}"
+            logger.error(msg)
+            raise ValueError(msg)
 
         # initialize model with shared parameters of all models
         # the model-specific parameters are taken from the dictionary above using partial
@@ -78,10 +88,14 @@ class Agent:
             learning_rate=specific_parameters.get("learning_rate"),
             gamma=specific_parameters.get("gamma"),
         )
+        logger.info(f"Using model {rl_model_id}")
+
+        logger.info("Successfully initialized agent")
 
     def learn(self):
         self.model.learn(total_timesteps=self.epochs, log_interval=self.log_interval)
         self.model.save(self.save_path)
+        logger.info(f"Saved the model at {self.save_path}")
 
     def apply(self):
         obs = self.gym_env.reset()
