@@ -14,6 +14,8 @@ class Environment(gym.Env):
     """
 
     def __init__(self: "Environment", shares: int, money: float, data: Data):
+        self.action_space = spaces.Box(low=[-1], high=[1], dtype=float)
+        self.observation_space = spaces.Box(shape=(len(self.state), 1))
         self.data = data
         self.state = [0, 0, 0, 0, 0, 0, 0]  # TODO
         self.money = np.asarray([money], dtype=float)
@@ -63,6 +65,7 @@ class Environment(gym.Env):
 
         next_money = self.money[self.time]
         next_observation = self.data.item(self.time)
+
         self.state = [
             *next_observation.all(),
             self.shares,
