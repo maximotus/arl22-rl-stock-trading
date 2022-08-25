@@ -85,9 +85,9 @@ class Agent:
                 tau=specific_parameters.get("tau"),
                 train_freq=specific_parameters.get("train_freq"),
                 gradient_steps=specific_parameters.get("gradient_steps"),
-                exploration_fraction=specific_parameters("exploration_fraction"),
-                exploration_initial_eps=specific_parameters("exploration_initial_eps"),
-                exploration_final_eps=specific_parameters("exploration_final_eps")
+                exploration_fraction=specific_parameters.get("exploration_fraction"),
+                exploration_initial_eps=specific_parameters.get("exploration_initial_eps"),
+                exploration_final_eps=specific_parameters.get("exploration_final_eps")
             ),
         }
 
