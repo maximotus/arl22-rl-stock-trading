@@ -12,6 +12,10 @@ logger = logging.getLogger("root")
 class TrainExperiment:
     """
     Represents a training experiment with its main components, namely a gym environment and agent.
+
+    An instance of this class reads the necessary fields of a given configuration (dict) and initializes
+    the gym environment, the data and the machine learning agent that should learn a policy in the environment.
+    The corresponding configurable attributes are described in ./config/template.yaml.
     """
 
     def __init__(self, config: dict):
