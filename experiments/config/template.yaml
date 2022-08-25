@@ -1,32 +1,33 @@
-mode: train # (train / eval)
+mode: "train" # (train / eval)
 logger:
   level: 20 # CRITICAL = 50, ERROR = 40, WARNING = 30, INFO = 20, DEBUG = 10, NOTSET = 0
   format: "%(asctime)s - %(levelname)s - %(module)s - %(message)s"
-device: cpu # (cuda / cpu / auto)
-experiment_path: .\results
-epochs: 500
+experiment_path: ".\results"
 
-frequencies:
-  save_freq: 1 # (i.e. how often should the model checkpoint be saved, in epochs)
-  eval_freq: 1
+gym_environment:
+  shares: 2
+  money: 100000
+  data:
+    path: ".\data"
+    symbols: ["AAPL"]
+    attributes: ["time", "open", "close", "low", "high"]
 
-dataloader:
-  dataset: celebA
-  size_fraction: 50000
-  batch_size: 1
+agent:
+  policy: "MlpPolicy"
+  device: "cpu" # (cuda / cpu / auto)
+  verbose: 0 # 0 none, 1 training information, 2 debug
+  save_path: "./result_dqn_trading"
 
-model:
-  name: CDCGAN
-  pretrained_path: # empty if start from scratch
-  start_epoch: # empty if start from scratch
-  criterion: BCELoss
-  optimizer: Adam
-  learning_rate: 0.001
-  parameters:
-    dropout: 0.2
-    alpha: 0.1
-    beta1: 0.1
-    ngf: 64
-    ndf: 64
-    z_channels: 128
-    use_spectral_norm: False
+  # define model with its specific parameters
+  model:
+    name: "DQN"
+    pretrained_path: # empty if start from scratch
+    learning_rate: 0.0005 # TODO
+    buffer_size: 50000 # TODO
+    learning_starts: 50000 # TODO
+    batch_size: 32 # TODO
+    tau: 1.0 # TODO
+    gamma: 0.99 # TODO
+    train_freq: 4 # TODO
+    gradient_steps: 1 # TODO
+    # add more configurable model-depending parameters here
