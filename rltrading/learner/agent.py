@@ -65,7 +65,7 @@ class Agent:
                 normalize_advantage=specific_parameters.get("normalize_advantage "),
                 ent_coef=specific_parameters.get("ent_coef"),
                 vf_coef=specific_parameters.get("vf_coef"),
-                target_kl=specific_parameters.get("target_kl")
+                target_kl=specific_parameters.get("target_kl"),
             ),
             "A2C": partial(
                 A2C,
@@ -75,7 +75,7 @@ class Agent:
                 vf_coef=specific_parameters.get("vf_coef"),
                 rms_prop_eps=specific_parameters.get("rms_prop_eps "),
                 useuse_rms_prop=specific_parameters.get("use_rms_prop"),
-                normalize_advantage=specific_parameters.get("normalize_advantage ")
+                normalize_advantage=specific_parameters.get("normalize_advantage "),
             ),
             "DQN": partial(
                 DQN,
@@ -86,8 +86,10 @@ class Agent:
                 train_freq=specific_parameters.get("train_freq"),
                 gradient_steps=specific_parameters.get("gradient_steps"),
                 exploration_fraction=specific_parameters.get("exploration_fraction"),
-                exploration_initial_eps=specific_parameters.get("exploration_initial_eps"),
-                exploration_final_eps=specific_parameters.get("exploration_final_eps")
+                exploration_initial_eps=specific_parameters.get(
+                    "exploration_initial_eps"
+                ),
+                exploration_final_eps=specific_parameters.get("exploration_final_eps"),
             ),
         }
 
@@ -105,7 +107,7 @@ class Agent:
             device=device,
             learning_rate=specific_parameters.get("learning_rate"),
             gamma=specific_parameters.get("gamma"),
-            seed=specific_parameters.get("seed")
+            seed=specific_parameters.get("seed"),
         )
         logger.info(f"Using model {rl_model_id}")
 

@@ -24,8 +24,12 @@ class Environment(gym.Env):
         self.shares = shares
         self.portfolio_value = 0
         self.time = 0
-        self.action_space = spaces.Box(low=np.array([-1]), high=np.array([1]), dtype=float)
-        self.observation_space = spaces.Box(low=-inf, high=inf, shape=(len(self.state), 1), dtype=float)
+        self.action_space = spaces.Box(
+            low=np.array([-1]), high=np.array([1]), dtype=float
+        )
+        self.observation_space = spaces.Box(
+            low=-inf, high=inf, shape=(len(self.state), 1), dtype=float
+        )
 
     def reset(self):
         self.time = 0
