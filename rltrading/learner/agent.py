@@ -55,12 +55,27 @@ class Agent:
 
         rl_model_aliases = {
             "PPO": partial(
-                PPO
-                # TODO add model specific parameters
+                PPO,
+                n_steps=specific_parameters.get("n_steps"),
+                batch_size=specific_parameters.get("batch_size"),
+                n_epochs=specific_parameters.get("n_epochs"),
+                gae_lambda=specific_parameters.get("gae_lambda"),
+                clip_range=specific_parameters.get("clip_range"),
+                clip_range_vf=specific_parameters.get("clip_range_vf"),
+                normalize_advantage=specific_parameters.get("normalize_advantage "),
+                ent_coef=specific_parameters.get("ent_coef"),
+                vf_coef=specific_parameters.get("vf_coef"),
+                target_kl=specific_parameters.get("target_kl")
             ),
             "A2C": partial(
-                A2C
-                # TODO add model specific parameters
+                A2C,
+                n_steps=specific_parameters.get("n_steps"),
+                gae_lambda=specific_parameters.get("gae_lambda"),
+                ent_coef=specific_parameters.get("ent_coef"),
+                vf_coef=specific_parameters.get("vf_coef"),
+                rms_prop_eps=specific_parameters.get("rms_prop_eps "),
+                useuse_rms_prop=specific_parameters.get("use_rms_prop"),
+                normalize_advantage=specific_parameters.get("normalize_advantage ")
             ),
             "DQN": partial(
                 DQN,
@@ -70,6 +85,9 @@ class Agent:
                 tau=specific_parameters.get("tau"),
                 train_freq=specific_parameters.get("train_freq"),
                 gradient_steps=specific_parameters.get("gradient_steps"),
+                exploration_fraction=specific_parameters("exploration_fraction"),
+                exploration_initial_eps=specific_parameters("exploration_initial_eps"),
+                exploration_final_eps=specific_parameters("exploration_final_eps")
             ),
         }
 
@@ -87,6 +105,7 @@ class Agent:
             device=device,
             learning_rate=specific_parameters.get("learning_rate"),
             gamma=specific_parameters.get("gamma"),
+            seed=specific_parameters.get("seed")
         )
         logger.info(f"Using model {rl_model_id}")
 
