@@ -46,9 +46,11 @@ def main():
         + configuration_file
     )
 
-    # TODO depending on mode, start training or evaluation
-    # use configuration and finnhub_api_key
-    raise NotImplementedError
+    if mode == "train":
+        raise NotImplementedError
+
+    if mode == "eval":
+        raise NotImplementedError
 
 
 if __name__ == "__main__":
