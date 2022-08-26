@@ -5,10 +5,16 @@ import torch
 import os
 
 from functools import partial
+from collections import namedtuple
 from stable_baselines3 import DQN, PPO, A2C
 from stable_baselines3.common.logger import configure
 
 logger = logging.getLogger("root")
+
+ResultMemory = namedtuple(
+    "ResultMemory", field_names=["observation", "action", "state", "reward"]
+)
+
 
 
 class Agent:
@@ -123,10 +129,12 @@ class Agent:
         logger.info(f"Saved the model at {self.model_save_path}")
 
     def apply(self):
+        memory = []
         obs = self.gym_env.reset()
         while True:
             action, _states = self.model.predict(obs, deterministic=True)
             obs, reward, done, info = self.gym_env.step(action)
+            memory.append(ResultMemory(obs, action, _states, reward))
             self.gym_env.render()
             if done:
                 obs = self.gym_env.reset()
