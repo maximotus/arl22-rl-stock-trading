@@ -42,6 +42,7 @@ def main():
     configuration["experiment_path"] = experiment_path
     configuration["finnhub_api_key"] = finnhub_api_key
 
+    # logger setup
     logger = setup_logger(experiment_path, log_lvl, log_fmt)
     logger.info(
         "Successfully read the given configuration file, created experiment directory and set up logger."
