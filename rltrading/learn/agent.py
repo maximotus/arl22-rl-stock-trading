@@ -1,3 +1,4 @@
+from typing import List
 import gym
 import logging
 import torch
@@ -5,6 +6,7 @@ import os
 
 from functools import partial
 from stable_baselines3 import DQN, PPO, A2C
+from stable_baselines3.common.logger import configure
 
 logger = logging.getLogger("root")
 
@@ -15,6 +17,7 @@ class Agent:
         gym_env: gym.Env,
         epochs: int,
         log_interval: int,
+        sb_logger: List[str],
         save_path: str,
         model_config: dict,
     ):
@@ -24,7 +27,8 @@ class Agent:
         self.epochs = epochs
         self.log_interval = log_interval
         self.model_save_path = os.path.join(save_path, "model") 
-        self.tensorboard_save_path = os.path.join(save_path, "stats", "tensorboard")
+        self.stats_save_path = os.path.join(save_path, "stats")
+        self.sb_logger = configure(self.stats_save_path, sb_logger)
 
         # initialize device if it is known
         device_name = model_config.get("device")
@@ -103,7 +107,6 @@ class Agent:
             policy=policy_id,
             env=self.gym_env,
             device=device,
-            tensorboard_log=self.tensorboard_save_path,
             verbose=model_config.get("verbose"),
             learning_rate=model_config.get("learning_rate"),
             gamma=model_config.get("gamma"),
@@ -114,6 +117,7 @@ class Agent:
         logger.info("Successfully initialized agent")
 
     def learn(self):
+        self.model.set_logger(self.sb_logger)
         self.model.learn(total_timesteps=self.epochs, log_interval=self.log_interval)
         self.model.save(self.model_save_path)
         logger.info(f"Saved the model at {self.model_save_path}")

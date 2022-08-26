@@ -42,7 +42,6 @@ def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
     paths = [
         os.path.join(base_path, "stats"),
         os.path.join(base_path, "model"),
-        os.path.join(base_path, "stats", "tensorboard"),
     ]
 
     for path in paths:

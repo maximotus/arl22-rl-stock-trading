@@ -66,6 +66,7 @@ class TrainExperiment:
         agent_config = config.get("agent")
         epochs = agent_config.get("epochs")
         log_interval = agent_config.get("log_interval")
+        sb_logger = agent_config.get("sb_logger")
         save_path = config.get("experiment_path")
 
         model_config = agent_config.get("model")
@@ -74,6 +75,7 @@ class TrainExperiment:
             gym_env=gym,
             epochs=epochs,
             log_interval=log_interval,
+            sb_logger=sb_logger,
             save_path=save_path,
             model_config=model_config,
         )
