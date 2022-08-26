@@ -22,7 +22,7 @@ def main():
     )
     args = parser.parse_args()
 
-    # read configuration file and finnhub api key, also merge them
+    # read configuration file and finnhub api key
     configuration_file = args.conf
     finnhub_api_key = args.finnhub_key
     configuration = parse_config(configuration_file)
