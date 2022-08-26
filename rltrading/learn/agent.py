@@ -1,6 +1,7 @@
 import gym
 import logging
 import torch
+import os
 
 from functools import partial
 from stable_baselines3 import DQN, PPO, A2C
@@ -22,7 +23,8 @@ class Agent:
         self.gym_env = gym_env
         self.epochs = epochs
         self.log_interval = log_interval
-        self.save_path = save_path
+        self.model_save_path = os.path.join(save_path, "model") 
+        self.tensorboard_save_path = os.path.join(save_path, "stats", "tensorboard")
 
         # initialize device if it is known
         device_name = model_config.get("device")
@@ -101,6 +103,7 @@ class Agent:
             policy=policy_id,
             env=self.gym_env,
             device=device,
+            tensorboard_log=self.tensorboard_save_path,
             verbose=model_config.get("verbose"),
             learning_rate=model_config.get("learning_rate"),
             gamma=model_config.get("gamma"),
@@ -112,8 +115,8 @@ class Agent:
 
     def learn(self):
         self.model.learn(total_timesteps=self.epochs, log_interval=self.log_interval)
-        self.model.save(self.save_path)
-        logger.info(f"Saved the model at {self.save_path}")
+        self.model.save(self.model_save_path)
+        logger.info(f"Saved the model at {self.model_save_path}")
 
     def apply(self):
         obs = self.gym_env.reset()

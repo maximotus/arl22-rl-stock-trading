@@ -66,7 +66,7 @@ class TrainExperiment:
         agent_config = config.get("agent")
         epochs = agent_config.get("epochs")
         log_interval = agent_config.get("log_interval")
-        save_path = os.path.join(config.get("experiment_path"), "model")
+        save_path = config.get("experiment_path")
 
         model_config = agent_config.get("model")
 
