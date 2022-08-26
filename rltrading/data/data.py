@@ -21,6 +21,9 @@ class Config(BaseModel):
 class Observation(BaseModel):
     _data: pd.Series = PrivateAttr()
 
+    def __init__(self, _data):
+        self._data = _data
+
     def value(self: "Observation", key: str) -> float:
         """_summary_
 
