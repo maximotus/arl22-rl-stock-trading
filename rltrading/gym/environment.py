@@ -31,11 +31,6 @@ class Environment(gym.Env):
             low=-inf, high=inf, shape=(1,), dtype=np.float32
         )
 
-    def _get_obs(self):
-        curr_observation = self.data.item(self.time)
-        curr_close = curr_observation.value("close")
-        return np.array([curr_close])
-
     def reset(self):
         self.time = 0
         self.shares = 0
@@ -73,10 +68,18 @@ class Environment(gym.Env):
 
                 
         self.time += 1
-        info = {}
-        done = self.data.has_next(self.time)
-        return self._get_obs(), reward, done, info
+        done = not self.data.has_next(self.time)
+        return self._get_obs(), reward, done, self._get_info()
 
     def render(self):
         pass
+
+    def _get_obs(self):
+        curr_observation = self.data.item(self.time)
+        curr_close = curr_observation.value("close")
+        return np.array([curr_close])
+
+    def _get_info(self):
+        return {}
+
 
