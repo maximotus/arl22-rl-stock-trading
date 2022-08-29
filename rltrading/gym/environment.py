@@ -55,7 +55,7 @@ class Environment(gym.Env):
                 self.active_position = True
         else:
             if action == self.BUY_ACTION and self.shares < 0:
-                reward = (-self.shares) * self.last_price - curr_close * self.shares
+                reward = (-self.shares) * self.last_price - curr_close * (-self.shares)
                 self.shares = 0
                 self.active_position = False
             if action == self.SELL_ACTION and self.shares > 0:
@@ -77,7 +77,6 @@ class Environment(gym.Env):
             curr_observation = self.data.item(self.time - (self.lookback - 1 + i))
             curr_close = curr_observation.value("close")
             obs.append(curr_close)
-
         return np.array(obs)
 
     def _get_info(self):

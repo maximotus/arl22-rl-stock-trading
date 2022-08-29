@@ -138,6 +138,8 @@ class Agent:
             self.gym_env.render()
             if done:
                 obs = self.gym_env.reset()
+                break
+        logger.info("current memory:", memory)
 
 
 # proving that the above should work (can be removed if the env is debugged and everything works)
