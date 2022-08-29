@@ -16,23 +16,20 @@ class Environment(gym.Env):
     Specify how many shares of a given stock and how much money the agent has
     """
 
-    def __init__(self: "Environment", shares: int, money: float, data: Data):
-        self.amount = 1
-        self.active_position = False
-        self.shares = 0
-        self.money = money
-        self.balance = money
-        self.last_price = 0
-
+    def __init__(self: "Environment", shares: int, money: float, data: Data, lookback: int):
         self.data = data
-        self.time = 0
+        self.amount = 1
+        self.money = money
+        self.lookback = lookback
+
         self.action_space = spaces.Discrete(3)
         self.observation_space = spaces.Box(
-            low=-inf, high=inf, shape=(1,), dtype=np.float32
+            low=-inf, high=inf, shape=(lookback,), dtype=np.float32
         )
+        self.reset()
 
     def reset(self):
-        self.time = 0
+        self.time = self.lookback - 1
         self.shares = 0
         self.balance = self.money
         self.active_position = False
@@ -75,9 +72,13 @@ class Environment(gym.Env):
         pass
 
     def _get_obs(self):
-        curr_observation = self.data.item(self.time)
-        curr_close = curr_observation.value("close")
-        return np.array([curr_close])
+        obs = []
+        for i in range(self.lookback):
+            curr_observation = self.data.item(self.time - (self.lookback - 1 + i))
+            curr_close = curr_observation.value("close")
+            obs.append(curr_close)
+
+        return np.array(obs)
 
     def _get_info(self):
         return {}

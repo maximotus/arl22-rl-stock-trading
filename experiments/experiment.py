@@ -59,7 +59,7 @@ class TrainExperiment:
             f"Using data of symbol {symbol} with length={len(data)} and shape={data.shape}"
         )
 
-        gym = Environment(shares=shares, money=money, data=data)
+        gym = Environment(shares=shares, money=money, data=data, lookback=6)
 
         logger.info(f"Using gym environment with #shares={shares} and #money={money}")
 
