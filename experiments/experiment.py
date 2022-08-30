@@ -53,13 +53,13 @@ class TrainExperiment:
         else:
             logger.info("Data already exists. Loading data...")
             data.load(symbol=symbol, dir_path=data_path)
-        data.reduce_attributes(attributes)
+        #data.reduce_attributes(attributes)
 
         logger.info(
             f"Using data of symbol {symbol} with length={len(data)} and shape={data.shape}"
         )
 
-        gym = Environment(shares=shares, money=money, data=data, lookback=6)
+        gym = Environment(shares=shares, money=money, data=data, window_size=6)
 
         logger.info(f"Using gym environment with #shares={shares} and #money={money}")
 

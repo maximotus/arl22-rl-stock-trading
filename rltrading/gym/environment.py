@@ -37,7 +37,7 @@ class Environment(gym.Env):
 
         self.action_space = spaces.Discrete(len(Actions))
         self.observation_space = spaces.Box(
-            low=-inf, high=inf, shape=(window_size,), dtype=np.float32
+            low=-inf, high=inf, shape=(window_size, self.data.shape[1]), dtype=np.float32
         )
         self.reset()
 
@@ -99,8 +99,14 @@ class Environment(gym.Env):
         obs = []
         for i in range(self.window_size):
             curr_observation = self.data.item(self.time - (self.window_size - 1 + i))
-            curr_close = curr_observation.value("close")
-            obs.append(curr_close)
+            obs.append(curr_observation.all())
+
+            # curr_close = curr_observation.value("close")
+            # obs.append(curr_close)
+            # obs.append(curr_observation.value("open"))
+            # print(type(curr_observation))
+            # print(*curr_observation.all())
+            # print(curr_observation.value("close"))
         return np.array(obs)
 
     def _get_info(self):
