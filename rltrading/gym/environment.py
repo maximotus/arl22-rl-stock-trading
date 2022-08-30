@@ -15,6 +15,7 @@ class Positions(Enum):
 class Actions(Enum):
     Sell = 0
     Buy = 1
+    Hold = 2
 
 class Environment(gym.Env):
 
@@ -50,12 +51,16 @@ class Environment(gym.Env):
         curr_observation = self.data.item(self.time)
         curr_close = curr_observation.value("close")
         reward = 0
-
+        print("Action ", action)
         if self.active_position == Positions.Long:
             if action == Actions.Sell.value:
                 reward = self.last_trade_price - curr_close
                 self.active_position = Positions.Short
                 self.last_trade_price = curr_close
+                quantity = self._total_profit / self.last_trade_price
+                self._total_profit = quantity * curr_close
+            elif action == Actions.Hold.value:
+                reward = self.last_trade_price - curr_close
                 quantity = self._total_profit / self.last_trade_price
                 self._total_profit = quantity * curr_close
 
@@ -66,6 +71,10 @@ class Environment(gym.Env):
                 self.last_trade_price = curr_close
                 quantity = self._total_profit * self.last_trade_price
                 self._total_profit = quantity / curr_close
+            elif action == Actions.Hold.value:
+                reward = self.last_trade_price - curr_close
+                quantity = self._total_profit * self.last_trade_price
+                self._total_profit = quantity / curr_close
 
         # else:
         #     if action == self.BUY_ACTION and self.shares < 0:
@@ -74,7 +83,7 @@ class Environment(gym.Env):
         #         reward = curr_close * self.shares - self.shares * self.last_price
         #         self.shares = 0
         #         self.active_position = False
-
+        print("Reward ", reward)
         self.time += 1
         done = not self.data.has_next(self.time)
         return self._get_obs(), reward, done, self._get_info()

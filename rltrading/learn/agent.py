@@ -17,6 +17,7 @@ ResultMemory = namedtuple(
     "ResultMemory", field_names=["observation", "action", "state", "reward"]
 )
 
+
 class Agent:
     def __init__(
         self: "Agent",
@@ -32,7 +33,7 @@ class Agent:
         self.gym_env = gym_env
         self.epochs = epochs
         self.log_interval = log_interval
-        self.model_save_path = os.path.join(save_path, "model") 
+        self.model_save_path = os.path.join(save_path, "model")
         self.stats_save_path = os.path.join(save_path, "stats")
         self.sb_logger = configure(self.stats_save_path, sb_logger)
 
@@ -132,7 +133,8 @@ class Agent:
         memory = []
         obs = self.gym_env.reset()
         while True:
-            action, _states = self.model.predict(obs, deterministic=True)
+            action, _states = self.model.predict(obs, deterministic=False)
+
             obs, reward, done, info = self.gym_env.step(action)
             memory.append(ResultMemory(obs, action, _states, reward))
             self.gym_env.render()
