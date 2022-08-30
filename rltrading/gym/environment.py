@@ -1,5 +1,7 @@
 from enum import Enum
 
+import logging
+
 import gym
 import numpy as np
 
@@ -7,6 +9,8 @@ from numpy import inf
 from gym.vector.utils import spaces
 
 from rltrading.data.data import Data
+
+logger = logging.getLogger("root")
 
 class Positions(Enum):
     Short = 0
@@ -51,7 +55,7 @@ class Environment(gym.Env):
         curr_observation = self.data.item(self.time)
         curr_close = curr_observation.value("close")
         reward = 0
-        print("Action ", action)
+        logger.debug(f"Action choosen: {action}")
         if self.active_position == Positions.Long:
             if action == Actions.Sell.value:
                 reward = self.last_trade_price - curr_close
@@ -83,7 +87,7 @@ class Environment(gym.Env):
         #         reward = curr_close * self.shares - self.shares * self.last_price
         #         self.shares = 0
         #         self.active_position = False
-        print("Reward ", reward)
+        logger.debug(f"Reward: {reward}")
         self.time += 1
         done = not self.data.has_next(self.time)
         return self._get_obs(), reward, done, self._get_info()
