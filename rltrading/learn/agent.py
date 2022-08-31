@@ -9,7 +9,7 @@ from collections import namedtuple
 from stable_baselines3 import DQN, PPO, A2C
 from stable_baselines3.common.logger import configure
 
-from rltrading.learn.resultPlotting import plotResults
+from rltrading.learn.resultPlotting import plot_results
 
 logger = logging.getLogger("root")
 
@@ -141,7 +141,7 @@ class Agent:
             if done:
                 obs = self.gym_env.reset()
                 break
-        plotResults(result_memory=memory)
+        plot_results(result_memory=memory)
 
 
 # proving that the above should work (can be removed if the env is debugged and everything works)
