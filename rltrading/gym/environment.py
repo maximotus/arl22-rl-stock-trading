@@ -55,6 +55,7 @@ class Environment(gym.Env):
         self.balance = self.money
         self.active_position = Positions.Long
         self._total_profit = 1.0
+        self._total_reward = 0.0
         self.last_trade_price = self.data.item(self.time).value("close")
         self.done = False
         return self._get_obs()
@@ -62,31 +63,36 @@ class Environment(gym.Env):
     def step(self, action: int):
         curr_observation = self.data.item(self.time)
         curr_close = curr_observation.value("close")
-        reward = 0
+        step_reward = 0.0
         logger.debug(f"Action choosen: {action}")
         if self.active_position == Positions.Long:
             if action == Actions.Sell.value:
-                reward = self.last_trade_price - curr_close
+                step_reward = self.last_trade_price - curr_close
                 self.active_position = Positions.Short
                 self.last_trade_price = curr_close
                 quantity = self._total_profit / self.last_trade_price
                 self._total_profit = quantity * curr_close
             elif action == Actions.Hold.value:
-                reward = self.last_trade_price - curr_close
+                step_reward = self.last_trade_price - curr_close
                 quantity = self._total_profit / self.last_trade_price
                 self._total_profit = quantity * curr_close
 
         if self.active_position == Positions.Short:
             if action == Actions.Buy.value:
-                reward = curr_close - self.last_trade_price
+                step_reward = curr_close - self.last_trade_price
                 self.active_position = Positions.Long
                 self.last_trade_price = curr_close
                 quantity = self._total_profit * self.last_trade_price
                 self._total_profit = quantity / curr_close
             elif action == Actions.Hold.value:
-                reward = self.last_trade_price - curr_close
+                step_reward = self.last_trade_price - curr_close
                 quantity = self._total_profit * self.last_trade_price
                 self._total_profit = quantity / curr_close
+
+        self._total_reward += step_reward
+        logger.debug(f"Step Reward: {step_reward}")
+        logger.debug(f"Total Reward: {self._total_reward}")
+        logger.debug(f"Total Profit: {self._total_profit}")
 
         # else:
         #     if action == self.BUY_ACTION and self.shares < 0:
@@ -95,10 +101,10 @@ class Environment(gym.Env):
         #         reward = curr_close * self.shares - self.shares * self.last_price
         #         self.shares = 0
         #         self.active_position = False
-        logger.debug(f"Reward: {reward}")
         self.time += 1
         done = not self.data.has_next(self.time)
-        return self._get_obs(), reward, done, self._get_info()
+
+        return self._get_obs(), step_reward, done, self._get_info()
 
     def render(self, **kwargs):
         pass
@@ -115,4 +121,8 @@ class Environment(gym.Env):
         return obs
 
     def _get_info(self):
-        return {}
+        return dict(
+            total_reward=self._total_reward,
+            total_profit=self._total_profit,
+            position=self.active_position
+        )
