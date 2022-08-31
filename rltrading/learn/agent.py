@@ -9,7 +9,7 @@ from collections import namedtuple
 from stable_baselines3 import DQN, PPO, A2C
 from stable_baselines3.common.logger import configure
 
-from rltrading.learn.resultPlotting import plot_results
+from rltrading.learn.result_plotting import plot_results
 
 logger = logging.getLogger("root")
 
@@ -23,7 +23,7 @@ class Agent:
         self: "Agent",
         training_gym_env: gym.Env,
         testing_gym_env: gym.Env,
-        epochs: int,
+        timesteps: int,
         log_interval: int,
         sb_logger: List[str],
         save_path: str,
@@ -33,7 +33,7 @@ class Agent:
 
         self.training_gym_env = training_gym_env
         self.testing_gym_env = testing_gym_env
-        self.epochs = epochs
+        self.timesteps = timesteps
         self.log_interval = log_interval
         self.model_save_path = os.path.join(save_path, "model")
         self.stats_save_path = os.path.join(save_path, "stats")
@@ -127,7 +127,7 @@ class Agent:
 
     def learn(self):
         self.model.set_logger(self.sb_logger)
-        self.model.learn(total_timesteps=self.epochs, log_interval=self.log_interval)
+        self.model.learn(total_timesteps=self.timesteps, log_interval=self.log_interval)
         self.model.save(self.model_save_path)
         logger.info(f"Saved the model at {self.model_save_path}")
 
@@ -145,42 +145,3 @@ class Agent:
                 obs = self.testing_gym_env.reset()
                 break
         plot_results(result_memory=memory)
-
-
-# proving that the above should work (can be removed if the env is debugged and everything works)
-# if __name__ == "__main__":
-#     env = gym.make("CartPole-v0")
-#
-#     rl_models = {
-#         "PPO": partial(
-#             DQN,
-#             policy="MlpPolicy",
-#             env=env,
-#             verbose=0,
-#             device=torch.device("cpu")
-#         ),
-#         "A2C": partial(
-#             DQN,
-#             policy="MlpPolicy",
-#             env=env,
-#             verbose=0,
-#             device=torch.device("cpu")
-#         ),
-#         "DQN": partial(
-#             DQN,
-#             learning_rate=0.0005,
-#             buffer_size=50000,
-#             learning_starts=50000,
-#             batch_size=32,
-#             tau=1.3,
-#             gamma=0.99,
-#             train_freq=4,
-#             gradient_steps=1
-#         )
-#     }
-#     model = rl_models["DQN"](policy="MlpPolicy",
-#                              env=env,
-#                              verbose=2,
-#                              device=torch.device("cpu"))
-#     print(model.tau)
-#     print(model.verbose)

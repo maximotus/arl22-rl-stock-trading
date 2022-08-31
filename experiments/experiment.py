@@ -92,10 +92,13 @@ class TrainExperiment:
         training_gym = Environment(data=training_data, window_size=window_size, enable_render=enable_render)
         testing_gym = Environment(data=testing_data, window_size=window_size, enable_render=enable_render)
 
-        logger.info(f"Using gym environment with #windowsize={window_size} and #enable_render={enable_render}")
+
+        logger.info(
+            f"Using gym environment with #windowsize={window_size} and #enable_render={enable_render}"
+        )
 
         agent_config = config.get("agent")
-        epochs = agent_config.get("epochs")
+        timesteps = agent_config.get("episodes") * len(data)
         log_interval = agent_config.get("log_interval")
         sb_logger = agent_config.get("sb_logger")
         save_path = config.get("experiment_path")
@@ -105,7 +108,7 @@ class TrainExperiment:
         agent = Agent(
             training_gym_env=training_gym,
             testing_gym_env=testing_gym,
-            epochs=epochs,
+            timesteps=timesteps,
             log_interval=log_interval,
             sb_logger=sb_logger,
             save_path=save_path,
