@@ -1,13 +1,12 @@
-from enum import Enum
-
-import logging
-
+import datetime
 import gym
+import logging
+import matplotlib.pyplot as plt
 import numpy as np
 
-from numpy import inf
+from enum import Enum
 from gym.vector.utils import spaces
-
+from numpy import inf
 from rltrading.data.data import Data
 
 logger = logging.getLogger("root")
@@ -49,19 +48,24 @@ class Environment(gym.Env):
     def reset(self):
         # the initial time will be the window_size-th index plus one (so the window already fits; time starts with 1)
         self.time = self.window_size
-
         self.shares = 0
         self.balance = self.money
         self.active_position = Positions.Long
         self._total_profit = 1.0
         self._total_reward = 0.0
+        self.close_prices = dict(date=[], price=[])
         self.last_trade_price = self.data.item(self.time).value("close")
         self.done = False
         return self._get_obs()
 
     def step(self, action: int):
         curr_observation = self.data.item(self.time)
+
         curr_close = curr_observation.value("close")
+        curr_date = curr_observation.value("time")
+        self.close_prices["date"].append(datetime.datetime.fromtimestamp(curr_date))
+        self.close_prices["price"].append(curr_close)
+
         step_reward = 0.0
         logger.debug(f"Action choosen: {action}")
         if self.active_position == Positions.Long:
@@ -105,8 +109,37 @@ class Environment(gym.Env):
 
         return self._get_obs(), step_reward, done, self._get_info()
 
+    def setup_rendering(self):
+        plt.ion()
+        self._fig = plt.figure(figsize=(17, 7))
+        self._fig.suptitle(f"Applying learned policy on data...")
+        self._ax = self._fig.add_subplot()
+        self._ax.set_title("Evolution of the close price...")
+        x = np.linspace(0, len(self.data), len(self.data))
+        y = np.zeros(len(self.data))
+        (self._line1,) = self._ax.plot(x, y)
+
     def render(self, **kwargs):
-        pass
+        # rendering the evolution of the close price
+        # TODO also render decisions as points (e.g. sell = red point, buy = green point)
+        new_y = np.zeros(len(self.data))
+        new_y[new_y == 0] = np.nan
+        new_y[0 : len(self.close_prices["price"])] = self.close_prices["price"]
+        self._ax.set_ylim(
+            [min(self.close_prices["price"]) - 2, max(self.close_prices["price"]) + 2]
+        )
+
+        labels = [item.get_text() for item in self._ax.get_xticklabels()]
+        labels[0 : len(self.close_prices["date"])] = self.close_prices["date"]
+        self._ax.set_xticklabels(labels)
+
+        self._line1.set_ydata(new_y)
+        self._fig.canvas.draw()
+        self._fig.canvas.flush_events()
+
+        # TODO render the evolution of the step_reward
+        # TODO render the evolution of the _total_reward
+        # TODO render the evolution of the _total_profit
 
     def _get_obs(self):
         obs = []

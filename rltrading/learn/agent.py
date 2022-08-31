@@ -131,6 +131,7 @@ class Agent:
 
     def apply(self):
         memory = []
+        self.gym_env.setup_rendering()
         obs = self.gym_env.reset()
         while True:
             action, _states = self.model.predict(obs, deterministic=False)
