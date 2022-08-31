@@ -98,7 +98,7 @@ class TrainExperiment:
         )
 
         agent_config = config.get("agent")
-        timesteps = agent_config.get("episodes") * len(data)
+        timesteps = agent_config.get("episodes") * len(training_data)
         log_interval = agent_config.get("log_interval")
         sb_logger = agent_config.get("sb_logger")
         save_path = config.get("experiment_path")
