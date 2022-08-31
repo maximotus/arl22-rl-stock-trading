@@ -48,7 +48,9 @@ class Environment(gym.Env):
         self.reset()
 
     def reset(self):
-        self.time = self.window_size - 1
+        # the initial time will be the window_size-th index plus one (so the window already fits; time starts with 1)
+        self.time = self.window_size
+
         self.shares = 0
         self.balance = self.money
         self.active_position = Positions.Long
@@ -103,8 +105,11 @@ class Environment(gym.Env):
 
     def _get_obs(self):
         obs = []
+        # apply window on the data to get the observation
         for i in range(self.window_size):
-            curr_observation = self.data.item(self.time - (self.window_size - 1 + i))
+            # apply window from the very left to the very right relative to the current time using i
+            window_index = self.time - (self.window_size + i)
+            curr_observation = self.data.item(window_index)
             obs.append(curr_observation.all())
         obs = np.array(obs)
         return obs
