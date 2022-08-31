@@ -41,7 +41,7 @@ class Environment(gym.Env):
         self.observation_space = spaces.Box(
             low=-inf,
             high=inf,
-            shape=(window_size, self.data.shape[1] + 2),
+            shape=(window_size, self.data.shape[1] + 1),
             dtype=np.float32,
         )
         self.reset()
@@ -120,7 +120,7 @@ class Environment(gym.Env):
 
             # add dynamic data to observation
             curr_observation = curr_observation.all()
-            curr_observation.extend([self._total_profit, self._total_reward])
+            curr_observation.extend([self._total_profit])
 
             obs.append(curr_observation)
         obs = np.array(obs)
