@@ -9,7 +9,7 @@ from collections import namedtuple
 from stable_baselines3 import DQN, PPO, A2C
 from stable_baselines3.common.logger import configure
 
-from rltrading.learn.resultPlotting import plot_results
+from rltrading.learn.result_plotting import plot_results
 
 logger = logging.getLogger("root")
 
@@ -22,7 +22,7 @@ class Agent:
     def __init__(
         self: "Agent",
         gym_env: gym.Env,
-        epochs: int,
+        timesteps: int,
         log_interval: int,
         sb_logger: List[str],
         save_path: str,
@@ -31,7 +31,7 @@ class Agent:
         logger.info("Initializing agent...")
 
         self.gym_env = gym_env
-        self.epochs = epochs
+        self.timesteps = timesteps
         self.log_interval = log_interval
         self.model_save_path = os.path.join(save_path, "model")
         self.stats_save_path = os.path.join(save_path, "stats")
@@ -125,7 +125,7 @@ class Agent:
 
     def learn(self):
         self.model.set_logger(self.sb_logger)
-        self.model.learn(total_timesteps=self.epochs, log_interval=self.log_interval)
+        self.model.learn(total_timesteps=self.timesteps, log_interval=self.log_interval)
         self.model.save(self.model_save_path)
         logger.info(f"Saved the model at {self.model_save_path}")
 
