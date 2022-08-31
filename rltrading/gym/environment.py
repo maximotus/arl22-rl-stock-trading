@@ -92,14 +92,15 @@ class Environment(gym.Env):
         return self._get_obs(), step_reward, done, self._get_info()
 
     def setup_rendering(self):
-        plt.ion()
-        self._fig = plt.figure(figsize=(17, 7))
-        self._fig.suptitle(f"Applying learned policy on data...")
-        self._ax = self._fig.add_subplot()
-        self._ax.set_title("Evolution of the close price...")
-        x = np.linspace(0, len(self.data), len(self.data))
-        y = np.zeros(len(self.data))
-        (self._line1,) = self._ax.plot(x, y)
+        if self.enable_render:
+            plt.ion()
+            self._fig = plt.figure(figsize=(17, 7))
+            self._fig.suptitle(f"Applying learned policy on data...")
+            self._ax = self._fig.add_subplot()
+            self._ax.set_title("Evolution of the close price...")
+            x = np.linspace(0, len(self.data), len(self.data))
+            y = np.zeros(len(self.data))
+            (self._line1,) = self._ax.plot(x, y)
 
     def render(self, **kwargs):
         if self.enable_render:

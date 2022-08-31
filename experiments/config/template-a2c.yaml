@@ -14,8 +14,10 @@ gym_environment:
     attributes: [ "time", "open", "close", "low", "high" ]
     n_peers: -1 # -1 all, 0 none, n > 0 else TODO implement
     social_lookback: 1 # n > 0 in days
-    start: "2022-07-18 01:00:00"
-    end: "2022-08-18 23:59:59"
+    training_start: "2022-01-18 01:00:00"
+    training_end: "2022-06-18 23:59:59"
+    testing_start: "2022-06-18 01:00:00"
+    testing_end: "2022-08-18 23:59:59"
 
 # define the rl agent (using the above gym environment)
 agent:

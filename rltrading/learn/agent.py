@@ -21,7 +21,8 @@ ResultMemory = namedtuple(
 class Agent:
     def __init__(
         self: "Agent",
-        gym_env: gym.Env,
+        training_gym_env: gym.Env,
+        testing_gym_env: gym.Env,
         epochs: int,
         log_interval: int,
         sb_logger: List[str],
@@ -30,7 +31,8 @@ class Agent:
     ):
         logger.info("Initializing agent...")
 
-        self.gym_env = gym_env
+        self.training_gym_env = training_gym_env
+        self.testing_gym_env = testing_gym_env
         self.epochs = epochs
         self.log_interval = log_interval
         self.model_save_path = os.path.join(save_path, "model")
@@ -112,7 +114,7 @@ class Agent:
         # the model-specific parameters are taken from the dictionary above using partial
         self.model = rl_model_aliases[rl_model_id](
             policy=policy_id,
-            env=self.gym_env,
+            env=self.training_gym_env,
             device=device,
             verbose=model_config.get("verbose"),
             learning_rate=model_config.get("learning_rate"),
@@ -131,16 +133,16 @@ class Agent:
 
     def apply(self):
         memory = []
-        self.gym_env.setup_rendering()
-        obs = self.gym_env.reset()
+        self.testing_gym_env.setup_rendering()
+        obs = self.testing_gym_env.reset()
         while True:
             action, _states = self.model.predict(obs, deterministic=False)
 
-            obs, reward, done, info = self.gym_env.step(action)
+            obs, reward, done, info = self.testing_gym_env.step(action)
             memory.append(ResultMemory(obs, action, _states, reward))
-            self.gym_env.render()
+            self.testing_gym_env.render()
             if done:
-                obs = self.gym_env.reset()
+                obs = self.testing_gym_env.reset()
                 break
         plot_results(result_memory=memory)
 
