@@ -53,7 +53,9 @@ class TrainExperiment:
         else:
             logger.info("Data already exists. Loading data...")
             data.load(symbol=symbol, dir_path=data_path)
-        #data.reduce_attributes(attributes)
+
+        if attributes:
+            data.reduce_attributes(attributes)
 
         logger.info(
             f"Using data of symbol {symbol} with length={len(data)} and shape={data.shape}"
