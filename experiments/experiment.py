@@ -62,9 +62,13 @@ class TrainExperiment:
             f"Using data of symbol {symbol} with length={len(data)} and shape={data.shape}"
         )
 
-        gym = Environment(data=data, window_size=window_size, enable_render=enable_render)
+        gym = Environment(
+            data=data, window_size=window_size, enable_render=enable_render
+        )
 
-        logger.info(f"Using gym environment with #windowsize={window_size} and #enable_render={enable_render}")
+        logger.info(
+            f"Using gym environment with #windowsize={window_size} and #enable_render={enable_render}"
+        )
 
         agent_config = config.get("agent")
         epochs = agent_config.get("epochs")

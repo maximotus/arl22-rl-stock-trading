@@ -66,7 +66,7 @@ class Environment(gym.Env):
         logger.debug(f"Action choosen: {action}")
         if self.active_position == Positions.Long:
             if action == Actions.Sell.value:
-                step_reward = (self.last_trade_price - curr_close)
+                step_reward = self.last_trade_price - curr_close
                 self.active_position = Positions.Short
                 self.last_trade_price = curr_close
                 quantity = self._total_profit / self.last_trade_price
@@ -74,7 +74,7 @@ class Environment(gym.Env):
 
         if self.active_position == Positions.Short:
             if action == Actions.Buy.value:
-                step_reward = (curr_close - self.last_trade_price)
+                step_reward = curr_close - self.last_trade_price
                 self.active_position = Positions.Long
                 self.last_trade_price = curr_close
                 quantity = self._total_profit * self.last_trade_price
@@ -85,7 +85,6 @@ class Environment(gym.Env):
         logger.debug(f"Total Reward: {self._total_reward}")
         logger.debug(f"Total Profit: {self._total_profit}")
 
-        
         self.time += 1
         done = not self.data.has_next(self.time)
 
@@ -109,7 +108,10 @@ class Environment(gym.Env):
             new_y[new_y == 0] = np.nan
             new_y[0 : len(self.close_prices["price"])] = self.close_prices["price"]
             self._ax.set_ylim(
-                [min(self.close_prices["price"]) - 2, max(self.close_prices["price"]) + 2]
+                [
+                    min(self.close_prices["price"]) - 2,
+                    max(self.close_prices["price"]) + 2,
+                ]
             )
 
             labels = [item.get_text() for item in self._ax.get_xticklabels()]
