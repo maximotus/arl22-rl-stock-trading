@@ -2,12 +2,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plotResults(result_memory):
-    print(result_memory)
+def plot_results(result_memory):
+    # print(result_memory)
     i = 0
     j = 0
     k = 0
-    for e in (result_memory):
+    for e in result_memory:
         if e.action == 1:
             i += 1
         if e.action == 2:
