@@ -25,7 +25,6 @@ class Actions(Enum):
 
 
 class Environment(gym.Env):
-
     """
     Specify how many shares of a given stock and how much money the agent has
     """
@@ -42,7 +41,7 @@ class Environment(gym.Env):
         self.observation_space = spaces.Box(
             low=-inf,
             high=inf,
-            shape=(window_size, self.data.shape[1]),
+            shape=(window_size, self.data.shape[1] + 2),
             dtype=np.float32,
         )
         self.reset()
@@ -115,8 +114,15 @@ class Environment(gym.Env):
         for i in range(self.window_size):
             # apply window from the very left to the very right relative to the current time using i
             window_index = self.time - (self.window_size + i)
+
+            # add fix data to observation
             curr_observation = self.data.item(window_index)
-            obs.append(curr_observation.all())
+
+            # add dynamic data to observation
+            curr_observation = curr_observation.all()
+            curr_observation.extend([self._total_profit, self._total_reward])
+
+            obs.append(curr_observation)
         obs = np.array(obs)
         return obs
 
@@ -124,5 +130,5 @@ class Environment(gym.Env):
         return dict(
             total_reward=self._total_reward,
             total_profit=self._total_profit,
-            position=self.active_position
+            position=self.active_position,
         )
