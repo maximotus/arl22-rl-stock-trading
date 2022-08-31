@@ -20,7 +20,6 @@ class Positions(Enum):
 class Actions(Enum):
     Sell = 0
     Buy = 1
-    Hold = 2
 
 
 class Environment(gym.Env):
@@ -29,11 +28,10 @@ class Environment(gym.Env):
     """
 
     def __init__(
-        self: "Environment", shares: int, money: float, data: Data, window_size: int
+        self: "Environment", data: Data, window_size: int, enable_render: bool = True
     ):
         self.data = data
-        self.amount = 1
-        self.money = money
+        self.enable_render = enable_render
         self.window_size = window_size
 
         self.action_space = spaces.Discrete(len(Actions))
@@ -48,8 +46,6 @@ class Environment(gym.Env):
     def reset(self):
         # the initial time will be the window_size-th index plus one (so the window already fits; time starts with 1)
         self.time = self.window_size
-        self.shares = 0
-        self.balance = self.money
         self.active_position = Positions.Long
         self._total_profit = 1.0
         self._total_reward = 0.0
@@ -70,25 +66,17 @@ class Environment(gym.Env):
         logger.debug(f"Action choosen: {action}")
         if self.active_position == Positions.Long:
             if action == Actions.Sell.value:
-                step_reward = self.last_trade_price - curr_close
+                step_reward = (self.last_trade_price - curr_close)
                 self.active_position = Positions.Short
                 self.last_trade_price = curr_close
-                quantity = self._total_profit / self.last_trade_price
-                self._total_profit = quantity * curr_close
-            elif action == Actions.Hold.value:
-                step_reward = self.last_trade_price - curr_close
                 quantity = self._total_profit / self.last_trade_price
                 self._total_profit = quantity * curr_close
 
         if self.active_position == Positions.Short:
             if action == Actions.Buy.value:
-                step_reward = curr_close - self.last_trade_price
+                step_reward = (curr_close - self.last_trade_price)
                 self.active_position = Positions.Long
                 self.last_trade_price = curr_close
-                quantity = self._total_profit * self.last_trade_price
-                self._total_profit = quantity / curr_close
-            elif action == Actions.Hold.value:
-                step_reward = self.last_trade_price - curr_close
                 quantity = self._total_profit * self.last_trade_price
                 self._total_profit = quantity / curr_close
 
@@ -97,13 +85,7 @@ class Environment(gym.Env):
         logger.debug(f"Total Reward: {self._total_reward}")
         logger.debug(f"Total Profit: {self._total_profit}")
 
-        # else:
-        #     if action == self.BUY_ACTION and self.shares < 0:
-
-        #     if action == self.SELL_ACTION and self.shares > 0:
-        #         reward = curr_close * self.shares - self.shares * self.last_price
-        #         self.shares = 0
-        #         self.active_position = False
+        
         self.time += 1
         done = not self.data.has_next(self.time)
 
@@ -120,26 +102,27 @@ class Environment(gym.Env):
         (self._line1,) = self._ax.plot(x, y)
 
     def render(self, **kwargs):
-        # rendering the evolution of the close price
-        # TODO also render decisions as points (e.g. sell = red point, buy = green point)
-        new_y = np.zeros(len(self.data))
-        new_y[new_y == 0] = np.nan
-        new_y[0 : len(self.close_prices["price"])] = self.close_prices["price"]
-        self._ax.set_ylim(
-            [min(self.close_prices["price"]) - 2, max(self.close_prices["price"]) + 2]
-        )
+        if self.enable_render:
+            # rendering the evolution of the close price
+            # TODO also render decisions as points (e.g. sell = red point, buy = green point)
+            new_y = np.zeros(len(self.data))
+            new_y[new_y == 0] = np.nan
+            new_y[0 : len(self.close_prices["price"])] = self.close_prices["price"]
+            self._ax.set_ylim(
+                [min(self.close_prices["price"]) - 2, max(self.close_prices["price"]) + 2]
+            )
 
-        labels = [item.get_text() for item in self._ax.get_xticklabels()]
-        labels[0 : len(self.close_prices["date"])] = self.close_prices["date"]
-        self._ax.set_xticklabels(labels)
+            labels = [item.get_text() for item in self._ax.get_xticklabels()]
+            labels[0 : len(self.close_prices["date"])] = self.close_prices["date"]
+            self._ax.set_xticklabels(labels)
 
-        self._line1.set_ydata(new_y)
-        self._fig.canvas.draw()
-        self._fig.canvas.flush_events()
+            self._line1.set_ydata(new_y)
+            self._fig.canvas.draw()
+            self._fig.canvas.flush_events()
 
-        # TODO render the evolution of the step_reward
-        # TODO render the evolution of the _total_reward
-        # TODO render the evolution of the _total_profit
+            # TODO render the evolution of the step_reward
+            # TODO render the evolution of the _total_reward
+            # TODO render the evolution of the _total_profit
 
     def _get_obs(self):
         obs = []

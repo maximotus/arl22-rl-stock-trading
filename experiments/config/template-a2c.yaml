@@ -6,20 +6,20 @@ experiment_path: .\results
 
 # define gym environment that will be injected to the agent
 gym_environment:
-  shares: 2
-  money: 100000
+  enable_render: true
+  window_size: 6
   data:
     path: .\data\example
     symbol: AAPL
     attributes: [ "time", "open", "close", "low", "high" ]
     n_peers: -1 # -1 all, 0 none, n > 0 else TODO implement
     social_lookback: 1 # n > 0 in days
-    start: "2022-08-18 01:00:00"
+    start: "2022-07-18 01:00:00"
     end: "2022-08-18 23:59:59"
 
 # define the rl agent (using the above gym environment)
 agent:
-  epochs: 100
+  epochs: 10000
   log_interval: 5
   sb_logger: ["stdout", "csv", "tensorboard"] # format options are: "stdout", "csv", "log", "tensorboard", "json"
 

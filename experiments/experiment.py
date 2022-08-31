@@ -1,3 +1,4 @@
+from cgitb import enable
 import logging
 import os
 
@@ -22,8 +23,8 @@ class TrainExperiment:
         logger.info("Initializing training experiment...")
 
         gym_environment_config = config.get("gym_environment")
-        shares = gym_environment_config.get("shares")
-        money = gym_environment_config.get("money")
+        window_size = gym_environment_config.get("window_size")
+        enable_render = gym_environment_config.get("enable_render")
 
         data_config_raw = gym_environment_config.get("data")
         symbol = data_config_raw.get("symbol")
@@ -61,9 +62,9 @@ class TrainExperiment:
             f"Using data of symbol {symbol} with length={len(data)} and shape={data.shape}"
         )
 
-        gym = Environment(shares=shares, money=money, data=data, window_size=6)
+        gym = Environment(data=data, window_size=window_size, enable_render=enable_render)
 
-        logger.info(f"Using gym environment with #shares={shares} and #money={money}")
+        logger.info(f"Using gym environment with #windowsize={window_size} and #enable_render={enable_render}")
 
         agent_config = config.get("agent")
         epochs = agent_config.get("epochs")
