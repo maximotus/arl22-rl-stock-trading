@@ -58,8 +58,8 @@ def plot_results(result_memory):
                 long_prices.append(prices[i])
             action = actions[i]
 
-    ax3.plot(longs, long_prices, 'o', color='green', markersize=1)
-    ax3.plot(shorts, short_prices, 'o', color='red', markersize=1)
+    ax3.plot(longs, long_prices, 'o', color='green', markersize=3)
+    ax3.plot(shorts, short_prices, 'o', color='red', markersize=3)
     ax3.set(
         xlabel="time", ylabel="price", title="green = longs, red = shorts on the price of the asset"
     )
