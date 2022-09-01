@@ -4,7 +4,7 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 
-from enum import Enum
+from enum import IntEnum
 from gym.vector.utils import spaces
 from numpy import inf
 from rltrading.data.data import Data
@@ -12,12 +12,12 @@ from rltrading.data.data import Data
 logger = logging.getLogger("root")
 
 
-class Positions(Enum):
+class Positions(IntEnum):
     Short = 0
     Long = 1
 
 
-class Actions(Enum):
+class Actions(IntEnum):
     Sell = 0
     Buy = 1
 
@@ -31,6 +31,8 @@ class Environment(gym.Env):
         self: "Environment", data: Data, window_size: int, enable_render: bool = True
     ):
         self.data = data
+        self.data.reduce_attributes(['time', 'close', 'high', 'low'])
+
         self.enable_render = enable_render
         self.window_size = window_size
 
@@ -38,7 +40,7 @@ class Environment(gym.Env):
         self.observation_space = spaces.Box(
             low=-inf,
             high=inf,
-            shape=(window_size, self.data.shape[1] + 1),
+            shape=(window_size, self.data.shape[1]),
             dtype=np.float32,
         )
         self.reset()
@@ -86,7 +88,7 @@ class Environment(gym.Env):
         logger.debug(f"Total Profit: {self._total_profit}")
 
         self.time += 1
-        done = not self.data.has_next(self.time)
+        done = not self.data.has_next(self.time + self.window_size)
 
         return self._get_obs(), step_reward, done, self._get_info()
 
@@ -132,14 +134,18 @@ class Environment(gym.Env):
         # apply window on the data to get the observation
         for i in range(self.window_size):
             # apply window from the very left to the very right relative to the current time using i
-            window_index = self.time - (self.window_size + i)
+            window_index = self.time - self.window_size + i
 
             # add fix data to observation
             curr_observation = self.data.item(window_index)
 
             # add dynamic data to observation
             curr_observation = curr_observation.all()
-            curr_observation.extend([self._total_profit])
+
+            #remove timesteps from observations
+            curr_observation.pop(0)
+
+            curr_observation.extend([float(self.active_position)])
 
             obs.append(curr_observation)
         obs = np.array(obs)
