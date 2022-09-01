@@ -31,7 +31,6 @@ class Environment(gym.Env):
         self: "Environment", data: Data, window_size: int, enable_render: bool = True
     ):
         self.data = data
-        self.data.reduce_attributes(['time', 'close', 'high', 'low'])
 
         self.enable_render = enable_render
         self.window_size = window_size
@@ -88,7 +87,7 @@ class Environment(gym.Env):
         logger.debug(f"Total Profit: {self._total_profit}")
 
         self.time += 1
-        done = not self.data.has_next(self.time + self.window_size)
+        done = not self.data.has_next(self.time)
 
         return self._get_obs(), step_reward, done, self._get_info()
 
