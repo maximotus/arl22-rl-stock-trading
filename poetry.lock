@@ -371,6 +371,20 @@ robotics = ["mujoco_py (>=1.50,<2.0)"]
 toy_text = ["scipy (>=1.4.1)"]
 
 [[package]]
+name = "gym-anytrading"
+version = "1.3.1"
+description = ""
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+gym = ">=0.12.5"
+matplotlib = ">=3.1.1"
+numpy = ">=1.16.4"
+pandas = ">=0.24.2"
+
+[[package]]
 name = "idna"
 version = "3.3"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -1289,7 +1303,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "ea6eece2e79072823ab35153c54ceb6f6e94ff528f334a364e024eb6a64f3556"
+content-hash = "65604d334a3e281bcf0996c008840367c630dfb83335d3903253b8fb6b237b6e"
 
 [metadata.files]
 absl-py = [
@@ -1617,6 +1631,10 @@ grpcio = [
 ]
 gym = [
     {file = "gym-0.21.0.tar.gz", hash = "sha256:0fd1ce165c754b4017e37a617b097c032b8c3feb8a0394ccc8777c7c50dddff3"},
+]
+gym-anytrading = [
+    {file = "gym_anytrading-1.3.1-py3-none-any.whl", hash = "sha256:a770f0afeb4634a38e0c5a9323ec0afeeba9a52b112fbb7afb70e9588ee4ec4f"},
+    {file = "gym_anytrading-1.3.1.tar.gz", hash = "sha256:12ba50a9fcfc4551861397a9f3f5e890e6b03708767b1ab359609e7084a30a6e"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},

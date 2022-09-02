@@ -1,6 +1,8 @@
 from cgitb import enable
 import logging
 import os
+import gym
+import gym_anytrading
 
 from datetime import timedelta
 from dateutil.parser import parse
@@ -89,8 +91,10 @@ class TrainExperiment:
             f"and using testing data of symbol {symbol} with length={len(testing_data)} and shape={testing_data.shape}"
         )
 
-        training_gym = Environment(data=training_data, window_size=window_size, enable_render=enable_render)
-        testing_gym = Environment(data=testing_data, window_size=window_size, enable_render=enable_render)
+        training_gym = gym.make('forex-v0')
+        testing_gym = gym.make('forex-v0')
+        #training_gym = Environment(data=training_data, window_size=window_size, enable_render=enable_render)
+        #testing_gym = Environment(data=testing_data, window_size=window_size, enable_render=enable_render)
 
 
         logger.info(
