@@ -83,6 +83,9 @@ class Data(BaseModel):
         if store and (dir_path is not None):
             path = os.path.join(dir_path, f"{config.symbol}.csv")
             self._data_frame.to_csv(path, index=False)
+    
+    def getDataframe(self): 
+        return self._data_frame
 
     def load(self: "Data", symbol: str, dir_path: str):
         """Load the data from a previously fetched ``pd.DataFrame``.

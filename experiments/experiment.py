@@ -3,6 +3,7 @@ import logging
 import os
 import gym
 import gym_anytrading
+import pandas as pd
 
 from datetime import timedelta
 from dateutil.parser import parse
@@ -91,8 +92,8 @@ class TrainExperiment:
             f"and using testing data of symbol {symbol} with length={len(testing_data)} and shape={testing_data.shape}"
         )
 
-        training_gym = gym.make('forex-v0')
-        testing_gym = gym.make('forex-v0')
+        training_gym = gym.make('forex-v0', df=training_data.getDataframe(), frame_bound=(window_size, training_data.shape[0]))
+        testing_gym = gym.make('forex-v0', df=testing_data.getDataframe(), frame_bound=(window_size, testing_data.shape[0]))
         #training_gym = Environment(data=training_data, window_size=window_size, enable_render=enable_render)
         #testing_gym = Environment(data=testing_data, window_size=window_size, enable_render=enable_render)
 
