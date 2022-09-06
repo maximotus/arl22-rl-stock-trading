@@ -9,6 +9,7 @@ test_policy: true # whether to test / apply the policy after training or not
 gym_environment:
   enable_render: true # whether to render the policy application or not
   window_size: 6
+  scale_reward: 10000
   data:
     train_path: .\data\example\training\AAPL.csv
     test_path: .\data\example\testing\AAPL.csv

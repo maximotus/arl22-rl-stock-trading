@@ -28,12 +28,13 @@ class Environment(gym.Env):
     """
 
     def __init__(
-        self: "Environment", data: Data, window_size: int, enable_render: bool = False
+        self: "Environment", data: Data, window_size: int, enable_render: bool = False, scale_reward: int = 10000
     ):
         self.data = data
 
         self.enable_render = enable_render
         self.window_size = window_size
+        self.scale_reward = scale_reward
 
         self.action_space = spaces.Discrete(len(Actions))
         self.observation_space = spaces.Box(
@@ -68,7 +69,7 @@ class Environment(gym.Env):
         logger.debug(f"Action choosen: {action}")
         if self.active_position == Positions.Long:
             if action == Actions.Sell.value:
-                step_reward = self.last_trade_price - curr_close
+                step_reward = (self.last_trade_price - curr_close) * self.scale_reward
                 self.active_position = Positions.Short
                 self.last_trade_price = curr_close
                 quantity = self._total_profit / self.last_trade_price
@@ -76,7 +77,7 @@ class Environment(gym.Env):
 
         if self.active_position == Positions.Short:
             if action == Actions.Buy.value:
-                step_reward = curr_close - self.last_trade_price
+                step_reward = (curr_close - self.last_trade_price) * self.scale_reward
                 self.active_position = Positions.Long
                 self.last_trade_price = curr_close
                 quantity = self._total_profit * self.last_trade_price
