@@ -1,4 +1,6 @@
 import datetime
+import sys
+
 import gym
 import logging
 import matplotlib.pyplot as plt
@@ -33,12 +35,14 @@ class Environment(gym.Env):
         window_size: int,
         enable_render: bool = False,
         scale_reward: int = 10000,
+        use_time: bool = True
     ):
         self.data = data
 
         self.enable_render = enable_render
         self.window_size = window_size
         self.scale_reward = scale_reward
+        self._use_time = use_time
 
         self.action_space = spaces.Discrete(len(Actions))
         self.observation_space = spaces.Box(
@@ -147,14 +151,13 @@ class Environment(gym.Env):
             # add fix data to observation
             curr_observation = self.data.item(window_index)
 
+            # remove timesteps from observations
+            if not self._use_time:
+                curr_observation.remove(keys=["time"])
+
             # add dynamic data to observation
             curr_observation = curr_observation.all()
-
-            # remove timesteps from observations
-            curr_observation.pop(0)
-
             curr_observation.extend([float(self.active_position)])
-
             obs.append(curr_observation)
         obs = np.array(obs)
         return obs

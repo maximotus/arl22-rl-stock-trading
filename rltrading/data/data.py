@@ -44,6 +44,9 @@ class Observation(BaseModel):
     def all(self: "Observation") -> List[float]:
         return self._data.tolist()
 
+    def remove(self: "Observation", keys: List[str]):
+        self._data = self._data.drop(labels=keys)
+
 
 class Data(BaseModel):
     _symbol: str = PrivateAttr(default_factory=None)

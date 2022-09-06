@@ -28,6 +28,12 @@ class TrainExperiment:
         testing_data_path = data_config_raw.get("test_path")
         attributes = data_config_raw.get("attributes")
 
+        # remember if config specifies time as learnable attribute and
+        # append it, so it can be used for plotting
+        time_key = "time"
+        use_time = time_key in attributes
+        attributes.append(time_key)
+
         # assuming that the data already exists
         if not os.path.exists(os.path.join(training_data_path)):
             logger.error(
@@ -50,10 +56,10 @@ class TrainExperiment:
         )
 
         training_gym = Environment(
-            data=training_data, window_size=window_size, scale_reward=scale_reward
+            data=training_data, window_size=window_size, scale_reward=scale_reward, use_time=use_time
         )
         testing_gym = Environment(
-            data=testing_data, window_size=window_size, enable_render=enable_render
+            data=testing_data, window_size=window_size, enable_render=enable_render, use_time=use_time
         )
 
         logger.info(
