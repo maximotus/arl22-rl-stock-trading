@@ -48,9 +48,7 @@ class TrainExperiment:
             + f" and using testing data located in {testing_data_path} with length={len(testing_data)} and shape={testing_data.shape}"
         )
 
-        training_gym = Environment(
-            data=training_data, window_size=window_size
-        )
+        training_gym = Environment(data=training_data, window_size=window_size)
         testing_gym = Environment(
             data=testing_data, window_size=window_size, enable_render=enable_render
         )
