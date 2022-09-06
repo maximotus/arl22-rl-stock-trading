@@ -12,8 +12,6 @@ gym_environment:
     path: .\experiments\data\example
     symbol: AAPL
     attributes: [ "time", "open", "close", "low", "high" ]
-    n_peers: -1 # -1 all, 0 none, n > 0 else TODO implement
-    social_lookback: 1 # n > 0 in days
     training_start: "2022-01-18 01:00:00"
     training_end: "2022-06-18 23:59:59"
     testing_start: "2022-06-18 01:00:00"
