@@ -1,4 +1,3 @@
-from cgitb import enable
 import logging
 import os
 
