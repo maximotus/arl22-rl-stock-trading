@@ -131,17 +131,18 @@ class Agent:
         self.model.save(self.model_save_path)
         logger.info(f"Saved the model at {self.model_save_path}")
 
-    def apply(self):
+    def test(self):
         memory = []
-        self.testing_gym_env.setup_rendering()
         obs = self.testing_gym_env.reset()
         while True:
             action, _states = self.model.predict(obs, deterministic=False)
-
             obs, reward, done, info = self.testing_gym_env.step(action)
             memory.append(ResultMemory(obs, action, _states, reward))
             self.testing_gym_env.render()
             if done:
-                obs = self.testing_gym_env.reset()
+                _ = self.testing_gym_env.reset()
                 break
         plot_results(result_memory=memory)
+
+    def eval(self):
+        raise NotImplementedError

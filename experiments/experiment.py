@@ -48,9 +48,7 @@ class TrainExperiment:
             + f" and using testing data located in {testing_data_path} with length={len(testing_data)} and shape={testing_data.shape}"
         )
 
-        training_gym = Environment(
-            data=training_data, window_size=window_size, enable_render=enable_render
-        )
+        training_gym = Environment(data=training_data, window_size=window_size)
         testing_gym = Environment(
             data=testing_data, window_size=window_size, enable_render=enable_render
         )
@@ -77,6 +75,7 @@ class TrainExperiment:
             model_config=model_config,
         )
 
+        self.test_policy = config.get("test_policy")
         self.training_gym = training_gym
         self.testing_gym = testing_gym
         self.agent = agent
@@ -88,5 +87,8 @@ class TrainExperiment:
         logger.info("Learning the agent...")
         self.agent.learn()
         logger.info("Finished learning the agent")
-        logger.info("Applying learned policy (endless)...")
-        self.agent.apply()
+
+        if self.test_policy:
+            logger.info("Testing learned policy on test data...")
+            self.agent.test()
+            logger.info("Finished testing the learned policy on test data")
