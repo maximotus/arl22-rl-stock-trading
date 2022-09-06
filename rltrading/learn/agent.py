@@ -86,7 +86,7 @@ class Agent:
                 gae_lambda=model_config.get("gae_lambda"),
                 ent_coef=model_config.get("ent_coef"),
                 vf_coef=model_config.get("vf_coef"),
-                rms_prop_eps=model_config.get("rms_prop_eps "),
+                rms_prop_eps=model_config.get("rms_prop_eps"),
                 use_rms_prop=model_config.get("use_rms_prop"),
                 normalize_advantage=model_config.get("normalize_advantage "),
             ),
