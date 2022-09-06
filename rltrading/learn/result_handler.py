@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
+import pandas as pd
 from rltrading.gym.environment import Actions, Positions
 
 
-def plot_results(result_memory):
+def plot_result(result_memory, save_path = None):
     time = range(len(result_memory))
     gs = gridspec.GridSpec(2, 2, wspace=0.3, hspace=0.3)
     # fig, axes = plt.subplots(2, 2, figsize=(20,8))
@@ -64,3 +65,11 @@ def plot_results(result_memory):
     )
 
     plt.show()
+    
+    if save_path:
+        plt.savefig(save_path + "\\result_graph.png")
+
+def save_result(result_memory, save_path: str):
+    path = save_path + "\\result.csv"
+    pd.DataFrame(result_memory).to_csv(path)
+

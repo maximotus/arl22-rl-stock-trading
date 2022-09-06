@@ -9,12 +9,12 @@ from collections import namedtuple
 from stable_baselines3 import DQN, PPO, A2C
 from stable_baselines3.common.logger import configure
 
-from rltrading.learn.result_plotting import plot_results
+from rltrading.learn.result_handler import plot_result, save_result
 
 logger = logging.getLogger("root")
 
 ResultMemory = namedtuple(
-    "ResultMemory", field_names=["observation", "action", "state", "reward"]
+    "ResultMemory", field_names=["observation", "action", "state", "reward", "info"]
 )
 
 
@@ -137,12 +137,13 @@ class Agent:
         while True:
             action, _states = self.model.predict(obs, deterministic=False)
             obs, reward, done, info = self.testing_gym_env.step(action)
-            memory.append(ResultMemory(obs, action, _states, reward))
+            memory.append(ResultMemory(obs, action, _states, reward, info))
             self.testing_gym_env.render()
             if done:
                 _ = self.testing_gym_env.reset()
                 break
-        plot_results(result_memory=memory)
+        plot_result(result_memory=memory, save_path=self.stats_save_path)
+        save_result(memory, self.stats_save_path)
 
     def eval(self):
         raise NotImplementedError
