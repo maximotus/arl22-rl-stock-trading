@@ -1,4 +1,5 @@
-import os
+from time import sleep, time
+from tkinter import E
 from typing import List
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
@@ -6,6 +7,7 @@ from dotenv import load_dotenv
 import numpy as np
 import pandas as pd
 import finnhub as fh
+from finnhub.exceptions import FinnhubAPIException
 
 
 def get_social_sentiment(
@@ -80,16 +82,17 @@ def get_social_sentiment(
     return sentiment_df
 
 
-def get_social_sentiment_alternatives(
-    symbol: str, days: List[int], lookback: timedelta
+def get_social_sentiment_alternative(
+    finnhub_api_key: str, symbol: str, days: List[int], lookback: timedelta
 ) -> pd.DataFrame:
-    load_dotenv()
-    finnhub_api_key = os.getenv("FINNHUB_API_KEY", None)
     fh_client = fh.Client(api_key=finnhub_api_key)
 
     all_sentiments = []
     for day in days:
-        social_sentiment = fh_client.stock_social_sentiment(symbol, _from=day)
+        from_ = (day - lookback).strftime("%Y-%m-%d")
+        to_ = day.strftime("%Y-%m-%d")
+
+        social_sentiment = __get_social_sentiment_df(fh_client, symbol, from_, to_)
 
         sentiment_data_frames = []
         sentiment_platforms = ["reddit", "twitter"]
@@ -123,7 +126,16 @@ def get_social_sentiment_alternatives(
                 sentiment_data_frames[1], how="outer"
             )
             sentiment_df = sentiment_df.fillna(value=0.0)
+            print(len(sentiment_df))
             all_sentiments.append(sentiment_df)
 
     sentiments_df = pd.concat(all_sentiments)
     return sentiments_df
+
+
+def __get_social_sentiment_df(fh_client, symbol, from_, to_):
+    try:
+        return fh_client.stock_social_sentiment(symbol, _from=from_, to=to_)
+    except FinnhubAPIException:
+        sleep(2.0)
+        return __get_social_sentiment_df(fh_client, symbol, from_, to_)

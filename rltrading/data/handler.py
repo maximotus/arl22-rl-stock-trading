@@ -1,23 +1,37 @@
 from typing import List
 from datetime import datetime, timedelta
 import calendar
+import time
 import numpy as np
 import pandas as pd
 
-from rltrading.data.fundamental import get_social_sentiment
+from rltrading.data.fundamental import get_social_sentiment, get_social_sentiment_alternative
 from rltrading.data.meta_trader import get_asset_data
 
 
 def get_data(
     fh_key: str, symbol: str, _from: datetime, to: datetime, lookback: timedelta
 ) -> pd.DataFrame:
+    print("Getting asset data...")
+    start = time.time()
     meta_trader_data = get_asset_data(symbol, _from, to)
-    social_sentiment = get_social_sentiment(
-        fh_key, symbol, _from, to, lookback=lookback
+    print(f"Successfully got asset data. ({time.time() - start})")
+    print("Getting social sentiment...")
+    start = time.time()
+    days = __get_days(meta_trader_data["time"])
+    social_sentiment = get_social_sentiment_alternative(
+        fh_key, symbol, days, lookback=lookback
     )
+    print(f"Successfully got socidal sentiment. ({time.time() - start})")
     times = meta_trader_data["time"].values
+    print("Aggregating social sentiment...")
+    start = time.time()
     social_sentiment = __aggregate_social_sentiment(social_sentiment, times, lookback)
+    print(f"Successfully aggregated social sentiment. ({time.time() - start})")
+    print("Mergin data...")
+    start = time.time()
     total = meta_trader_data.merge(social_sentiment, how="left")
+    print(f"Merged data. ({time.time() - start})")
     total = total.fillna(value=0.0)
     total = total.sort_values(["time"])
     return total
@@ -60,3 +74,14 @@ def __substract_time(timestamp: int, lookback: timedelta) -> int:
     return calendar.timegm(
         (datetime.fromtimestamp(timestamp) - lookback).utctimetuple()
     )
+
+
+def __get_days(times: List[int]):
+    dates = list(map(__to_date, times))
+    unique_days = np.unique(dates).tolist()
+    return unique_days
+    
+
+def __to_date(time: int) -> datetime:
+    dt = datetime.fromtimestamp(time)
+    return datetime(dt.year, dt.month, dt.day)
