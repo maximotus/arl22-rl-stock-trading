@@ -3,10 +3,11 @@ logger:
   level: 20 # CRITICAL = 50, ERROR = 40, WARNING = 30, INFO = 20, DEBUG = 10, NOTSET = 0
   format: "%(asctime)s - %(levelname)s - %(module)s - %(message)s"
 experiment_path: .\results
+test_policy: true # whether to test / apply the policy after training or not
 
 # define gym environment that will be injected to the agent
 gym_environment:
-  enable_render: true
+  enable_render: true # whether to render the policy application or not
   window_size: 6
   data:
     train_path: .\data\example\training\AAPL.csv

@@ -131,7 +131,7 @@ class Agent:
         self.model.save(self.model_save_path)
         logger.info(f"Saved the model at {self.model_save_path}")
 
-    def apply(self):
+    def test(self):
         memory = []
         self.testing_gym_env.setup_rendering()
         obs = self.testing_gym_env.reset()
@@ -145,3 +145,6 @@ class Agent:
                 obs = self.testing_gym_env.reset()
                 break
         plot_results(result_memory=memory)
+
+    def eval(self):
+        raise NotImplementedError
