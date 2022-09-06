@@ -1,51 +1,45 @@
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import numpy as np
-from rltrading.gym.environment import Positions
+from rltrading.gym.environment import Actions, Positions
 
 def plot_results(result_memory):
-    # print(result_memory)
-    i = 0
-    j = 0
-    k = 0
-    for e in result_memory:
-        if e.action == 1:
-            i += 1
-        if e.action == 2:
-            j += 1
-        if e.action == 0:
-            k += 1
-    print("Action 0: ", k)
-    print("Action 1: ", i)
-    print("Acton 2:", j)
     time = range(len(result_memory))
-    fig, axes = plt.subplots(2, 2, figsize=(20,8))
+    gs = gridspec.GridSpec(2, 2, wspace=0.3, hspace=0.3)
+    #fig, axes = plt.subplots(2, 2, figsize=(20,8))
+    plt.figure(figsize=(15, 8))
+
+    # print reward curve
+    ax = plt.subplot(gs[0, 0])
     res = list(map(lambda x: x.reward, result_memory))
     cum_rewards = np.cumsum(res)
-    ax = axes[0][0]
     ax.plot(time, cum_rewards)
     ax.set(
         xlabel="time", ylabel="cumulative rewards", title="cumulative rewards over time"
     )
     ax.grid()
 
-    ax2 = axes[1][0]
-    bin = np.arange(4)
-    ax2.hist(list(map(lambda x: x.action, result_memory)), bins=bin, edgecolor="black")
-    ax2.set_xticks(bin + 0.5, bin)
+    # print action count
+    ax2 = plt.subplot(gs[0, 1]) 
+    actions = list(map(lambda x: x.action, result_memory))
+    print("action 0: ", actions.count(0), " actions 1: ", actions.count(1))
+    labels, counts = np.unique(actions, return_counts=True)
+    ax2.bar(labels, counts, align='center')
+    plt.gca().set_xticks(labels)
     ax2.set(
         xlabel="action",
         ylabel="n times chosen",
         title="the amount each action got chosen",
     )
 
-    ax3 = axes[0][1]
+    # print where shorts and longs were taken
+    ax3 = plt.subplot(gs[1, :]) 
     prices = list(map(lambda x: x.observation[len(x.observation)-1][0], result_memory))
     ax3.plot(time, prices)
     actions = list(map(lambda x: x.action,  result_memory))
     action = actions[0]
-    # since we start with a long first datapoint 0 is a long
-    longs = [0]
-    long_prices = [prices[0]]
+    longs = []
+    long_prices = []
     shorts = []
     short_prices = []
     for i in range(1, len(actions)):
