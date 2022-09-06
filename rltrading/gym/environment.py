@@ -141,7 +141,7 @@ class Environment(gym.Env):
             # add dynamic data to observation
             curr_observation = curr_observation.all()
 
-            #remove timesteps from observations
+            # remove timesteps from observations
             curr_observation.pop(0)
 
             curr_observation.extend([float(self.active_position)])
