@@ -9,8 +9,8 @@ gym_environment:
   enable_render: true
   window_size: 6
   data:
-    train_path: .\data\example\AAPL.csv
-    test_path: .\data\example\AAPL.csv
+    train_path: .\data\example\training\AAPL.csv
+    test_path: .\data\example\testing\AAPL.csv
     attributes: [ "time", "open", "close", "low", "high" ]
 
 # define the rl agent (using the above gym environment)
