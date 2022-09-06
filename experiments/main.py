@@ -13,18 +13,10 @@ def main():
         required=True,
         help="relative or absolute path to the configuration file",
     )
-    parser.add_argument(
-        "--finnhub-key",
-        type=str,
-        metavar="FINNHUB_API_KEY",
-        required=True,
-        help="api key for https://finnhub.io/, get it here: https://finnhub.io/register",
-    )
     args = parser.parse_args()
 
     # read configuration file and finnhub api key
     configuration_file = args.conf
-    finnhub_api_key = args.finnhub_key
     configuration = parse_config(configuration_file)
 
     # experiment setup
@@ -38,9 +30,8 @@ def main():
         mode,
     )
 
-    # overwrite overall experiment path with the newly created base_path of the experiment and add finnhub api key
+    # overwrite overall experiment path with the newly created base_path of the experiment
     configuration["experiment_path"] = experiment_path
-    configuration["finnhub_api_key"] = finnhub_api_key
 
     # logger setup
     logger = setup_logger(experiment_path, log_lvl, log_fmt)
