@@ -45,8 +45,8 @@ def min_max_scaling_test(data: pd.DataFrame, scalars: pd.DataFrame) -> pd.DataFr
     for column in out.columns.tolist():
         curr = out[column]
         curr_scalars = scalars.loc[scalars["column"] == column]
-        cmin =  curr_scalars["min"]
-        cmax = curr_scalars["max"]
+        cmin =  curr_scalars["min"].item()
+        cmax = curr_scalars["max"].item()
         out[column] = (curr - cmin) / (cmax - cmin)
     return out
 
@@ -56,8 +56,8 @@ def z_score_scaling_test(data: pd.DataFrame, scalars: pd.DataFrame) -> pd.DataFr
     for column in out.columns.tolist():
         curr = out[column]
         curr_scalars = scalars.loc[scalars["column"] == column]
-        mean =  curr_scalars["mean"]
-        std = curr_scalars["std"]
+        mean =  curr_scalars["mean"].item()
+        std = curr_scalars["std"].item()
         out[column] = (curr - mean) / std
     return out
 
