@@ -49,7 +49,7 @@ class TrainExperiment:
         )
 
         training_gym = Environment(
-            data=training_data, window_size=window_size, enable_render=enable_render
+            data=training_data, window_size=window_size
         )
         testing_gym = Environment(
             data=testing_data, window_size=window_size, enable_render=enable_render

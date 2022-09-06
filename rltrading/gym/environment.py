@@ -28,7 +28,7 @@ class Environment(gym.Env):
     """
 
     def __init__(
-        self: "Environment", data: Data, window_size: int, enable_render: bool = True
+        self: "Environment", data: Data, window_size: int, enable_render: bool = False
     ):
         self.data = data
 
@@ -53,6 +53,7 @@ class Environment(gym.Env):
         self.close_prices = dict(date=[], price=[])
         self.last_trade_price = self.data.item(self.time).value("close")
         self.done = False
+        self._rendering = False
         return self._get_obs()
 
     def step(self, action: int):
@@ -91,8 +92,11 @@ class Environment(gym.Env):
 
         return self._get_obs(), step_reward, done, self._get_info()
 
-    def setup_rendering(self):
-        if self.enable_render:
+    def render(self, **kwargs):
+        if not self.enable_render:
+            return
+
+        if not self._rendering:
             plt.ion()
             self._fig = plt.figure(figsize=(17, 7))
             self._fig.suptitle(f"Applying learned policy on data...")
@@ -101,32 +105,31 @@ class Environment(gym.Env):
             x = np.linspace(0, len(self.data), len(self.data))
             y = np.zeros(len(self.data))
             (self._line1,) = self._ax.plot(x, y)
+            self._rendering = True
 
-    def render(self, **kwargs):
-        if self.enable_render:
-            # rendering the evolution of the close price
-            # TODO also render decisions as points (e.g. sell = red point, buy = green point)
-            new_y = np.zeros(len(self.data))
-            new_y[new_y == 0] = np.nan
-            new_y[0 : len(self.close_prices["price"])] = self.close_prices["price"]
-            self._ax.set_ylim(
-                [
-                    min(self.close_prices["price"]) - 2,
-                    max(self.close_prices["price"]) + 2,
-                ]
-            )
+        # rendering the evolution of the close price
+        # TODO also render decisions as points (e.g. sell = red point, buy = green point)
+        new_y = np.zeros(len(self.data))
+        new_y[new_y == 0] = np.nan
+        new_y[0 : len(self.close_prices["price"])] = self.close_prices["price"]
+        self._ax.set_ylim(
+            [
+                min(self.close_prices["price"]) - 2,
+                max(self.close_prices["price"]) + 2,
+            ]
+        )
 
-            labels = [item.get_text() for item in self._ax.get_xticklabels()]
-            labels[0 : len(self.close_prices["date"])] = self.close_prices["date"]
-            self._ax.set_xticklabels(labels)
+        labels = [item.get_text() for item in self._ax.get_xticklabels()]
+        labels[0 : len(self.close_prices["date"])] = self.close_prices["date"]
+        self._ax.set_xticklabels(labels)
 
-            self._line1.set_ydata(new_y)
-            self._fig.canvas.draw()
-            self._fig.canvas.flush_events()
+        self._line1.set_ydata(new_y)
+        self._fig.canvas.draw()
+        self._fig.canvas.flush_events()
 
-            # TODO render the evolution of the step_reward
-            # TODO render the evolution of the _total_reward
-            # TODO render the evolution of the _total_profit
+        # TODO render the evolution of the step_reward
+        # TODO render the evolution of the _total_reward
+        # TODO render the evolution of the _total_profit
 
     def _get_obs(self):
         obs = []
