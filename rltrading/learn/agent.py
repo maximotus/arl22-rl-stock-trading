@@ -9,6 +9,8 @@ from collections import namedtuple
 from stable_baselines3 import DQN, PPO, A2C
 from stable_baselines3.common.logger import configure
 
+from rltrading.learn.result_plotting import plot_results
+
 logger = logging.getLogger("root")
 
 ResultMemory = namedtuple(
@@ -16,12 +18,12 @@ ResultMemory = namedtuple(
 )
 
 
-
 class Agent:
     def __init__(
         self: "Agent",
-        gym_env: gym.Env,
-        epochs: int,
+        training_gym_env: gym.Env,
+        testing_gym_env: gym.Env,
+        timesteps: int,
         log_interval: int,
         sb_logger: List[str],
         save_path: str,
@@ -29,10 +31,11 @@ class Agent:
     ):
         logger.info("Initializing agent...")
 
-        self.gym_env = gym_env
-        self.epochs = epochs
+        self.training_gym_env = training_gym_env
+        self.testing_gym_env = testing_gym_env
+        self.timesteps = timesteps
         self.log_interval = log_interval
-        self.model_save_path = os.path.join(save_path, "model") 
+        self.model_save_path = os.path.join(save_path, "model")
         self.stats_save_path = os.path.join(save_path, "stats")
         self.sb_logger = configure(self.stats_save_path, sb_logger)
 
@@ -83,7 +86,7 @@ class Agent:
                 gae_lambda=model_config.get("gae_lambda"),
                 ent_coef=model_config.get("ent_coef"),
                 vf_coef=model_config.get("vf_coef"),
-                rms_prop_eps=model_config.get("rms_prop_eps "),
+                rms_prop_eps=model_config.get("rms_prop_eps"),
                 use_rms_prop=model_config.get("use_rms_prop"),
                 normalize_advantage=model_config.get("normalize_advantage "),
             ),
@@ -111,7 +114,7 @@ class Agent:
         # the model-specific parameters are taken from the dictionary above using partial
         self.model = rl_model_aliases[rl_model_id](
             policy=policy_id,
-            env=self.gym_env,
+            env=self.training_gym_env,
             device=device,
             verbose=model_config.get("verbose"),
             learning_rate=model_config.get("learning_rate"),
@@ -124,56 +127,21 @@ class Agent:
 
     def learn(self):
         self.model.set_logger(self.sb_logger)
-        self.model.learn(total_timesteps=self.epochs, log_interval=self.log_interval)
+        self.model.learn(total_timesteps=self.timesteps, log_interval=self.log_interval)
         self.model.save(self.model_save_path)
         logger.info(f"Saved the model at {self.model_save_path}")
 
     def apply(self):
         memory = []
-        obs = self.gym_env.reset()
+        self.testing_gym_env.setup_rendering()
+        obs = self.testing_gym_env.reset()
         while True:
-            action, _states = self.model.predict(obs, deterministic=True)
-            obs, reward, done, info = self.gym_env.step(action)
+            action, _states = self.model.predict(obs, deterministic=False)
+
+            obs, reward, done, info = self.testing_gym_env.step(action)
             memory.append(ResultMemory(obs, action, _states, reward))
-            self.gym_env.render()
+            self.testing_gym_env.render()
             if done:
-                obs = self.gym_env.reset()
-
-
-# proving that the above should work (can be removed if the env is debugged and everything works)
-# if __name__ == "__main__":
-#     env = gym.make("CartPole-v0")
-#
-#     rl_models = {
-#         "PPO": partial(
-#             DQN,
-#             policy="MlpPolicy",
-#             env=env,
-#             verbose=0,
-#             device=torch.device("cpu")
-#         ),
-#         "A2C": partial(
-#             DQN,
-#             policy="MlpPolicy",
-#             env=env,
-#             verbose=0,
-#             device=torch.device("cpu")
-#         ),
-#         "DQN": partial(
-#             DQN,
-#             learning_rate=0.0005,
-#             buffer_size=50000,
-#             learning_starts=50000,
-#             batch_size=32,
-#             tau=1.3,
-#             gamma=0.99,
-#             train_freq=4,
-#             gradient_steps=1
-#         )
-#     }
-#     model = rl_models["DQN"](policy="MlpPolicy",
-#                              env=env,
-#                              verbose=2,
-#                              device=torch.device("cpu"))
-#     print(model.tau)
-#     print(model.verbose)
+                obs = self.testing_gym_env.reset()
+                break
+        plot_results(result_memory=memory)

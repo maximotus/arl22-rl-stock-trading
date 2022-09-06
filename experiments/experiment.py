@@ -1,3 +1,4 @@
+from cgitb import enable
 import logging
 import os
 
@@ -22,23 +23,37 @@ class TrainExperiment:
         logger.info("Initializing training experiment...")
 
         gym_environment_config = config.get("gym_environment")
-        shares = gym_environment_config.get("shares")
-        money = gym_environment_config.get("money")
+        window_size = gym_environment_config.get("window_size")
+        enable_render = gym_environment_config.get("enable_render")
 
         data_config_raw = gym_environment_config.get("data")
         symbol = data_config_raw.get("symbol")
         data_path = data_config_raw.get("path")
+        training_data_path = data_path + "\\training"
+        testing_data_path = data_path + "\\testing"
         attributes = data_config_raw.get("attributes")
         n_peers = data_config_raw.get("n_peers")
         social_lookback = timedelta(days=data_config_raw.get("social_lookback"))
-        start = parse(data_config_raw.get("start"))
-        end = parse(data_config_raw.get("end"))
+        training_start = parse(data_config_raw.get("training_start"))
+        training_end = parse(data_config_raw.get("training_end"))
+        testing_start = parse(data_config_raw.get("testing_start"))
+        testing_end = parse(data_config_raw.get("testing_end"))
+ 
         finnhub_api_key = config.get("finnhub_api_key")
 
-        data_config = Config(
+        # TODO maybe allow the option to specify a timeframe for ohlcv candles like d1, h1, m30, ... not only m1
+        training_data_config = Config(
             symbol=symbol,
-            from_=start,
-            to=end,
+            from_=training_start,
+            to=training_end,
+            lookback=social_lookback,
+            finnhub_api_key=finnhub_api_key,
+        )
+
+        testing_data_config = Config(
+            symbol=symbol,
+            from_=testing_start,
+            to=testing_end,
             lookback=social_lookback,
             finnhub_api_key=finnhub_api_key,
         )
@@ -46,25 +61,44 @@ class TrainExperiment:
         # fetch data if not already exists
         # TODO @jflxb if this will already be done in data.py, it can be removed here
         # TODO use n_peers properly
-        data = Data()
-        if not os.path.exists(os.path.join(data_path, f"{symbol}.csv")):
-            logger.info("Data does not exist. Fetching data...")
-            data.fetch(config=data_config, dir_path=data_path)
+        training_data = Data()
+        if not os.path.exists(os.path.join(training_data_path, f"{symbol}.csv")):
+            logger.info("Training data does not exist. Fetching data...")
+            training_data.fetch(config=training_data_config, dir_path=training_data_path)
         else:
-            logger.info("Data already exists. Loading data...")
-            data.load(symbol=symbol, dir_path=data_path)
-        data.reduce_attributes(attributes)
+            logger.info("Training data already exists. Loading data...")
+            training_data.load(symbol=symbol, dir_path=training_data_path)
+
+        if attributes:
+            training_data.reduce_attributes(attributes)
+
+        testing_data = Data()
+        if not os.path.exists(os.path.join(testing_data_path, f"{symbol}.csv")):
+            logger.info("Testing data does not exist. Fetching data...")
+            testing_data.fetch(config=testing_data_config, dir_path=testing_data_path)
+        else:
+            logger.info("Testing data already exists. Loading data...")
+            testing_data.load(symbol=symbol, dir_path=testing_data_path)
+
+        if attributes:
+            testing_data.reduce_attributes(attributes)
+
 
         logger.info(
-            f"Using data of symbol {symbol} with length={len(data)} and shape={data.shape}"
+            f"Using training data of symbol {symbol} with length={len(training_data)} and shape={training_data.shape}," +
+            f"and using testing data of symbol {symbol} with length={len(testing_data)} and shape={testing_data.shape}"
         )
 
-        gym = Environment(shares=shares, money=money, data=data)
+        training_gym = Environment(data=training_data, window_size=window_size, enable_render=enable_render)
+        testing_gym = Environment(data=testing_data, window_size=window_size, enable_render=enable_render)
 
-        logger.info(f"Using gym environment with #shares={shares} and #money={money}")
+
+        logger.info(
+            f"Using gym environment with #windowsize={window_size} and #enable_render={enable_render}"
+        )
 
         agent_config = config.get("agent")
-        epochs = agent_config.get("epochs")
+        timesteps = agent_config.get("episodes") * len(training_data)
         log_interval = agent_config.get("log_interval")
         sb_logger = agent_config.get("sb_logger")
         save_path = config.get("experiment_path")
@@ -72,15 +106,17 @@ class TrainExperiment:
         model_config = agent_config.get("model")
 
         agent = Agent(
-            gym_env=gym,
-            epochs=epochs,
+            training_gym_env=training_gym,
+            testing_gym_env=testing_gym,
+            timesteps=timesteps,
             log_interval=log_interval,
             sb_logger=sb_logger,
             save_path=save_path,
             model_config=model_config,
         )
 
-        self.gym = gym
+        self.training_gym = training_gym
+        self.testing_gym = testing_gym
         self.agent = agent
 
         logger.info("Successfully initialized training experiment")

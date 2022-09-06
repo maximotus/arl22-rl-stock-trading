@@ -1,96 +1,158 @@
+import datetime
 import gym
+import logging
+import matplotlib.pyplot as plt
 import numpy as np
 
-from numpy import inf
+from enum import IntEnum
 from gym.vector.utils import spaces
-
+from numpy import inf
 from rltrading.data.data import Data
+
+logger = logging.getLogger("root")
+
+
+class Positions(IntEnum):
+    Short = 0
+    Long = 1
+
+
+class Actions(IntEnum):
+    Sell = 0
+    Buy = 1
 
 
 class Environment(gym.Env):
-    BUY_ACTION = 1
-    SELL_ACTION = -1
-    HOLD_ACTION = 0
-
     """
     Specify how many shares of a given stock and how much money the agent has
     """
 
-    def __init__(self: "Environment", shares: int, money: float, data: Data):
+    def __init__(
+        self: "Environment", data: Data, window_size: int, enable_render: bool = True
+    ):
         self.data = data
-        self.state = [0, 0, 0, 0, 0, 0, 0]  # TODO
-        self.money = np.asarray([money], dtype=float)
-        self.action = np.asarray([], dtype=float)
-        self.shares = shares
-        self.portfolio_value = 0
-        self.time = 0
-        self.action_space = spaces.Box(
-            low=np.array([-1]), high=np.array([1]), dtype=float
-        )
+
+        self.enable_render = enable_render
+        self.window_size = window_size
+
+        self.action_space = spaces.Discrete(len(Actions))
         self.observation_space = spaces.Box(
-            low=-inf, high=inf, shape=(len(self.state), 1), dtype=float
+            low=-inf,
+            high=inf,
+            shape=(window_size, self.data.shape[1]),
+            dtype=np.float32,
         )
+        self.reset()
 
     def reset(self):
-        self.time = 0
-        self.money = np.asarray([0])
-        self.shares = 0
-        self.portfolio_value = 0
+        # the initial time will be the window_size-th index plus one (so the window already fits; time starts with 1)
+        self.time = self.window_size
+        self.active_position = Positions.Long
+        self._total_profit = 1.0
+        self._total_reward = 0.0
+        self.close_prices = dict(date=[], price=[])
+        self.last_trade_price = self.data.item(self.time).value("close")
+        self.done = False
+        return self._get_obs()
 
-    def step(self, action: float):
-        curr_money = self.money[self.time]
+    def step(self, action: int):
         curr_observation = self.data.item(self.time)
+
         curr_close = curr_observation.value("close")
+        curr_date = curr_observation.value("time")
+        self.close_prices["date"].append(datetime.datetime.fromtimestamp(curr_date))
+        self.close_prices["price"].append(curr_close)
 
-        # Buy
-        if action > self.HOLD_ACTION:
-            amount_of_shares = int(action * curr_money / curr_close)
-            costs = curr_close * amount_of_shares
-            self.money = np.append(self.money, (curr_money - costs))
-            self.shares += amount_of_shares
-            self.action = np.append(self.action, self.BUY_ACTION)
+        step_reward = 0.0
+        logger.debug(f"Action choosen: {action}")
+        if self.active_position == Positions.Long:
+            if action == Actions.Sell.value:
+                step_reward = self.last_trade_price - curr_close
+                self.active_position = Positions.Short
+                self.last_trade_price = curr_close
+                quantity = self._total_profit / self.last_trade_price
+                self._total_profit = quantity * curr_close
 
-        # Sell
-        if action < self.HOLD_ACTION:
-            amount_of_shares = int(action * self.portfolio_value / curr_close) * -1
-            gain = curr_close * amount_of_shares
-            if amount_of_shares <= self.shares:
-                self.money.loc[len(self.money.index)] = curr_money + gain
-                self.money = np.append(self.money, (curr_money + gain))
-                self.shares -= amount_of_shares
-                self.action = np.append(self.action, self.SELL_ACTION)
+        if self.active_position == Positions.Short:
+            if action == Actions.Buy.value:
+                step_reward = curr_close - self.last_trade_price
+                self.active_position = Positions.Long
+                self.last_trade_price = curr_close
+                quantity = self._total_profit * self.last_trade_price
+                self._total_profit = quantity / curr_close
 
-        # Hold
-        if action == self.HOLD_ACTION:
-            self.action = np.append(self.action, self.HOLD_ACTION)
+        self._total_reward += step_reward
+        logger.debug(f"Step Reward: {step_reward}")
+        logger.debug(f"Total Reward: {self._total_reward}")
+        logger.debug(f"Total Profit: {self._total_profit}")
 
         self.time += 1
-        next_money = self.money[self.time]
-        next_observation = self.data.item(self.time)
+        done = not self.data.has_next(self.time)
 
-        self.portfolio_value = self.shares * next_observation.value("close")
+        return self._get_obs(), step_reward, done, self._get_info()
 
-        next_money = self.money[self.time]
-        next_observation = self.data.item(self.time)
+    def setup_rendering(self):
+        if self.enable_render:
+            plt.ion()
+            self._fig = plt.figure(figsize=(17, 7))
+            self._fig.suptitle(f"Applying learned policy on data...")
+            self._ax = self._fig.add_subplot()
+            self._ax.set_title("Evolution of the close price...")
+            x = np.linspace(0, len(self.data), len(self.data))
+            y = np.zeros(len(self.data))
+            (self._line1,) = self._ax.plot(x, y)
 
-        self.state = [
-            *next_observation.all(),
-            self.shares,
-            self.portfolio_value,
-            next_money,
-            self.action,
-        ]
+    def render(self, **kwargs):
+        if self.enable_render:
+            # rendering the evolution of the close price
+            # TODO also render decisions as points (e.g. sell = red point, buy = green point)
+            new_y = np.zeros(len(self.data))
+            new_y[new_y == 0] = np.nan
+            new_y[0 : len(self.close_prices["price"])] = self.close_prices["price"]
+            self._ax.set_ylim(
+                [
+                    min(self.close_prices["price"]) - 2,
+                    max(self.close_prices["price"]) + 2,
+                ]
+            )
 
-        info = {"Round: ", self.time}
-        self.reward = (self.money[self.time] - self.money[self.time - 1]) / self.money[
-            self.time - 1
-        ]
+            labels = [item.get_text() for item in self._ax.get_xticklabels()]
+            labels[0 : len(self.close_prices["date"])] = self.close_prices["date"]
+            self._ax.set_xticklabels(labels)
 
-        done = self.data.has_next(self.time)
-        return self.state, self.reward, done, info
+            self._line1.set_ydata(new_y)
+            self._fig.canvas.draw()
+            self._fig.canvas.flush_events()
 
-    def render(self):
-        pass
+            # TODO render the evolution of the step_reward
+            # TODO render the evolution of the _total_reward
+            # TODO render the evolution of the _total_profit
 
-    def getObsStateSize(self):
-        return len(self.state)
+    def _get_obs(self):
+        obs = []
+        # apply window on the data to get the observation
+        for i in range(self.window_size):
+            # apply window from the very left to the very right relative to the current time using i
+            window_index = self.time - self.window_size + i
+
+            # add fix data to observation
+            curr_observation = self.data.item(window_index)
+
+            # add dynamic data to observation
+            curr_observation = curr_observation.all()
+
+            #remove timesteps from observations
+            curr_observation.pop(0)
+
+            curr_observation.extend([float(self.active_position)])
+
+            obs.append(curr_observation)
+        obs = np.array(obs)
+        return obs
+
+    def _get_info(self):
+        return dict(
+            total_reward=self._total_reward,
+            total_profit=self._total_profit,
+            position=self.active_position,
+        )
