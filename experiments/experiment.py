@@ -49,7 +49,9 @@ class TrainExperiment:
             + f" and using testing data located in {testing_data_path} with length={len(testing_data)} and shape={testing_data.shape}"
         )
 
-        training_gym = Environment(data=training_data, window_size=window_size, scale_reward=scale_reward)
+        training_gym = Environment(
+            data=training_data, window_size=window_size, scale_reward=scale_reward
+        )
         testing_gym = Environment(
             data=testing_data, window_size=window_size, enable_render=enable_render
         )
@@ -59,7 +61,8 @@ class TrainExperiment:
         )
 
         agent_config = config.get("agent")
-        timesteps = agent_config.get("episodes") * len(training_data)
+        episodes = agent_config.get("episodes")
+        timesteps = episodes * len(training_data)
         log_interval = agent_config.get("log_interval")
         sb_logger = agent_config.get("sb_logger")
         save_path = config.get("experiment_path")
@@ -69,6 +72,7 @@ class TrainExperiment:
         agent = Agent(
             training_gym_env=training_gym,
             testing_gym_env=testing_gym,
+            episodes=episodes,
             timesteps=timesteps,
             log_interval=log_interval,
             sb_logger=sb_logger,

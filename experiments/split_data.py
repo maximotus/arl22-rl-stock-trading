@@ -16,11 +16,7 @@ def z_score_scaling(data: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         mean = curr.mean()
         std = curr.std()
         out[column] = (curr - mean) / std
-        scalars.append({
-            "column": column,
-            "mean": mean,
-            "std": std
-        })
+        scalars.append({"column": column, "mean": mean, "std": std})
     return out, pd.DataFrame(scalars)
 
 
@@ -32,11 +28,7 @@ def min_max_scaling(data: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         cmin = curr.min()
         cmax = curr.max()
         out[column] = (curr - cmin) / (cmax - cmin)
-        scalars.append({
-            "column": column,
-            "min": cmin,
-            "max": cmax
-        })
+        scalars.append({"column": column, "min": cmin, "max": cmax})
     return out, pd.DataFrame(scalars)
 
 
@@ -45,7 +37,7 @@ def min_max_scaling_test(data: pd.DataFrame, scalars: pd.DataFrame) -> pd.DataFr
     for column in out.columns.tolist():
         curr = out[column]
         curr_scalars = scalars.loc[scalars["column"] == column]
-        cmin =  curr_scalars["min"].item()
+        cmin = curr_scalars["min"].item()
         cmax = curr_scalars["max"].item()
         out[column] = (curr - cmin) / (cmax - cmin)
     return out
@@ -56,7 +48,7 @@ def z_score_scaling_test(data: pd.DataFrame, scalars: pd.DataFrame) -> pd.DataFr
     for column in out.columns.tolist():
         curr = out[column]
         curr_scalars = scalars.loc[scalars["column"] == column]
-        mean =  curr_scalars["mean"].item()
+        mean = curr_scalars["mean"].item()
         std = curr_scalars["std"].item()
         out[column] = (curr - mean) / std
     return out
@@ -64,7 +56,7 @@ def z_score_scaling_test(data: pd.DataFrame, scalars: pd.DataFrame) -> pd.DataFr
 
 # Path to the raw data.
 cwd = os.getcwd()
-data_path = os.path.join(cwd, 'experiments', 'data', 'AAPL', 'raw', 'AAPL.csv')
+data_path = os.path.join(cwd, "experiments", "data", "AAPL", "raw", "AAPL.csv")
 
 # Specify the sizes for the testing and the training split in percent.
 training_split = 0.8
@@ -85,7 +77,7 @@ assert testing_data.shape[0] == test_length
 
 # NOW NORMALIZING
 # MinMax Normalization
-min_max_path = os.path.join(cwd, 'experiments', 'data', 'AAPL', 'split', 'minmax')
+min_max_path = os.path.join(cwd, "experiments", "data", "AAPL", "split", "minmax")
 os.makedirs(min_max_path, exist_ok=True)
 
 training_data_norm, scalars_norm = min_max_scaling(training_data)
@@ -100,7 +92,7 @@ testing_data_norm.to_csv(test_min_max_path, index=False)
 scalars_norm.to_csv(scalars_norm_path, index=False)
 
 # Z-Score Scaling
-zscore_path = os.path.join(cwd, 'experiments', 'data', 'AAPL', 'split', 'zscore')
+zscore_path = os.path.join(cwd, "experiments", "data", "AAPL", "split", "zscore")
 os.makedirs(zscore_path, exist_ok=True)
 
 training_data_z, scalars_z = z_score_scaling(training_data)

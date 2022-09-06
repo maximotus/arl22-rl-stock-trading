@@ -28,7 +28,11 @@ class Environment(gym.Env):
     """
 
     def __init__(
-        self: "Environment", data: Data, window_size: int, enable_render: bool = False, scale_reward: int = 10000
+        self: "Environment",
+        data: Data,
+        window_size: int,
+        enable_render: bool = False,
+        scale_reward: int = 10000,
     ):
         self.data = data
 

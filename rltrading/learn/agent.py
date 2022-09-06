@@ -23,6 +23,7 @@ class Agent:
         self: "Agent",
         training_gym_env: gym.Env,
         testing_gym_env: gym.Env,
+        episodes: int,
         timesteps: int,
         log_interval: int,
         sb_logger: List[str],
@@ -33,9 +34,10 @@ class Agent:
 
         self.training_gym_env = training_gym_env
         self.testing_gym_env = testing_gym_env
+        self.episodes = episodes
         self.timesteps = timesteps
         self.log_interval = log_interval
-        self.model_save_path = os.path.join(save_path, "model")
+        self.model_save_path = os.path.join(save_path, "model", f"episode-{episodes}")
         self.stats_save_path = os.path.join(save_path, "stats")
         self.sb_logger = configure(self.stats_save_path, sb_logger)
 
