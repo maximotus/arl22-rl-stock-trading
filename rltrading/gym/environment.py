@@ -56,7 +56,7 @@ class Environment(gym.Env):
         self._total_profit = 1.0
         self._total_reward = 0.0
         self.close_prices = dict(date=[], price=[])
-        self.last_trade_price = self.data.item(self.time).value("close")
+        self.last_trade_price = self.data.item(self.time).value("close") + np.nextafter(0, 1)
         self.done = False
         self._rendering = False
         return self._get_obs()
@@ -65,7 +65,7 @@ class Environment(gym.Env):
         curr_observation = self.data.item(self.time)
 
         # avoid division by 0 if data is normalized
-        curr_close = np.nextafter(0, 1) if curr_observation.value("close") == 0.0 else curr_observation.value("close")
+        curr_close = curr_observation.value("close") + np.nextafter(0, 1)
         curr_date = curr_observation.value("time")
         self.close_prices["date"].append(datetime.datetime.fromtimestamp(curr_date))
         self.close_prices["price"].append(curr_close)
