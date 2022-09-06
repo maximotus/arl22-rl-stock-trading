@@ -64,7 +64,8 @@ class Environment(gym.Env):
     def step(self, action: int):
         curr_observation = self.data.item(self.time)
 
-        curr_close = curr_observation.value("close")
+        # avoid division by 0 if data is normalized
+        curr_close = np.nextafter(0, 1) if curr_observation.value("close") == 0.0 else curr_observation.value("close")
         curr_date = curr_observation.value("time")
         self.close_prices["date"].append(datetime.datetime.fromtimestamp(curr_date))
         self.close_prices["price"].append(curr_close)
