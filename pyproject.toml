@@ -29,6 +29,7 @@ torch = "^1.12.1"
 stable-baselines3 = "^1.6.0"
 pyglet = "^1.5.26"
 tensorboard = "^2.10.0"
+sklearn = "^0.0"
 
 [tool.poetry.dev-dependencies]
 
