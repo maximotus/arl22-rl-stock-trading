@@ -5,7 +5,10 @@ import time
 import numpy as np
 import pandas as pd
 
-from rltrading.data.fundamental import get_social_sentiment, get_social_sentiment_alternative
+from rltrading.data.fundamental import (
+    get_social_sentiment,
+    get_social_sentiment_alternative,
+)
 from rltrading.data.meta_trader import get_asset_data
 
 
@@ -80,7 +83,7 @@ def __get_days(times: List[int]):
     dates = list(map(__to_date, times))
     unique_days = np.unique(dates).tolist()
     return unique_days
-    
+
 
 def __to_date(time: int) -> datetime:
     dt = datetime.fromtimestamp(time)
