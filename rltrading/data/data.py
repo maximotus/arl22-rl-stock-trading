@@ -84,7 +84,7 @@ class Data(BaseModel):
             path = os.path.join(dir_path, f"{config.symbol}.csv")
             self._data_frame.to_csv(path, index=False)
 
-    def load(self: "Data", symbol: str, dir_path: str):
+    def load(self: "Data", file_path: str):
         """Load the data from a previously fetched ``pd.DataFrame``.
 
         Parameters
@@ -94,9 +94,7 @@ class Data(BaseModel):
         path : str
             Path to the ``.csv`` file containing the ``pd.DataFrame``.
         """
-        self._symbol = symbol
-        full_path = os.path.join(dir_path, f"{symbol}.csv")
-        self._data_frame = pd.read_csv(Path(full_path))
+        self._data_frame = pd.read_csv(Path(file_path))
 
     def observations(self: "Data", columns: List[str] = None) -> Iterable[List[float]]:
         """Iterate over all observations.
