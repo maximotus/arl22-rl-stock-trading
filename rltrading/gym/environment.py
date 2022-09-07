@@ -1,5 +1,4 @@
 import datetime
-import sys
 
 import gym
 import logging
@@ -45,10 +44,20 @@ class Environment(gym.Env):
         self._use_time = use_time
 
         self.action_space = spaces.Discrete(len(Actions))
+
+        # Either way, time will be appended to data for plotting purposes.
+        # However, if one explicitly specifies time as learnable parameter,
+        # it does not have to be removed and thus there is no need to subtract
+        # one from the observation space shape in dimension 1.
+        # Moreover, since the active position is always added to the observation,
+        # one has to be added in every case.
+        dim_1 = (self.data.shape[1] + 1) if self._use_time else (self.data.shape[1] - 1 + 1)
+        dim_0 = window_size
+
         self.observation_space = spaces.Box(
             low=-inf,
             high=inf,
-            shape=(window_size, self.data.shape[1]),
+            shape=(dim_0, dim_1),
             dtype=np.float32,
         )
         self.reset()

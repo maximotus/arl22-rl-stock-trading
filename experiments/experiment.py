@@ -32,7 +32,8 @@ class TrainExperiment:
         # append it, so it can be used for plotting
         time_key = "time"
         use_time = time_key in attributes
-        attributes.append(time_key)
+        if not use_time:
+            attributes.append(time_key)
 
         # assuming that the data already exists
         if not os.path.exists(os.path.join(training_data_path)):
