@@ -2,7 +2,7 @@
 name = "rltrading"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["Jonas Blenninger <you@example.com>", "Max Erler <contact@maxerler.com>", "Korbinian Federholzner <you@example.com>", "Andreas Lauber <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
