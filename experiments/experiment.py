@@ -36,6 +36,7 @@ class TrainExperiment:
             attributes.append(time_key)
 
         logger.info(f"Using time as learnable parameter: {use_time}")
+        logger.info(f"Using the following features as learnable parameters: {attributes}")
 
         # assuming that the data already exists
         if not os.path.exists(os.path.join(training_data_path)):
