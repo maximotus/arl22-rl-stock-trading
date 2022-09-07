@@ -57,10 +57,16 @@ class TrainExperiment:
         )
 
         training_gym = Environment(
-            data=training_data, window_size=window_size, scale_reward=scale_reward, use_time=use_time
+            data=training_data,
+            window_size=window_size,
+            scale_reward=scale_reward,
+            use_time=use_time,
         )
         testing_gym = Environment(
-            data=testing_data, window_size=window_size, enable_render=enable_render, use_time=use_time
+            data=testing_data,
+            window_size=window_size,
+            enable_render=enable_render,
+            use_time=use_time,
         )
 
         logger.info(
