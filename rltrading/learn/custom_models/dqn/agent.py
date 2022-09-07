@@ -2,10 +2,9 @@ import gym
 import numpy as np
 import torch
 
+from rltrading.learn.custom_models.dqn.dqn import DQN
+from rltrading.learn.custom_models.dqn.replayMemory import ReplayMemory, Transition
 from typing import Tuple
-from rltrading.learn.DQN.dqn import DQN
-
-from rltrading.learn.DQN.replayMemory import ReplayMemory, Transition
 
 
 class Agent:

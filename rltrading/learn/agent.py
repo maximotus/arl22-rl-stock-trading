@@ -1,15 +1,14 @@
-from typing import List
 import gym
 import logging
-import torch
 import os
+import torch
 
-from functools import partial
 from collections import namedtuple
+from functools import partial
+from rltrading.learn.result_handler import plot_result, save_result
 from stable_baselines3 import DQN, PPO, A2C
 from stable_baselines3.common.logger import configure
-
-from rltrading.learn.result_handler import plot_result, save_result
+from typing import List
 
 logger = logging.getLogger("root")
 
@@ -55,11 +54,11 @@ class Agent:
         )
         logger.info(f"Using device {device}")
 
-        # initialize model if policy_id and model_id are known
-        # one could improve the rl model aliasing by differentiating between
+        # Initialize model if policy_id and model_id are known.
+        # One could improve the rl model aliasing by differentiating between
         # stable_baselines3.common.off_policy_algorithm.OffPolicyAlgorithm (DQN) and
         # from stable_baselines3.common.on_policy_algorithm.OnPolicyAlgorithm (PPO and A2C)
-        # and only then regard the real model-specific parameters
+        # and only then regard the real model-specific parameters.
         policy_ids = ["MlpPolicy", "CnnPolicy", "MultiInputPolicy"]
         policy_id = model_config.get("policy")
         if policy_id not in policy_ids:
