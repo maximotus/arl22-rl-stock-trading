@@ -1,5 +1,4 @@
 import datetime
-
 import gym
 import logging
 import matplotlib.pyplot as plt
@@ -34,7 +33,7 @@ class Environment(gym.Env):
         window_size: int,
         enable_render: bool = False,
         scale_reward: int = 10000,
-        use_time: bool = True
+        use_time: bool = True,
     ):
         self.data = data
 
@@ -51,7 +50,9 @@ class Environment(gym.Env):
         # one from the observation space shape in dimension 1.
         # Moreover, since the active position is always added to the observation,
         # one has to be added in every case.
-        dim_1 = (self.data.shape[1] + 1) if self._use_time else (self.data.shape[1] - 1 + 1)
+        dim_1 = (
+            (self.data.shape[1] + 1) if self._use_time else (self.data.shape[1] - 1 + 1)
+        )
         dim_0 = window_size
 
         self.observation_space = spaces.Box(
@@ -69,7 +70,9 @@ class Environment(gym.Env):
         self._total_profit = 1.0
         self._total_reward = 0.0
         self.close_prices = dict(date=[], price=[])
-        self.last_trade_price = self.data.item(self.time).value("close") + np.nextafter(0, 1)
+        self.last_trade_price = self.data.item(self.time).value("close") + np.nextafter(
+            0, 1
+        )
         self.done = False
         self._rendering = False
         return self._get_obs()
