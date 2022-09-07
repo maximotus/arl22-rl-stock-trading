@@ -28,6 +28,10 @@ class TrainExperiment:
         testing_data_path = data_config_raw.get("test_path")
         attributes = data_config_raw.get("attributes")
 
+        logger.info(
+            f"Using the following features as learnable parameters: {attributes}"
+        )
+
         # remember if config specifies time as learnable attribute and
         # append it, so it can be used for plotting
         time_key = "time"
@@ -36,9 +40,6 @@ class TrainExperiment:
             attributes.append(time_key)
 
         logger.info(f"Using time as learnable parameter: {use_time}")
-        logger.info(
-            f"Using the following features as learnable parameters: {attributes}"
-        )
 
         # assuming that the data already exists
         if not os.path.exists(os.path.join(training_data_path)):
