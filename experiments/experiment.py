@@ -36,7 +36,9 @@ class TrainExperiment:
             attributes.append(time_key)
 
         logger.info(f"Using time as learnable parameter: {use_time}")
-        logger.info(f"Using the following features as learnable parameters: {attributes}")
+        logger.info(
+            f"Using the following features as learnable parameters: {attributes}"
+        )
 
         # assuming that the data already exists
         if not os.path.exists(os.path.join(training_data_path)):
@@ -60,14 +62,20 @@ class TrainExperiment:
         )
 
         training_gym = Environment(
-            data=training_data, window_size=window_size, scale_reward=scale_reward, use_time=use_time
+            data=training_data,
+            window_size=window_size,
+            scale_reward=scale_reward,
+            use_time=use_time,
         )
         testing_gym = Environment(
-            data=testing_data, window_size=window_size, enable_render=enable_render, use_time=use_time
+            data=testing_data,
+            window_size=window_size,
+            enable_render=enable_render,
+            use_time=use_time,
         )
 
         logger.info(
-            f"Using gym environment with window_size={window_size} and enable_render={enable_render}"
+            f"Using gym environment with window_size={window_size}, scale_reward={scale_reward} and enable_render={enable_render}"
         )
 
         agent_config = config.get("agent")
