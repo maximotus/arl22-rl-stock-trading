@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "rltrading"
 version = "0.1.0"
-description = ""
+description = "rltrading is a reinforcement learning package for stock trading using proof-of-concept models from stable-baselines3, namely PPO, A2C and DQN. Moreover, this package provides a gym environment and an agent implementation using it. Also, it is extendable with custom models."
 authors = ["Jonas Blenninger <you@example.com>", "Max Erler <contact@maxerler.com>", "Korbinian Federholzner <you@example.com>", "Andreas Lauber <you@example.com>"]
 
 [tool.poetry.dependencies]
