@@ -34,7 +34,7 @@ class Environment(gym.Env):
         window_size: int,
         enable_render: bool = False,
         scale_reward: int = 10000,
-        use_time: bool = True,
+        use_time: bool = True
     ):
         self.data = data
 
