@@ -137,7 +137,7 @@ class Agent:
         memory = []
         obs = self.testing_gym_env.reset()
         while True:
-            action, _states = self.model.predict(obs, deterministic=False)
+            action, _states = self.model.predict(obs, deterministic=True)
             obs, reward, done, info = self.testing_gym_env.step(action)
             memory.append(ResultMemory(obs.tolist(), action, _states, reward, info))
             self.testing_gym_env.render()
