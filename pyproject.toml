@@ -27,6 +27,7 @@ numpy = "^1.23.2"
 stable-baselines3 = "^1.6.0"
 pyglet = "^1.5.26"
 tensorboard = "^2.10.0"
+seaborn = "^0.12.0"
 
 [tool.poetry.dev-dependencies]
 
