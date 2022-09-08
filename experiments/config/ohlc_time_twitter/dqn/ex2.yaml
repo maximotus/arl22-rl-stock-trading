@@ -1,0 +1,42 @@
+mode: train # (train / eval)
+logger:
+  level: 20 # CRITICAL = 50, ERROR = 40, WARNING = 30, INFO = 20, DEBUG = 10, NOTSET = 0
+  format: "%(asctime)s - %(levelname)s - %(module)s - %(message)s"
+experiment_path: ./experiments/results/ohlc_time_twitter/dqn
+test_policy: true # whether to test / apply the policy after training or not
+
+# define gym environment that will be injected to the agent
+gym_environment:
+  enable_render: false # whether to render the policy application or not
+  window_size: 30
+  scale_reward: 1
+  data:
+    train_path: ./experiments/data/minmax/train.csv
+    test_path: ./experiments/data/minmax/test.csv
+    attributes: ["time", "open", "high", "low", "close", "tick_volume", "spread", "real_volume", "twitter_mention_count", "twitter_mention_mean", "twitter_mention_std", "twitter_mention_min", "twitter_mention_25%", "twitter_mention_50%", "twitter_mention_75%", "twitter_mention_max", "twitter_postitive_score_count", "twitter_postitive_score_mean", "twitter_postitive_score_std", "twitter_postitive_score_min", "twitter_postitive_score_25%", "twitter_postitive_score_50%", "twitter_postitive_score_75%", "twitter_postitive_score_max", "twitter_negative_score_count", "twitter_negative_score_mean", "twitter_negative_score_std", "twitter_negative_score_min", "twitter_negative_score_25%", "twitter_negative_score_50%", "twitter_negative_score_75%", "twitter_negative_score_max", "twitter_positive_mention_count", "twitter_positive_mention_mean", "twitter_positive_mention_std", "twitter_positive_mention_min", "twitter_positive_mention_25%", "twitter_positive_mention_50%", "twitter_positive_mention_75%", "twitter_positive_mention_max", "twitter_negative_mention_count", "twitter_negative_mention_mean", "twitter_negative_mention_std", "twitter_negative_mention_min", "twitter_negative_mention_25%", "twitter_negative_mention_50%", "twitter_negative_mention_75%", "twitter_negative_mention_max", "twitter_score_count", "twitter_score_mean", "twitter_score_std", "twitter_score_min", "twitter_score_25%", "twitter_score_50%", "twitter_score_75%", "twitter_score_max"]
+
+# define the rl agent (using the above gym environment)
+agent:
+  episodes: 100
+  log_interval: 5
+  sb_logger: ["stdout", "csv"] # format options are: "stdout", "csv", "log", "tensorboard", "json"
+
+  # define model with its specific parameters
+  model:
+    name: DQN
+    pretrained_path: # empty if start from scratch TODO implement
+    policy: MlpPolicy
+    device: auto # (cuda / cpu / auto)
+    verbose: 1 # 0 none, 1 training information, 2 debug
+    learning_rate: 0.0001
+    gamma: 0.99
+    seed: 2
+    buffer_size: 1000000
+    learning_starts: 50000
+    batch_size: 32
+    tau: 1.0
+    train_freq: 4
+    gradient_steps: 1
+    exploration_fraction: 0.1
+    exploration_initial_eps: 1.0
+    exploration_final_eps: 0.05
