@@ -7,7 +7,7 @@ test_policy: true # whether to test / apply the policy after training or not
 
 # define gym environment that will be injected to the agent
 gym_environment:
-  enable_render: true # whether to render the policy application or not
+  enable_render: false # whether to render the policy application or not
   window_size: 30
   scale_reward: 1
   data:

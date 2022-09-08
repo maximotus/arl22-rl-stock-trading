@@ -139,7 +139,7 @@ class Agent:
         while True:
             action, _states = self.model.predict(obs, deterministic=False)
             obs, reward, done, info = self.testing_gym_env.step(action)
-            memory.append(ResultMemory(obs, action, _states, reward, info))
+            memory.append(ResultMemory(obs.tolist(), action, _states, reward, info))
             self.testing_gym_env.render()
             if done:
                 _ = self.testing_gym_env.reset()
