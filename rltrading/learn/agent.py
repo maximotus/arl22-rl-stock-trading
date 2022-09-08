@@ -146,6 +146,7 @@ class Agent:
                 break
         plot_result(result_memory=memory, save_path=self.stats_save_path)
         save_result(memory, self.stats_save_path)
+        logger.info(f"Saved the results at {self.stats_save_path}")
 
     def eval(self):
         raise NotImplementedError
