@@ -7,37 +7,36 @@ test_policy: true # whether to test / apply the policy after training or not
 
 # define gym environment that will be injected to the agent
 gym_environment:
-  enable_render: true # whether to render the policy application or not
-  window_size: 6
-  scale_reward: 10000
+  enable_render: false # whether to render the policy application or not
+  window_size: 30
+  scale_reward: 1
   data:
     train_path: ./experiments/data/minmax/train.csv
     test_path: ./experiments/data/minmax/test.csv
-    attributes: [ "time", "open", "close", "low", "high" ]
+    attributes: [ "open", "high", "low", "close", "tick_volume", "spread", "real_volume" ]
 
 # define the rl agent (using the above gym environment)
 agent:
   episodes: 100
   log_interval: 5
-  sb_logger: ["stdout", "csv", "tensorboard"] # format options are: "stdout", "csv", "log", "tensorboard", "json"
+  sb_logger: [ "stdout", "csv", "tensorboard" ] # format options are: "stdout", "csv", "log", "tensorboard", "json"
 
   # define model with its specific parameters
   model:
-    name: PPO
+    name: DQN
     pretrained_path: # empty if start from scratch TODO implement
     policy: MlpPolicy
-    device: cuda # (cuda / cpu / auto)
+    device: auto # (cuda / cpu / auto)
     verbose: 0 # 0 none, 1 training information, 2 debug
-    learning_rate: 0.0003
+    learning_rate: 0.0001
     gamma: 0.99
     seed: null
-    n_steps: 2048
+    buffer_size: 1000000
+    learning_starts: 50000
     batch_size: 32
-    n_epochs: 10
-    gae_lambda: 0.95
-    clip_range: 0.2
-    clip_range_vf: null
-    normalize_advantage: true
-    ent_coef: 0.0
-    vf_coef: 0.5
-    target_kl: null
+    tau: 1.0
+    train_freq: 4
+    gradient_steps: 1
+    exploration_fraction: 0.1
+    exploration_initial_eps: 1.0
+    exploration_final_eps: 0.05

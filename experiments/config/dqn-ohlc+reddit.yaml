@@ -1,0 +1,42 @@
+mode: train # (train / eval)
+logger:
+  level: 20 # CRITICAL = 50, ERROR = 40, WARNING = 30, INFO = 20, DEBUG = 10, NOTSET = 0
+  format: "%(asctime)s - %(levelname)s - %(module)s - %(message)s"
+experiment_path: ./experiments/results
+test_policy: true # whether to test / apply the policy after training or not
+
+# define gym environment that will be injected to the agent
+gym_environment:
+  enable_render: false # whether to render the policy application or not
+  window_size: 30
+  scale_reward: 1
+  data:
+    train_path: ./experiments/data/minmax/train.csv
+    test_path: ./experiments/data/minmax/test.csv
+    attributes: ["open", "high", "low", "close", "tick_volume", "spread", "real_volume", "reddit_mention_count", "reddit_mention_mean", "reddit_mention_std", "reddit_mention_min", "reddit_mention_25%", "reddit_mention_50%", "reddit_mention_75%", "reddit_mention_max", "reddit_postitive_score_count", "reddit_postitive_score_mean", "reddit_postitive_score_std", "reddit_postitive_score_min", "reddit_postitive_score_25%", "reddit_postitive_score_50%", "reddit_postitive_score_75%", "reddit_postitive_score_max", "reddit_negative_score_count", "reddit_negative_score_mean", "reddit_negative_score_std", "reddit_negative_score_min", "reddit_negative_score_25%", "reddit_negative_score_50%", "reddit_negative_score_75%", "reddit_negative_score_max", "reddit_positive_mention_count", "reddit_positive_mention_mean", "reddit_positive_mention_std", "reddit_positive_mention_min", "reddit_positive_mention_25%", "reddit_positive_mention_50%", "reddit_positive_mention_75%", "reddit_positive_mention_max", "reddit_negative_mention_count", "reddit_negative_mention_mean", "reddit_negative_mention_std", "reddit_negative_mention_min", "reddit_negative_mention_25%", "reddit_negative_mention_50%", "reddit_negative_mention_75%", "reddit_negative_mention_max", "reddit_score_count", "reddit_score_mean", "reddit_score_std", "reddit_score_min", "reddit_score_25%", "reddit_score_50%", "reddit_score_75%", "reddit_score_max"]
+
+# define the rl agent (using the above gym environment)
+agent:
+  episodes: 100
+  log_interval: 5
+  sb_logger: [ "stdout", "csv", "tensorboard" ] # format options are: "stdout", "csv", "log", "tensorboard", "json"
+
+  # define model with its specific parameters
+  model:
+    name: DQN
+    pretrained_path: # empty if start from scratch TODO implement
+    policy: MlpPolicy
+    device: auto # (cuda / cpu / auto)
+    verbose: 0 # 0 none, 1 training information, 2 debug
+    learning_rate: 0.0001
+    gamma: 0.99
+    seed: null
+    buffer_size: 1000000
+    learning_starts: 50000
+    batch_size: 32
+    tau: 1.0
+    train_freq: 4
+    gradient_steps: 1
+    exploration_fraction: 0.1
+    exploration_initial_eps: 1.0
+    exploration_final_eps: 0.05
