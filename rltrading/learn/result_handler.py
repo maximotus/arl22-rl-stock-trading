@@ -37,7 +37,7 @@ def plot_result(result_memory, save_path=None):
     # print where shorts and longs were taken
     ax3 = plt.subplot(gs[1, :])
     prices = list(
-        map(lambda x: x.observation[len(x.observation) - 1][0], result_memory)
+        map(lambda x: x.observation[len(x.observation) - 1]["close"], result_memory)
     )
     ax3.plot(time, prices)
     actions = list(map(lambda x: x.action, result_memory))
