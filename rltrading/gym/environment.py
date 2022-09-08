@@ -114,11 +114,12 @@ class Environment(gym.Env):
         self.time += 1
         done = not self.data.has_next(self.time)
 
+        self.current_info = self._get_info(curr_observation.to_dict())
         return (
             self._get_obs(),
             step_reward,
             done,
-            self._get_info(curr_observation.to_dict()),
+            self.current_info,
         )
 
     def render(self, **kwargs):
