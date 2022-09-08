@@ -1,8 +1,8 @@
 #!/bin/sh
 #SBATCH --nodes=1
-#SBATCH --job-name=stock-trading-dqn-ohlc-reddit-twitter
-#SBATCH --output=stock-trading-dqn-ohlc-reddit-twitter.out
-#SBATCH --error=stock-trading-dqn-ohlc-reddit-twitter.err
+#SBATCH --job-name=dqn_ohlc_tick
+#SBATCH --output=dqn_ohlc_tick.out
+#SBATCH --error=dqn_ohlc_tick.err
 #SBATCH --partition=All
 echo "Starting multi-experiment..."
 conda activate arl22
