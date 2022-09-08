@@ -7,13 +7,13 @@ test_policy: true # whether to test / apply the policy after training or not
 
 # define gym environment that will be injected to the agent
 gym_environment:
-  enable_render: true # whether to render the policy application or not
+  enable_render: false # whether to render the policy application or not
   window_size: 30
   scale_reward: 1
   data:
     train_path: ./../../../experiments/data/AAPL/split/minmax/train.csv
     test_path: ./../../../experiments/data/AAPL/split/minmax/test.csv
-    attributes: [ "time", "open", "close", "low", "high" ]
+    attributes: ["time", "open", "high", "low", "close", "tick_volume", "spread", "real_volume"]
 
 # define the rl agent (using the above gym environment)
 agent:
