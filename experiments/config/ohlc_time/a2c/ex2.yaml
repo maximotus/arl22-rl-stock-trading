@@ -11,8 +11,8 @@ gym_environment:
   window_size: 30
   scale_reward: 1
   data:
-    train_path: ./experiments/data/AAPL/split/minmax/train.csv
-    test_path: ./experiments/data/AAPL/split/minmax/test.csv
+    train_path: ./experiments/data/minmax/train.csv
+    test_path: ./experiments/data/minmax/test.csv
     attributes: ["time", "open", "high", "low", "close", "tick_volume", "spread", "real_volume"]
 
 # define the rl agent (using the above gym environment)
@@ -26,7 +26,7 @@ agent:
     name: A2C
     pretrained_path: # empty if start from scratch TODO implement
     policy: MlpPolicy
-    device: cuda # (cuda / cpu / auto)
+    device: auto # (cuda / cpu / auto)
     verbose: 0 # 0 none, 1 training information, 2 debug
     learning_rate: 0.0007
     gamma: 0.99
