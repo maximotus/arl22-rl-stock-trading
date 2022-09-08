@@ -62,8 +62,6 @@ class Environment(gym.Env):
             shape=(dim_0, dim_1),
             dtype=np.float32,
         )
-        self.current_info = None
-
         logger.info(f"Using action space of shape: {self.action_space.shape}")
         logger.info(f"Using observation space of shape: {self.observation_space.shape}")
 
