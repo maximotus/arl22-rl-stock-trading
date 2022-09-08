@@ -82,6 +82,7 @@ class Environment(gym.Env):
         )
         self.done = False
         self._rendering = False
+        self.current_info = None
         return self._get_obs()
 
     def step(self, action: int):
