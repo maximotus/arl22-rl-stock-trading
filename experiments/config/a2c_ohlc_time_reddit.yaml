@@ -17,7 +17,7 @@ gym_environment:
 
 # define the rl agent (using the above gym environment)
 agent:
-  episodes: 100
+  episodes: 10
   log_interval: 5
   sb_logger: ["stdout", "csv", "tensorboard"] # format options are: "stdout", "csv", "log", "tensorboard", "json"
 

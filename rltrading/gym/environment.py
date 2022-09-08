@@ -96,16 +96,16 @@ class Environment(gym.Env):
         if (self.active_position == Positions.Long) and (action == Actions.Sell.value): 
             step_reward = (curr_close - self.last_trade_price) * self.scale_reward               
             self.active_position = Positions.Short
-            self.last_trade_price = curr_close
             quantity = self._total_profit / self.last_trade_price
             self._total_profit = quantity * curr_close
+            self.last_trade_price = curr_close
 
         if (self.active_position == Positions.Short) and (action == Actions.Buy.value):
             step_reward = (self.last_trade_price - curr_close) * self.scale_reward
             self.active_position = Positions.Long
-            self.last_trade_price = curr_close
             quantity = self._total_profit * self.last_trade_price
             self._total_profit = quantity / curr_close
+            self.last_trade_price = curr_close
 
         self._total_reward += step_reward
         logger.debug(f"Step Reward: {step_reward}")
