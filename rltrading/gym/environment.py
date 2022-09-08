@@ -75,6 +75,7 @@ class Environment(gym.Env):
         self._total_profit = 1.0
         self._total_reward = 0.0
         self.close_prices = dict(date=[], price=[])
+        # avoid division by 0 if data is normalized
         self.last_trade_price = self.data.item(self.time).value("close") + np.nextafter(
             0, 1
         )
@@ -85,15 +86,11 @@ class Environment(gym.Env):
     def step(self, action: int):
         curr_observation = self.data.item(self.time)
 
-        # avoid division by 0 if data is normalized
-        curr_close = curr_observation.value("close") + np.nextafter(0, 1)
-        curr_date = curr_observation.value("time")
-        self.close_prices["date"].append(datetime.datetime.fromtimestamp(curr_date))
-        self.close_prices["price"].append(curr_close)
-
         step_reward = 0.0
-        logger.debug(f"Action choosen: {action}")
+        # logger.debug(f"Action choosen: {action}")
         if (self.active_position == Positions.Long) and (action == Actions.Sell.value):
+            # avoid division by 0 if data is normalized
+            curr_close = curr_observation.value("close") + np.nextafter(0, 1)
             step_reward = (curr_close - self.last_trade_price) * self.scale_reward
             self.active_position = Positions.Short
             quantity = self._total_profit / self.last_trade_price
@@ -101,6 +98,8 @@ class Environment(gym.Env):
             self.last_trade_price = curr_close
 
         if (self.active_position == Positions.Short) and (action == Actions.Buy.value):
+            # avoid division by 0 if data is normalized
+            curr_close = curr_observation.value("close") + np.nextafter(0, 1)
             step_reward = (self.last_trade_price - curr_close) * self.scale_reward
             self.active_position = Positions.Long
             quantity = self._total_profit * self.last_trade_price
@@ -108,9 +107,9 @@ class Environment(gym.Env):
             self.last_trade_price = curr_close
 
         self._total_reward += step_reward
-        logger.debug(f"Step Reward: {step_reward}")
-        logger.debug(f"Total Reward: {self._total_reward}")
-        logger.debug(f"Total Profit: {self._total_profit}")
+        # logger.debug(f"Step Reward: {step_reward}")
+        # logger.debug(f"Total Reward: {self._total_reward}")
+        # logger.debug(f"Total Profit: {self._total_profit}")
 
         self.time += 1
         done = not self.data.has_next(self.time)
