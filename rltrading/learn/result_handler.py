@@ -35,34 +35,34 @@ def plot_result(result_memory, save_path=None):
     )
 
     # print where shorts and longs were taken
-    ax3 = plt.subplot(gs[1, :])
-    prices = list(
-        map(lambda x: x.observation[len(x.observation) - 1]["close"], result_memory)
-    )
-    ax3.plot(time, prices)
-    actions = list(map(lambda x: x.action, result_memory))
-    action = actions[0]
-    longs = []
-    long_prices = []
-    shorts = []
-    short_prices = []
-    for i in range(1, len(actions)):
-        if actions[i] != action:
-            if actions[i] == Positions.Short and action == Positions.Long:
-                shorts.append(i)
-                short_prices.append(prices[i])
-            if actions[i] == Positions.Long and action == Positions.Short:
-                longs.append(i)
-                long_prices.append(prices[i])
-            action = actions[i]
+    # ax3 = plt.subplot(gs[1, :])
+    # prices = list(
+    #     map(lambda x: x.info[len(x.observation) - 1]["observation"]["close"], result_memory)
+    # )
+    # ax3.plot(time, prices)
+    # actions = list(map(lambda x: x.action, result_memory))
+    # action = actions[0]
+    # longs = []
+    # long_prices = []
+    # shorts = []
+    # short_prices = []
+    # for i in range(1, len(actions)):
+    #     if actions[i] != action:
+    #         if actions[i] == Positions.Short and action == Positions.Long:
+    #             shorts.append(i)
+    #             short_prices.append(prices[i])
+    #         if actions[i] == Positions.Long and action == Positions.Short:
+    #             longs.append(i)
+    #             long_prices.append(prices[i])
+    #         action = actions[i]
 
-    ax3.plot(longs, long_prices, "o", color="green", markersize=3)
-    ax3.plot(shorts, short_prices, "o", color="red", markersize=3)
-    ax3.set(
-        xlabel="time",
-        ylabel="price",
-        title="green = longs, red = shorts on the price of the asset",
-    )
+    # ax3.plot(longs, long_prices, "o", color="green", markersize=3)
+    # ax3.plot(shorts, short_prices, "o", color="red", markersize=3)
+    # ax3.set(
+    #     xlabel="time",
+    #     ylabel="price",
+    #     title="green = longs, red = shorts on the price of the asset",
+    # )
 
     plt.show()
 
