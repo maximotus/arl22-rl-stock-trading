@@ -34,7 +34,7 @@ class Environment(gym.Env):
         window_size: int,
         enable_render: bool = False,
         scale_reward: int = 10000,
-        use_time: bool = True
+        use_time: bool = True,
     ):
         self.data = data
 
@@ -93,8 +93,8 @@ class Environment(gym.Env):
 
         step_reward = 0.0
         logger.debug(f"Action choosen: {action}")
-        if (self.active_position == Positions.Long) and (action == Actions.Sell.value): 
-            step_reward = (curr_close - self.last_trade_price) * self.scale_reward               
+        if (self.active_position == Positions.Long) and (action == Actions.Sell.value):
+            step_reward = (curr_close - self.last_trade_price) * self.scale_reward
             self.active_position = Positions.Short
             quantity = self._total_profit / self.last_trade_price
             self._total_profit = quantity * curr_close
@@ -115,7 +115,12 @@ class Environment(gym.Env):
         self.time += 1
         done = not self.data.has_next(self.time)
 
-        return self._get_obs(), step_reward, done, self._get_info()
+        return (
+            self._get_obs(),
+            step_reward,
+            done,
+            self._get_info(curr_observation.to_dict()),
+        )
 
     def render(self, **kwargs):
         if not self.enable_render:
@@ -177,9 +182,10 @@ class Environment(gym.Env):
         obs = np.array(obs)
         return obs
 
-    def _get_info(self):
-        return dict(
-            total_reward=self._total_reward,
-            total_profit=self._total_profit,
-            position=self.active_position,
-        )
+    def _get_info(self, observation: dict) -> dict:
+        return {
+            "total_reward": self._total_reward,
+            "total_profit": self._total_profit,
+            "position": self.active_position,
+            "observation": observation,
+        }
