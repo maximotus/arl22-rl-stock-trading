@@ -23,7 +23,7 @@ agent:
 
   # define model with its specific parameters
   model:
-    name: DQN
+    name: DQN # compare https://stable-baselines3.readthedocs.io/en/master/modules/dqn.html
     pretrained_path: # empty if start from scratch TODO implement
     policy: MlpPolicy
     device: auto # (cuda / cpu / auto)
