@@ -11,14 +11,15 @@ gym_environment:
   window_size: 30
   scale_reward: 1
   data:
-    train_path: ./data/minmax/train.csv
-    test_path: ./data/minmax/test.csv
+    train_path: ./experiments/data/minmax/train.csv
+    test_path: ./experiments/data/minmax/test.csv
     attributes: [ "time", "open", "close", "low", "high" ]
 
 # define the rl agent (using the above gym environment)
 agent:
-  episodes: 1
+  episodes: 2
   log_interval: 5
+  save_model_interval: 1
   sb_logger: ["stdout", "csv", "tensorboard"] # format options are: "stdout", "csv", "log", "tensorboard", "json"
 
   # define model with its specific parameters
