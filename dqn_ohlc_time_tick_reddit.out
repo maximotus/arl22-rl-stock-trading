@@ -781,3 +781,18 @@ Logging to ./experiments/results/ohlc_time_tick_reddit/dqn/train/ex3/2022-09-09-
 |    loss             | 1.18e-08 |
 |    n_updates        | 1059436  |
 ----------------------------------
+----------------------------------
+| rollout/            |          |
+|    ep_len_mean      | 7.8e+04  |
+|    ep_rew_mean      | -0.26    |
+|    exploration_rate | 0.05     |
+| time/               |          |
+|    episodes         | 60       |
+|    fps              | 312      |
+|    time_elapsed     | 14951    |
+|    total_timesteps  | 4677540  |
+| train/              |          |
+|    learning_rate    | 0.0001   |
+|    loss             | 2.38e-05 |
+|    n_updates        | 1156884  |
+----------------------------------
