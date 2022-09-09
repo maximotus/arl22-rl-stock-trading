@@ -8,7 +8,7 @@ test_policy: true # whether to test / apply the policy after training or not
 # define gym environment that will be injected to the agent
 gym_environment:
   enable_render: true # whether to render the policy application or not
-  window_size: 6
+  window_size: 30
   scale_reward: 10000
   data:
     train_path: ./experiments/data/minmax/train.csv
@@ -26,8 +26,8 @@ agent:
     name: PPO
     pretrained_path: # empty if start from scratch TODO implement
     policy: MlpPolicy
-    device: cuda # (cuda / cpu / auto)
-    verbose: 0 # 0 none, 1 training information, 2 debug
+    device: auto # (cuda / cpu / auto)
+    verbose: 1 # 0 none, 1 training information, 2 debug
     learning_rate: 0.0003
     gamma: 0.99
     seed: null
