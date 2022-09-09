@@ -2,6 +2,7 @@ import logging
 import os
 
 from rltrading import Data, Environment, Agent
+from stable_baselines3.common.monitor import Monitor
 
 logger = logging.getLogger("root")
 
@@ -67,20 +68,20 @@ class Experiment:
         )
 
         # initialize training gym environment
-        self.training_gym = Environment(
+        self.training_gym = Monitor(Environment(
             data=self.training_data,
             window_size=window_size,
             scale_reward=scale_reward,
             use_time=use_time,
-        )
+        ))
 
         # initialize testing gym environment
-        self.testing_gym = Environment(
+        self.testing_gym = Monitor(Environment(
             data=self.testing_data,
             window_size=window_size,
             enable_render=enable_render,
             use_time=use_time,
-        )
+        ))
 
         # initialize overall experiment related parameters
         self.model_config = config.get("agent").get("model")
@@ -112,6 +113,7 @@ class TrainExperiment(Experiment):
 
         agent_config = config.get("agent")
         episodes = agent_config.get("episodes")
+        save_model_interval = agent_config.get("save_model_interval")
         timesteps = episodes * len(self.training_data)
         log_interval = agent_config.get("log_interval")
         sb_logger = agent_config.get("sb_logger")
@@ -122,6 +124,7 @@ class TrainExperiment(Experiment):
             testing_gym_env=self.testing_gym,
             episodes=episodes,
             timesteps=timesteps,
+            save_model_interval=save_model_interval,
             log_interval=log_interval,
             sb_logger=sb_logger,
             model_config=self.model_config,

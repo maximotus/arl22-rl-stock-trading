@@ -8,6 +8,7 @@ from functools import partial
 from collections import namedtuple
 from stable_baselines3 import DQN, PPO, A2C
 from stable_baselines3.common.logger import configure
+from stable_baselines3.common.callbacks import EvalCallback
 
 from rltrading.learn.result_handler import plot_result, save_result
 
@@ -24,6 +25,7 @@ class Agent:
         save_path: str,
         training_gym_env: gym.Env,
         testing_gym_env: gym.Env,
+        save_model_interval: int = -1,
         episodes: int = -1,
         timesteps: int = -1,
         log_interval: int = 5,
@@ -37,12 +39,22 @@ class Agent:
         self.episodes = episodes
         self.timesteps = timesteps
         self.log_interval = log_interval
-        self.model_save_path = os.path.join(save_path, "model", f"episode-{episodes}")
+        self.save_model_interval = save_model_interval
+        self.predict_deterministic = model_config.get("predict_deterministic")
+        self.model_save_path = os.path.join(save_path, "model")
         self.stats_save_path = os.path.join(save_path, "stats")
         self.sb_logger = (
             configure(self.stats_save_path, sb_logger) if sb_logger else None
         )
-        self.predict_deterministic = model_config.get("predict_deterministic")
+        best_save_path = os.path.join(self.model_save_path, "best")
+        self.eval_callback = EvalCallback(
+            self.testing_gym_env,
+            best_model_save_path=best_save_path,
+            log_path=self.model_save_path,
+            eval_freq=(self.timesteps / self.episodes) * self.save_model_interval,
+            deterministic=self.predict_deterministic,
+            render=False,
+        )
 
         # initialize device if it is known
         device_name = model_config.get("device")
@@ -154,9 +166,9 @@ class Agent:
 
     def learn(self):
         self.model.set_logger(self.sb_logger)
-        self.model.learn(total_timesteps=self.timesteps, log_interval=self.log_interval)
-        self.model.save(self.model_save_path)
-        logger.info(f"Saved the model at {self.model_save_path}")
+        self.model.learn(total_timesteps=self.timesteps, log_interval=self.log_interval, callback=self.eval_callback)
+        #self.model.save(self.model_save_path)
+        logger.info(f"Saved the models at {self.model_save_path}")
 
     def test(self, envs: List[str]):
         env_aliases = {"test": self.testing_gym_env, "train": self.training_gym_env}
