@@ -21,14 +21,14 @@ ResultMemory = namedtuple(
 class Agent:
     def __init__(
         self: "Agent",
+        save_path: str,
         training_gym_env: gym.Env,
         testing_gym_env: gym.Env,
-        episodes: int,
-        timesteps: int,
-        log_interval: int,
-        sb_logger: List[str],
-        save_path: str,
-        model_config: dict,
+        episodes: int = -1,
+        timesteps: int = -1,
+        log_interval: int = 5,
+        sb_logger: List[str] = None,
+        model_config: dict = None,
     ):
         logger.info("Initializing agent...")
 
@@ -39,7 +39,10 @@ class Agent:
         self.log_interval = log_interval
         self.model_save_path = os.path.join(save_path, "model", f"episode-{episodes}")
         self.stats_save_path = os.path.join(save_path, "stats")
-        self.sb_logger = configure(self.stats_save_path, sb_logger)
+        self.sb_logger = (
+            configure(self.stats_save_path, sb_logger) if sb_logger else None
+        )
+        self.predict_deterministic = model_config.get("predict_deterministic")
 
         # initialize device if it is known
         device_name = model_config.get("device")
@@ -50,12 +53,43 @@ class Agent:
             raise ValueError(msg)
         device = (
             torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            if device_name == "auto"
+            if device_name in ["auto", "cuda"]
             else torch.device(device_name)
         )
+        if device_name == "cuda" and not torch.cuda.is_available():
+            logger.warning(
+                f"Specified device cuda but cuda is not available! "
+                f"torch.cuda.is_available()=={torch.cuda.is_available()}"
+            )
         logger.info(f"Using device {device}")
 
-        # initialize model if policy_id and model_id are known
+        # check compatibility of specified rl_model_id
+        rl_model_id = model_config.get("name")
+        rl_models = ["PPO", "DQN", "A2C"]
+        if rl_model_id not in rl_models:
+            msg = f"Unknown RL-Model: {rl_model_id}"
+            logger.error(msg)
+            raise ValueError(msg)
+
+        # initialize model depending on whether there is a pretrained one specified
+        model_path = model_config.get("pretrained_path")
+        self.model = None
+        if model_path is not None:
+            self._init_pretrained_model(rl_model_id, model_path, device)
+        else:
+            self._init_new_model(rl_model_id, model_config, device)
+        assert self.model
+        logger.info(f"Using model {rl_model_id}")
+
+        logger.info("Successfully initialized agent")
+
+    def _init_pretrained_model(self, rl_model_id, model_path, device):
+        rl_model_aliases = {"PPO": PPO, "DQN": DQN, "A2C": A2C}
+
+        self.model = rl_model_aliases[rl_model_id].load(path=model_path, device=device)
+
+    def _init_new_model(self, rl_model_id, model_config, device):
+        # initialize model if policy_id is known
         # one could improve the rl model aliasing by differentiating between
         # stable_baselines3.common.off_policy_algorithm.OffPolicyAlgorithm (DQN) and
         # from stable_baselines3.common.on_policy_algorithm.OnPolicyAlgorithm (PPO and A2C)
@@ -106,12 +140,6 @@ class Agent:
             ),
         }
 
-        rl_model_id = model_config.get("name")
-        if rl_model_id not in rl_model_aliases.keys():
-            msg = f"Unknown RL-Model: {rl_model_id}"
-            logger.error(msg)
-            raise ValueError(msg)
-
         # initialize model with shared parameters of all models
         # the model-specific parameters are taken from the dictionary above using partial
         self.model = rl_model_aliases[rl_model_id](
@@ -123,9 +151,6 @@ class Agent:
             gamma=model_config.get("gamma"),
             seed=model_config.get("seed"),
         )
-        logger.info(f"Using model {rl_model_id}")
-
-        logger.info("Successfully initialized agent")
 
     def learn(self):
         self.model.set_logger(self.sb_logger)
@@ -133,20 +158,32 @@ class Agent:
         self.model.save(self.model_save_path)
         logger.info(f"Saved the model at {self.model_save_path}")
 
-    def test(self):
-        memory = []
-        obs = self.testing_gym_env.reset()
-        while True:
-            action, _states = self.model.predict(obs, deterministic=True)
-            obs, reward, done, info = self.testing_gym_env.step(action)
-            memory.append(ResultMemory(obs.tolist(), action, _states, reward, info))
-            self.testing_gym_env.render()
-            if done:
-                _ = self.testing_gym_env.reset()
-                break
-        plot_result(result_memory=memory, save_path=self.stats_save_path)
-        save_result(memory, self.stats_save_path)
-        logger.info(f"Saved the results at {self.stats_save_path}")
+    def test(self, envs: List[str]):
+        env_aliases = {"test": self.testing_gym_env, "train": self.training_gym_env}
+
+        for env in envs:
+            logger.info(f"Testing on {env} gym environment")
+            memory = []
+            obs = env_aliases[env].reset()
+            while True:
+                action, _states = self.model.predict(
+                    obs, deterministic=self.predict_deterministic
+                )
+                obs, reward, done, info = env_aliases[env].step(action)
+                memory.append(ResultMemory(obs.tolist(), action, _states, reward, info))
+                env_aliases[env].render()
+                if done:
+                    _ = env_aliases[env].reset()
+                    break
+            save_path = os.path.join(self.stats_save_path, f"{env}-env")
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
+                print("Created directory", save_path)
+            plot_result(result_memory=memory, save_path=save_path)
+            save_result(memory, save_path)
+            logger.info(f"Saved the results at {save_path}")
 
     def eval(self):
-        raise NotImplementedError
+        self.test(envs=["test", "train"])
+        # TODO do some more evaluation
+        # e.g. compare with heuristics

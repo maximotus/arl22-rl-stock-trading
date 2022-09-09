@@ -1,6 +1,6 @@
 import argparse
 
-from experiment import TrainExperiment
+from experiment import TrainExperiment, EvalExperiment
 from misc import setup_logger, parse_config, create_experiment_dir
 
 
@@ -26,7 +26,6 @@ def main():
     experiment_path = create_experiment_dir(
         configuration_file,
         configuration.get("experiment_path"),
-        configuration.get("agent").get("model").get("pretrained_path"),
         mode,
     )
 
@@ -47,7 +46,8 @@ def main():
         exp.conduct()
 
     if mode == "eval":
-        raise NotImplementedError
+        exp = EvalExperiment(configuration)
+        exp.conduct()
 
 
 if __name__ == "__main__":
