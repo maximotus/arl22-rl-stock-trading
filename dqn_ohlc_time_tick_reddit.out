@@ -796,3 +796,48 @@ Logging to ./experiments/results/ohlc_time_tick_reddit/dqn/train/ex3/2022-09-09-
 |    loss             | 2.38e-05 |
 |    n_updates        | 1156884  |
 ----------------------------------
+----------------------------------
+| rollout/            |          |
+|    ep_len_mean      | 7.8e+04  |
+|    ep_rew_mean      | -0.303   |
+|    exploration_rate | 0.05     |
+| time/               |          |
+|    episodes         | 65       |
+|    fps              | 312      |
+|    time_elapsed     | 16212    |
+|    total_timesteps  | 5067335  |
+| train/              |          |
+|    learning_rate    | 0.0001   |
+|    loss             | 5.4e-08  |
+|    n_updates        | 1254333  |
+----------------------------------
+----------------------------------
+| rollout/            |          |
+|    ep_len_mean      | 7.8e+04  |
+|    ep_rew_mean      | -0.298   |
+|    exploration_rate | 0.05     |
+| time/               |          |
+|    episodes         | 70       |
+|    fps              | 312      |
+|    time_elapsed     | 17473    |
+|    total_timesteps  | 5457130  |
+| train/              |          |
+|    learning_rate    | 0.0001   |
+|    loss             | 6.41e-08 |
+|    n_updates        | 1351782  |
+----------------------------------
+----------------------------------
+| rollout/            |          |
+|    ep_len_mean      | 7.8e+04  |
+|    ep_rew_mean      | -0.296   |
+|    exploration_rate | 0.05     |
+| time/               |          |
+|    episodes         | 75       |
+|    fps              | 312      |
+|    time_elapsed     | 18735    |
+|    total_timesteps  | 5846925  |
+| train/              |          |
+|    learning_rate    | 0.0001   |
+|    loss             | 1.09e-07 |
+|    n_updates        | 1449231  |
+----------------------------------
