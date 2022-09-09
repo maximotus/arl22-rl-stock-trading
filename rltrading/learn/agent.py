@@ -8,7 +8,7 @@ from functools import partial
 from collections import namedtuple
 from stable_baselines3 import DQN, PPO, A2C
 from stable_baselines3.common.logger import configure
-from stable_baselines3.common.callbacks import EvalCallback
+from stable_baselines3.common.callbacks import EvalCallback, CheckpointCallback, CallbackList
 
 from rltrading.learn.result_handler import plot_result, save_result
 
@@ -47,14 +47,22 @@ class Agent:
             configure(self.stats_save_path, sb_logger) if sb_logger else None
         )
         best_save_path = os.path.join(self.model_save_path, "best")
-        self.eval_callback = EvalCallback(
-            self.testing_gym_env,
-            best_model_save_path=best_save_path,
-            log_path=self.model_save_path,
-            eval_freq=(self.timesteps / self.episodes) * self.save_model_interval,
-            deterministic=self.predict_deterministic,
-            render=False,
-        )
+
+        self.callbacklist = CallbackList([
+            CheckpointCallback(
+                save_freq=(self.timesteps / self.episodes) * self.save_model_interval,
+                save_path=self.model_save_path,
+            ),
+            EvalCallback(
+                self.testing_gym_env,
+                best_model_save_path=best_save_path,
+                log_path=self.model_save_path,
+                eval_freq=(self.timesteps / self.episodes) * self.save_model_interval,
+                deterministic=self.predict_deterministic,
+                render=False,
+            )
+        ])
+        
 
         # initialize device if it is known
         device_name = model_config.get("device")
@@ -166,8 +174,7 @@ class Agent:
 
     def learn(self):
         self.model.set_logger(self.sb_logger)
-        self.model.learn(total_timesteps=self.timesteps, log_interval=self.log_interval, callback=self.eval_callback)
-        #self.model.save(self.model_save_path)
+        self.model.learn(total_timesteps=self.timesteps, log_interval=self.log_interval, callback=self.callbacklist)
         logger.info(f"Saved the models at {self.model_save_path}")
 
     def test(self, envs: List[str]):
