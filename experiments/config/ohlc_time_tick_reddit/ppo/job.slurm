@@ -1,8 +1,8 @@
 #!/bin/sh
 #SBATCH --nodes=1
 #SBATCH --job-name=ppo_ohlc_time_tick_reddit
-#SBATCH --output=ppo_ohlc_time_tick_reddit.out
-#SBATCH --error=ppo_ohlc_time_tick_reddit.err
+#SBATCH --output=./logs/ohlc_time_tick_reddit/ppo/ppo_ohlc_time_tick_reddit.out
+#SBATCH --error=./logs/ohlc_time_tick_reddit/ppo/ppo_ohlc_time_tick_reddit.err
 #SBATCH --partition=All
 echo "Starting multi-experiment..."
 conda activate arl22

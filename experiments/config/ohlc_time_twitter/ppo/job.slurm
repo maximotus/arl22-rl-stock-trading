@@ -1,8 +1,8 @@
 #!/bin/sh
 #SBATCH --nodes=1
 #SBATCH --job-name=ppo_ohlc_time_twitter
-#SBATCH --output=ppo_ohlc_time_twitter.out
-#SBATCH --error=ppo_ohlc_time_twitter.err
+#SBATCH --output=./logs/ohlc_time_twitter/ppo/ppo_ohlc_time_twitter.out
+#SBATCH --error=./logs/ohlc_time_twitter/ppo/ppo_ohlc_time_twitter.err
 #SBATCH --partition=All
 echo "Starting multi-experiment..."
 conda activate arl22

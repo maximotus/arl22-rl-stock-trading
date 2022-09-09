@@ -1,8 +1,8 @@
 #!/bin/sh
 #SBATCH --nodes=1
 #SBATCH --job-name=a2c_ohlc_time
-#SBATCH --output=a2c_ohlc_time.out
-#SBATCH --error=a2c_ohlc_time.err
+#SBATCH --output=./logs/ohlc_time/a2c/a2c_ohlc_time.out
+#SBATCH --error=./logs/ohlc_time/a2c/a2c_ohlc_time.err
 #SBATCH --partition=All
 echo "Starting multi-experiment..."
 conda activate arl22
