@@ -122,7 +122,7 @@ class Environment(gym.Env):
             self.current_info,
         )
 
-    def render(self, **kwargs):
+    def render(self, mode='human', **kwargs):
         if not self.enable_render:
             return
 
