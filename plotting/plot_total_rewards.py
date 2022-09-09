@@ -1,6 +1,7 @@
 import argparse
 import re
 import ast
+import json
 
 from pathlib import Path
 from typing import List
@@ -8,6 +9,23 @@ from typing import List
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import math
+
+
+class InfDecoder(json.JSONDecoder):
+    def __init__(self, *args, **kwargs):
+        json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+
+    def object_hook(self, dct):
+        # print(dct)
+        if 'total_profit' in dct:
+            # print('here', dct['total_profit'])
+            dct['total_profit'] = float(f'{dct["total_profit"]}')
+        # if 'Actor' in dct:
+        #     actor = Actor(dct['Actor']['Name'], dct['Actor']['Age'], '')
+        #     movie = Movie(dct['Movie']['Title'], dct['Movie']['Gross'], '', dct['Movie']['Year'])
+        #     return Edge(actor, movie)
+        return dct
 
 # TODO: 
 #   - create a Plot for the total reward over all three runs
@@ -25,6 +43,7 @@ import matplotlib.pyplot as plt
 # Plots for a single agent:
 def plots_singel_agent(agent: str, runs: List[Path]):
     _, infos = __create_data_frames(runs)
+    infos = infos.reset_index()
     plot_mean_std_total_reward(agent, infos)
     plot_mean_std_total_profit(agent, infos)
     plot_per_run_comparison_total_reward(agent, infos)
@@ -98,9 +117,30 @@ def __create_data_frames(runs: List[Path]) -> pd.DataFrame:
 
 def __fix_dict(ds: str) -> dict:
     fixed = re.sub(r"('position':) <Positions.[a-zA-Z]*: ([0-9])>", r"\1 \2", ds)
-    fixed_dict = ast.literal_eval(fixed)
+    fixed = re.sub(r"'", r'"', fixed)
+    fixed = re.sub(r"([-]*)(inf)", r'"\1\2"', fixed)
+    # fixed = re.sub(r"inf", r'"inf"', fixed)
+    # print(fixed)
+    # fixed_inf = re.sub(r"([-]*)(inf)", math.inf, fixed)
+    fixed_dict = json.loads(fixed, cls=InfDecoder)
+    # fixed_dict = ast.literal_eval(fixed)
     observation = fixed_dict.pop("observation")
     return {**fixed_dict, **observation}
 
 
-plots_singel_agent("Debug", runs=["./plotting/data/result-1.csv", "./plotting/data/result-2.csv", "./plotting/data/result-3.csv"])
+# plots_singel_agent("Debug", runs=["./plotting/data/result-1.csv", "./plotting/data/result-2.csv", "./plotting/data/result-3.csv"])
+plots_singel_agent("DQN", runs=[
+    "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time/dqn/train/ex1/2022-09-08-19-13-30/stats\\result.csv",
+    "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time/dqn/train/ex2/2022-09-09-00-53-22/stats\\result.csv",
+    "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time/dqn/train/ex3/2022-09-09-06-31-24/stats\\result.csv",
+])
+# plots_singel_agent("DQN", runs=[
+#     "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time_reddit/dqn/train/ex1/2022-09-08-19-18-39/stats\result.csv",
+#     "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time_reddit/dqn/train/ex2/2022-09-09-00-35-32/stats\result.csv",
+#     "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time_reddit/dqn/train/ex3/2022-09-09-05-49-37/stats\result.csv",
+# ])
+# plots_singel_agent("DQN", runs=[
+#     "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time_twitter/dqn/train/ex1/2022-09-08-19-19-13/stats\result.csv",
+#     "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time_twitter/dqn/train/ex2/2022-09-09-00-33-56/stats\result.csv",
+#     "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time_twitter/dqn/train/ex3/2022-09-09-05-49-37/stats\result.csv",
+# ])

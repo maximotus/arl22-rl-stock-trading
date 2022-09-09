@@ -217,3 +217,18 @@ Wrapping the env in a DummyVecEnv.
 |    loss             | 5.89e-08 |
 |    n_updates        | 1351782  |
 ----------------------------------
+----------------------------------
+| rollout/            |          |
+|    ep_len_mean      | 7.8e+04  |
+|    ep_rew_mean      | -0.157   |
+|    exploration_rate | 0.05     |
+| time/               |          |
+|    episodes         | 75       |
+|    fps              | 88       |
+|    time_elapsed     | 65848    |
+|    total_timesteps  | 5846925  |
+| train/              |          |
+|    learning_rate    | 0.0001   |
+|    loss             | 1.69e-07 |
+|    n_updates        | 1449231  |
+----------------------------------
