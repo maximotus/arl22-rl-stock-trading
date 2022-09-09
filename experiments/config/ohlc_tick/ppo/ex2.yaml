@@ -22,16 +22,16 @@ agent:
 
   # define model with its specific parameters
   model:
-    name: PPO
+    name: PPO # compare https://stable-baselines3.readthedocs.io/en/master/modules/ppo.html
     pretrained_path: # empty if start from scratch TODO implement
     policy: MlpPolicy
     device: auto # (cuda / cpu / auto)
-    verbose: 0 # 0 none, 1 training information, 2 debug
+    verbose: 1 # 0 none, 1 training information, 2 debug
     learning_rate: 0.0003
     gamma: 0.99
     seed: 2
     n_steps: 2048
-    batch_size: 32
+    batch_size: 64
     n_epochs: 10
     gae_lambda: 0.95
     clip_range: 0.2
