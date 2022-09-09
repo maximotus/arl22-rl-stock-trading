@@ -30,7 +30,7 @@ agent:
     verbose: 1 # 0 none, 1 training information, 2 debug
     learning_rate: 0.0007
     gamma: 0.99
-    seed: 1
+    seed: 2
     n_steps: 5
     gae_lambda: 1.0
     ent_coef: 0.0
