@@ -19,24 +19,27 @@ gym_environment:
 agent:
   episodes: 100
   log_interval: 5
+  save_model_interval: 1
   sb_logger: ["stdout", "csv", "tensorboard"] # format options are: "stdout", "csv", "log", "tensorboard", "json"
 
   # define model with its specific parameters
   model:
-    name: DQN # compare https://stable-baselines3.readthedocs.io/en/master/modules/dqn.html
+    name: PPO # compare https://stable-baselines3.readthedocs.io/en/master/modules/ppo.html
     pretrained_path: # empty if start from scratch TODO implement
     policy: MlpPolicy
     device: auto # (cuda / cpu / auto)
     verbose: 1 # 0 none, 1 training information, 2 debug
-    learning_rate: 0.0001
+    learning_rate: 0.0003
     gamma: 0.99
     seed: null
-    buffer_size: 1000000
-    learning_starts: 50000
-    batch_size: 32
-    tau: 1.0
-    train_freq: 4
-    gradient_steps: 1
-    exploration_fraction: 0.1
-    exploration_initial_eps: 1.0
-    exploration_final_eps: 0.05
+    n_steps: 2048
+    batch_size: 64
+    n_epochs: 10
+    gae_lambda: 0.95
+    clip_range: 0.2
+    clip_range_vf: null
+    normalize_advantage: true
+    ent_coef: 0.0
+    vf_coef: 0.5
+    target_kl: null
+    predict_deterministic: true # only for testing

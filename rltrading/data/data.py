@@ -46,7 +46,7 @@ class Observation(BaseModel):
 
     def remove(self: "Observation", keys: List[str]):
         self._data = self._data.drop(labels=keys)
-        
+
     def to_dict(self: "Observation") -> dict:
         return self._data.to_dict()
 

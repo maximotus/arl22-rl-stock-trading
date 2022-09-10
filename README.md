@@ -12,7 +12,7 @@ pip install poetry
 
 ```bash
 poetry install
-python experiments/main.py --conf ./config/template-dqn.yaml --finnhub-key FINNHUB_API_KEY
+python experiments/main.py --conf ./config/template-dqn-train.yaml --finnhub-key FINNHUB_API_KEY
 ```
 
 ## Data
