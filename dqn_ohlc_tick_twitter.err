@@ -44,3 +44,33 @@ IMPORTANT: You may need to close and restart your shell after running 'conda ini
   self._total_profit = quantity / curr_close
 /home/b/blenninger/arl22-rl-stock-trading/rltrading/gym/environment.py:106: RuntimeWarning: overflow encountered in double_scalars
   self._total_profit = quantity / curr_close
+2022-09-09 19:49:21,499 - INFO - agent - Saved the model at ./experiments/results/ohlc_tick_twitter/dqn/train/ex1/2022-09-08-19-24-51/model/episode-100
+2022-09-09 19:49:21,505 - INFO - experiment - Finished learning the agent
+2022-09-09 19:49:21,505 - INFO - experiment - Testing learned policy on test data...
+2022-09-09 19:53:56,872 - INFO - agent - Saved the results at ./experiments/results/ohlc_tick_twitter/dqn/train/ex1/2022-09-08-19-24-51/stats
+2022-09-09 19:53:57,601 - INFO - experiment - Finished testing the learned policy on test data
+2022-09-09 19:54:19,439 - INFO - main - Successfully read the given configuration file, created experiment directory and set up logger.
+2022-09-09 19:54:19,439 - INFO - main - Starting experiment in mode train using configuration ./experiments/config/ohlc_tick_twitter/dqn/ex2.yaml
+2022-09-09 19:54:19,439 - INFO - experiment - Initializing training experiment...
+2022-09-09 19:54:19,439 - INFO - experiment - Using the following features as learnable parameters: ['open', 'high', 'low', 'close', 'tick_volume', 'spread', 'real_volume', 'bid_count', 'bid_mean', 'bid_std', 'bid_min', 'bid_25%', 'bid_50%', 'bid_75%', 'bid_max', 'ask_count', 'ask_mean', 'ask_std', 'ask_min', 'ask_25%', 'ask_50%', 'ask_75%', 'ask_max', 'last_count', 'last_mean', 'last_std', 'last_min', 'last_25%', 'last_50%', 'last_75%', 'last_max', 'volume_count', 'volume_mean', 'volume_std', 'volume_min', 'volume_25%', 'volume_50%', 'volume_75%', 'volume_max', 'time_msc_count', 'time_msc_mean', 'time_msc_std', 'time_msc_min', 'time_msc_25%', 'time_msc_50%', 'time_msc_75%', 'time_msc_max', 'flags_count', 'flags_mean', 'flags_std', 'flags_min', 'flags_25%', 'flags_50%', 'flags_75%', 'flags_max', 'volume_real_count', 'volume_real_mean', 'volume_real_std', 'volume_real_min', 'volume_real_25%', 'volume_real_50%', 'volume_real_75%', 'volume_real_max', 'twitter_mention_count', 'twitter_mention_mean', 'twitter_mention_std', 'twitter_mention_min', 'twitter_mention_25%', 'twitter_mention_50%', 'twitter_mention_75%', 'twitter_mention_max', 'twitter_postitive_score_count', 'twitter_postitive_score_mean', 'twitter_postitive_score_std', 'twitter_postitive_score_min', 'twitter_postitive_score_25%', 'twitter_postitive_score_50%', 'twitter_postitive_score_75%', 'twitter_postitive_score_max', 'twitter_negative_score_count', 'twitter_negative_score_mean', 'twitter_negative_score_std', 'twitter_negative_score_min', 'twitter_negative_score_25%', 'twitter_negative_score_50%', 'twitter_negative_score_75%', 'twitter_negative_score_max', 'twitter_positive_mention_count', 'twitter_positive_mention_mean', 'twitter_positive_mention_std', 'twitter_positive_mention_min', 'twitter_positive_mention_25%', 'twitter_positive_mention_50%', 'twitter_positive_mention_75%', 'twitter_positive_mention_max', 'twitter_negative_mention_count', 'twitter_negative_mention_mean', 'twitter_negative_mention_std', 'twitter_negative_mention_min', 'twitter_negative_mention_25%', 'twitter_negative_mention_50%', 'twitter_negative_mention_75%', 'twitter_negative_mention_max', 'twitter_score_count', 'twitter_score_mean', 'twitter_score_std', 'twitter_score_min', 'twitter_score_25%', 'twitter_score_50%', 'twitter_score_75%', 'twitter_score_max']
+2022-09-09 19:54:19,439 - INFO - experiment - Using time as learnable parameter: False
+2022-09-09 19:54:24,090 - INFO - experiment - Using training data located in ./experiments/data/minmax/train.csv with length=77990 and shape=(77990, 112), and using testing data located in ./experiments/data/minmax/test.csv with length=19497 and shape=(19497, 112)
+2022-09-09 19:54:24,091 - INFO - environment - Using action space: Discrete(2)
+2022-09-09 19:54:24,091 - INFO - environment - Using observation space of shape: (30, 112)
+2022-09-09 19:54:24,101 - INFO - environment - Using action space: Discrete(2)
+2022-09-09 19:54:24,102 - INFO - environment - Using observation space of shape: (30, 112)
+2022-09-09 19:54:24,112 - INFO - experiment - Using gym environment with window_size=30, scale_reward=1 and enable_render=False
+2022-09-09 19:54:24,112 - INFO - agent - Initializing agent...
+2022-09-09 19:54:24,319 - INFO - agent - Using device cuda
+2022-09-09 19:54:24,319 - INFO - agent - Using policy MlpPolicy
+2022-09-09 19:54:28,677 - INFO - agent - Using model DQN
+2022-09-09 19:54:28,677 - INFO - agent - Successfully initialized agent
+2022-09-09 19:54:28,677 - INFO - experiment - Successfully initialized training experiment
+2022-09-09 19:54:28,677 - INFO - experiment - Starting training experiment...
+2022-09-09 19:54:28,677 - INFO - experiment - Learning the agent...
+/home/b/blenninger/arl22-rl-stock-trading/rltrading/gym/environment.py:106: RuntimeWarning: overflow encountered in double_scalars
+  self._total_profit = quantity / curr_close
+/home/b/blenninger/arl22-rl-stock-trading/rltrading/gym/environment.py:106: RuntimeWarning: overflow encountered in double_scalars
+  self._total_profit = quantity / curr_close
+/home/b/blenninger/arl22-rl-stock-trading/rltrading/gym/environment.py:106: RuntimeWarning: overflow encountered in double_scalars
+  self._total_profit = quantity / curr_close

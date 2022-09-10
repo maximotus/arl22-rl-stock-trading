@@ -20,7 +20,8 @@ class InfDecoder(json.JSONDecoder):
         # print(dct)
         if 'total_profit' in dct:
             # print('here', dct['total_profit'])
-            dct['total_profit'] = float(f'{dct["total_profit"]}')
+            # dct['total_profit'] = float(f'{dct["total_profit"]}')
+            dct['total_profit'] = float(f"{dct['total_profit']}")
         # if 'Actor' in dct:
         #     actor = Actor(dct['Actor']['Name'], dct['Actor']['Age'], '')
         #     movie = Movie(dct['Movie']['Title'], dct['Movie']['Gross'], '', dct['Movie']['Year'])
@@ -129,10 +130,10 @@ def __fix_dict(ds: str) -> dict:
 
 
 # plots_singel_agent("Debug", runs=["./plotting/data/result-1.csv", "./plotting/data/result-2.csv", "./plotting/data/result-3.csv"])
-plots_singel_agent("DQN", runs=[
-    "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time/dqn/train/ex1/2022-09-08-19-13-30/stats\\result.csv",
-    "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time/dqn/train/ex2/2022-09-09-00-53-22/stats\\result.csv",
-    "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time/dqn/train/ex3/2022-09-09-06-31-24/stats\\result.csv",
+plots_singel_agent("A2C", runs=[
+    "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time/a2c/train/ex1/2022-09-09-13-36-04/stats\\result.csv",
+    "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time/a2c/train/ex2/2022-09-09-21-18-36/stats\\result.csv",
+    "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time/a2c/train/ex3/2022-09-10-04-59-54/stats\\result.csv",
 ])
 # plots_singel_agent("DQN", runs=[
 #     "/home/b/blenninger/arl22-rl-stock-trading/experiments/results/ohlc_time_reddit/dqn/train/ex1/2022-09-08-19-18-39/stats\result.csv",

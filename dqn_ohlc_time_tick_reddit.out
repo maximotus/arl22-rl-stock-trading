@@ -841,3 +841,80 @@ Logging to ./experiments/results/ohlc_time_tick_reddit/dqn/train/ex3/2022-09-09-
 |    loss             | 1.09e-07 |
 |    n_updates        | 1449231  |
 ----------------------------------
+----------------------------------
+| rollout/            |          |
+|    ep_len_mean      | 7.8e+04  |
+|    ep_rew_mean      | -0.268   |
+|    exploration_rate | 0.05     |
+| time/               |          |
+|    episodes         | 80       |
+|    fps              | 311      |
+|    time_elapsed     | 19994    |
+|    total_timesteps  | 6236720  |
+| train/              |          |
+|    learning_rate    | 0.0001   |
+|    loss             | 3.66e-07 |
+|    n_updates        | 1546679  |
+----------------------------------
+----------------------------------
+| rollout/            |          |
+|    ep_len_mean      | 7.8e+04  |
+|    ep_rew_mean      | -0.248   |
+|    exploration_rate | 0.05     |
+| time/               |          |
+|    episodes         | 85       |
+|    fps              | 311      |
+|    time_elapsed     | 21253    |
+|    total_timesteps  | 6626515  |
+| train/              |          |
+|    learning_rate    | 0.0001   |
+|    loss             | 7.13e-08 |
+|    n_updates        | 1644128  |
+----------------------------------
+----------------------------------
+| rollout/            |          |
+|    ep_len_mean      | 7.8e+04  |
+|    ep_rew_mean      | -0.251   |
+|    exploration_rate | 0.05     |
+| time/               |          |
+|    episodes         | 90       |
+|    fps              | 311      |
+|    time_elapsed     | 22514    |
+|    total_timesteps  | 7016310  |
+| train/              |          |
+|    learning_rate    | 0.0001   |
+|    loss             | 3.2e-06  |
+|    n_updates        | 1741577  |
+----------------------------------
+----------------------------------
+| rollout/            |          |
+|    ep_len_mean      | 7.8e+04  |
+|    ep_rew_mean      | -0.224   |
+|    exploration_rate | 0.05     |
+| time/               |          |
+|    episodes         | 95       |
+|    fps              | 311      |
+|    time_elapsed     | 23774    |
+|    total_timesteps  | 7406105  |
+| train/              |          |
+|    learning_rate    | 0.0001   |
+|    loss             | 3.45e-09 |
+|    n_updates        | 1839026  |
+----------------------------------
+----------------------------------
+| rollout/            |          |
+|    ep_len_mean      | 7.8e+04  |
+|    ep_rew_mean      | -0.231   |
+|    exploration_rate | 0.05     |
+| time/               |          |
+|    episodes         | 100      |
+|    fps              | 311      |
+|    time_elapsed     | 25033    |
+|    total_timesteps  | 7795900  |
+| train/              |          |
+|    learning_rate    | 0.0001   |
+|    loss             | 6.89e-09 |
+|    n_updates        | 1936474  |
+----------------------------------
+action 0:  5  actions 1:  19461
+Finished multi-experiment

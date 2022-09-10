@@ -92,3 +92,8 @@ IMPORTANT: You may need to close and restart your shell after running 'conda ini
 2022-09-09 09:19:25,968 - INFO - experiment - Learning the agent...
 /home/b/blenninger/arl22-rl-stock-trading/rltrading/gym/environment.py:106: RuntimeWarning: overflow encountered in double_scalars
   self._total_profit = quantity / curr_close
+2022-09-09 16:16:49,826 - INFO - agent - Saved the model at ./experiments/results/ohlc_time_tick_reddit/dqn/train/ex3/2022-09-09-09-19-17/model/episode-100
+2022-09-09 16:16:49,827 - INFO - experiment - Finished learning the agent
+2022-09-09 16:16:49,827 - INFO - experiment - Testing learned policy on test data...
+2022-09-09 16:18:29,571 - INFO - agent - Saved the results at ./experiments/results/ohlc_time_tick_reddit/dqn/train/ex3/2022-09-09-09-19-17/stats
+2022-09-09 16:18:29,572 - INFO - experiment - Finished testing the learned policy on test data
