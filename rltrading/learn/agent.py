@@ -50,19 +50,18 @@ class Agent:
 
         self.callbacklist = CallbackList([
             CheckpointCallback(
-                save_freq=(self.timesteps / self.episodes) * self.save_model_interval,
+                save_freq=int((self.timesteps / self.episodes) * self.save_model_interval),
                 save_path=self.model_save_path,
             ),
             EvalCallback(
                 self.testing_gym_env,
                 best_model_save_path=best_save_path,
                 log_path=self.model_save_path,
-                eval_freq=(self.timesteps / self.episodes) * self.save_model_interval,
+                eval_freq=int((self.timesteps / self.episodes) * self.save_model_interval),
                 deterministic=self.predict_deterministic,
                 render=False,
             )
         ])
-        
 
         # initialize device if it is known
         device_name = model_config.get("device")
