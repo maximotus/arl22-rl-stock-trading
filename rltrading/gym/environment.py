@@ -70,12 +70,12 @@ class Environment(gym.Env):
     def reset(self):
         # the initial time will be the window_size-th index plus one (so the window already fits; time starts with 1)
         self.time = self.window_size
-        self.active_position = Positions.Long
+        self.active_position = Positions.Short
         self._total_profit = 1.0
         self._total_reward = 0.0
         self.close_prices = dict(date=[], price=[])
         # avoid division by 0 if data is normalized
-        self.last_trade_price = self.data.item(self.time).value("close") + np.nextafter(
+        self.last_trade_price = self.data.item(self.time - 1).value("close") + np.nextafter(
             0, 1
         )
         self.done = False
@@ -84,6 +84,7 @@ class Environment(gym.Env):
         return self._get_obs()
 
     def step(self, action: int):
+        self.time += 1
         curr_observation = self.data.item(self.time)
 
         step_reward = 0.0
@@ -111,7 +112,6 @@ class Environment(gym.Env):
         # logger.debug(f"Total Reward: {self._total_reward}")
         # logger.debug(f"Total Profit: {self._total_profit}")
 
-        self.time += 1
         done = not self.data.has_next(self.time)
 
         self.current_info = self._get_info(curr_observation.to_dict())
