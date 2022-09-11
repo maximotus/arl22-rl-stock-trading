@@ -71,6 +71,7 @@ class Experiment:
         self.training_gym = Monitor(Environment(
             data=self.training_data,
             window_size=window_size,
+            enable_render=enable_render,
             scale_reward=scale_reward,
             use_time=use_time,
         ))

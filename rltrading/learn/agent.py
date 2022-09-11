@@ -46,7 +46,7 @@ class Agent:
         self.sb_logger = (
             configure(self.stats_save_path, sb_logger) if sb_logger else None
         )
-        best_save_path = os.path.join(self.model_save_path, "best")
+        self.best_save_path = os.path.join(self.model_save_path, "best")
 
         self.callbacklist = CallbackList([
             CheckpointCallback(
@@ -55,7 +55,7 @@ class Agent:
             ),
             EvalCallback(
                 self.testing_gym_env,
-                best_model_save_path=best_save_path,
+                best_model_save_path=self.best_save_path,
                 log_path=self.model_save_path,
                 eval_freq=int((self.timesteps / self.episodes) * self.save_model_interval),
                 deterministic=self.predict_deterministic,
@@ -70,7 +70,7 @@ class Agent:
             msg = f"Unknown device name: {device_name}"
             logger.error(msg)
             raise ValueError(msg)
-        device = (
+        self.device = (
             torch.device("cuda" if torch.cuda.is_available() else "cpu")
             if device_name in ["auto", "cuda"]
             else torch.device(device_name)
@@ -80,7 +80,7 @@ class Agent:
                 f"Specified device cuda but cuda is not available! "
                 f"torch.cuda.is_available()=={torch.cuda.is_available()}"
             )
-        logger.info(f"Using device {device}")
+        logger.info(f"Using device {self.device}")
 
         # check compatibility of specified rl_model_id
         rl_model_id = model_config.get("name")
@@ -94,20 +94,20 @@ class Agent:
         model_path = model_config.get("pretrained_path")
         self.model = None
         if model_path is not None:
-            self._init_pretrained_model(rl_model_id, model_path, device)
+            self._init_pretrained_model(rl_model_id, model_path)
         else:
-            self._init_new_model(rl_model_id, model_config, device)
+            self._init_new_model(rl_model_id, model_config)
         assert self.model
         logger.info(f"Using model {rl_model_id}")
 
         logger.info("Successfully initialized agent")
 
-    def _init_pretrained_model(self, rl_model_id, model_path, device):
+    def _init_pretrained_model(self, rl_model_id, model_path):
         rl_model_aliases = {"PPO": PPO, "DQN": DQN, "A2C": A2C}
 
-        self.model = rl_model_aliases[rl_model_id].load(path=model_path, device=device)
+        self.model = rl_model_aliases[rl_model_id].load(path=model_path, device=self.device)
 
-    def _init_new_model(self, rl_model_id, model_config, device):
+    def _init_new_model(self, rl_model_id, model_config):
         # initialize model if policy_id is known
         # one could improve the rl model aliasing by differentiating between
         # stable_baselines3.common.off_policy_algorithm.OffPolicyAlgorithm (DQN) and
@@ -164,7 +164,7 @@ class Agent:
         self.model = rl_model_aliases[rl_model_id](
             policy=policy_id,
             env=self.training_gym_env,
-            device=device,
+            device=self.device,
             verbose=model_config.get("verbose"),
             learning_rate=model_config.get("learning_rate"),
             gamma=model_config.get("gamma"),
@@ -174,7 +174,10 @@ class Agent:
     def learn(self):
         self.model.set_logger(self.sb_logger)
         self.model.learn(total_timesteps=self.timesteps, log_interval=self.log_interval, callback=self.callbacklist)
-        logger.info(f"Saved the models at {self.model_save_path}")
+        #eval callback always calls the best model best_model.zip"
+        best_model_file = os.path.join(self.best_save_path, "best_model")
+        self.model.load(path=best_model_file, device=self.device)
+        logger.info(f"Saved the models at {self.model_save_path}, using best model from {self.best_save_path}")
 
     def test(self, envs: List[str]):
         env_aliases = {"test": self.testing_gym_env, "train": self.training_gym_env}
