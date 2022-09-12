@@ -83,10 +83,10 @@ class Agent:
         logger.info(f"Using device {self.device}")
 
         # check compatibility of specified rl_model_id
-        rl_model_id = model_config.get("name")
+        self.rl_model_id = model_config.get("name")
         rl_models = ["PPO", "DQN", "A2C"]
-        if rl_model_id not in rl_models:
-            msg = f"Unknown RL-Model: {rl_model_id}"
+        if self.rl_model_id not in rl_models:
+            msg = f"Unknown RL-Model: {self.rl_model_id}"
             logger.error(msg)
             raise ValueError(msg)
 
@@ -94,20 +94,20 @@ class Agent:
         model_path = model_config.get("pretrained_path")
         self.model = None
         if model_path is not None:
-            self._init_pretrained_model(rl_model_id, model_path)
+            self._init_pretrained_model(model_path)
         else:
-            self._init_new_model(rl_model_id, model_config)
+            self._init_new_model(model_config)
         assert self.model
-        logger.info(f"Using model {rl_model_id}")
+        logger.info(f"Using model {self.rl_model_id}")
 
         logger.info("Successfully initialized agent")
 
-    def _init_pretrained_model(self, rl_model_id, model_path):
+    def _init_pretrained_model(self, model_path):
         rl_model_aliases = {"PPO": PPO, "DQN": DQN, "A2C": A2C}
 
-        self.model = rl_model_aliases[rl_model_id].load(path=model_path, device=self.device)
+        self.model = rl_model_aliases[self.rl_model_id].load(path=model_path, device=self.device)
 
-    def _init_new_model(self, rl_model_id, model_config):
+    def _init_new_model(self, model_config):
         # initialize model if policy_id is known
         # one could improve the rl model aliasing by differentiating between
         # stable_baselines3.common.off_policy_algorithm.OffPolicyAlgorithm (DQN) and
@@ -161,7 +161,7 @@ class Agent:
 
         # initialize model with shared parameters of all models
         # the model-specific parameters are taken from the dictionary above using partial
-        self.model = rl_model_aliases[rl_model_id](
+        self.model = rl_model_aliases[self.rl_model_id](
             policy=policy_id,
             env=self.training_gym_env,
             device=self.device,
@@ -175,8 +175,9 @@ class Agent:
         self.model.set_logger(self.sb_logger)
         self.model.learn(total_timesteps=self.timesteps, log_interval=self.log_interval, callback=self.callbacklist)
         #eval callback always calls the best model best_model.zip"
-        best_model_file = os.path.join(self.best_save_path, "best_model")
-        self.model.load(path=best_model_file, device=self.device)
+        best_model_file = os.path.join(self.best_save_path, "best_model.zip")
+        del self.model
+        self._init_pretrained_model(best_model_file)
         logger.info(f"Saved the models at {self.model_save_path}, using best model from {self.best_save_path}")
 
     def test(self, envs: List[str]):
@@ -205,6 +206,6 @@ class Agent:
             logger.info(f"Saved the results at {save_path}")
 
     def eval(self):
-        self.test(envs=["test", "train"])
+        self.test(envs=["test"])
         # TODO do some more evaluation
         # e.g. compare with heuristics
