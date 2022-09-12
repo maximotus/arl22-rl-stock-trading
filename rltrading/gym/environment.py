@@ -163,7 +163,7 @@ class Environment(gym.Env):
 
     def _get_obs(self):
         # apply window on the data to get the observation
-        obs = self.data.batch(self.time - self.window_size, self.time)
+        obs = self.data.batch(self.time - self.window_size + 1, self.time + 1)
         # remove timesteps from observations
         if not self._use_time:
             obs = obs.drop('time', axis=1)
