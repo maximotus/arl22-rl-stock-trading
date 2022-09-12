@@ -104,4 +104,11 @@ Voll da ab 03.09.
   - trainingsdauer
   - kovergenz??? --> loss kurve
   - normalisierte daten verwenden! (nur die trainingsdaten normalisieren)
-  - 
+
+# TODO
+
+## Max
+- [ ] Email an Tokic mit Bitte um Aufschiebung
+- [ ] Problem mit  linear steigenden Preisen in Historie lösen
+- [ ] Experimente auf Cluster starten
+- [ ] Bericht schreiben
