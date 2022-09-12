@@ -7,7 +7,7 @@ from pydantic import BaseModel, PrivateAttr
 import pytz
 import pandas as pd
 
-# from rltrading.data.handler import get_data
+from rltrading.data.handler import get_data
 
 
 class Config(BaseModel):
