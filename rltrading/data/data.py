@@ -57,38 +57,38 @@ class Data(BaseModel):
 
     # _curr_pos: int = PrivateAttr(default_factory=0)
 
-    # def fetch(self: "Data", config: Config, dir_path: Optional[str], store: str = True):
-    #     """Fetch the data via the ``MetaTrader5`` and the ``Finnhub API``.
-    #
-    #     Parameters
-    #     ----------
-    #     self : Data
-    #         An instance of the Data class (itself).
-    #     dir_path : str, optional
-    #         Path to where the data should be saved to.
-    #         The path must already exist.
-    #     store : bool, optional
-    #         If the data should be stored to the given ``path``.
-    #     """
-    #     if store and (dir_path is None):
-    #         raise ValueError(
-    #             "The path can not be 'None' if the 'store' "
-    #             + "parameter is set to 'True'"
-    #         )
-    #     self._symbol = config.symbol
-    #     start = pytz.utc.localize(config.from_)
-    #     end = pytz.utc.localize(config.to)
-    #     self._data_frame = get_data(
-    #         fh_key=config.finnhub_api_key,
-    #         symbol=config.symbol,
-    #         _from=start,
-    #         to=end,
-    #         lookback=config.lookback,
-    #     )
-    #
-    #     if store and (dir_path is not None):
-    #         path = os.path.join(dir_path, f"{config.symbol}.csv")
-    #         self._data_frame.to_csv(path, index=False)
+    def fetch(self: "Data", config: Config, dir_path: Optional[str], store: str = True):
+        """Fetch the data via the ``MetaTrader5`` and the ``Finnhub API``.
+
+        Parameters
+        ----------
+        self : Data
+            An instance of the Data class (itself).
+        dir_path : str, optional
+            Path to where the data should be saved to.
+            The path must already exist.
+        store : bool, optional
+            If the data should be stored to the given ``path``.
+        """
+        if store and (dir_path is None):
+            raise ValueError(
+                "The path can not be 'None' if the 'store' "
+                + "parameter is set to 'True'"
+            )
+        self._symbol = config.symbol
+        start = pytz.utc.localize(config.from_)
+        end = pytz.utc.localize(config.to)
+        self._data_frame = get_data(
+            fh_key=config.finnhub_api_key,
+            symbol=config.symbol,
+            _from=start,
+            to=end,
+            lookback=config.lookback,
+        )
+
+        if store and (dir_path is not None):
+            path = os.path.join(dir_path, f"{config.symbol}.csv")
+            self._data_frame.to_csv(path, index=False)
 
     def load(self: "Data", file_path: str):
         """Load the data from a previously fetched ``pd.DataFrame``.
