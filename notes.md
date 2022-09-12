@@ -117,6 +117,6 @@ Voll da ab 03.09.
   - [x] Experiment Setup nur textuell beschreiben, auf Appendix verweisen
   - [x] @s an jonas
   - [x] Abstract
-  - [s] Introduction
+  - [x] Introduction
   - [x] Tabellen in Appendix fixen
   - [x] Tabellenreihenfolge 5, 4, 2, 3
