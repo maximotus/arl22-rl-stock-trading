@@ -46,7 +46,7 @@ class Observation(BaseModel):
 
     def remove(self: "Observation", keys: List[str]):
         self._data = self._data.drop(labels=keys)
-        
+
     def to_dict(self: "Observation") -> dict:
         return self._data.to_dict()
 
@@ -162,6 +162,9 @@ class Data(BaseModel):
         """
         observation = Observation(_data=self._data_frame.iloc[time_step])
         return observation
+
+    def batch(self: "Data", start_timestep: int, end_timestep: int):
+        return self._data_frame.iloc[start_timestep:end_timestep]
 
     def has_next(self: "Data", time_step: int) -> bool:
         """_summary_

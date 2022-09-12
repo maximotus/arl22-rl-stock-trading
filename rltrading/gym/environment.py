@@ -52,7 +52,7 @@ class Environment(gym.Env):
         # Moreover, since the active position is always added to the observation,
         # one has to be added in every case.
         dim_1 = (
-            (self.data.shape[1] + 1) if self._use_time else (self.data.shape[1] - 1 + 1)
+            (self.data.shape[1]) if self._use_time else (self.data.shape[1] - 1)
         )
         dim_0 = window_size
 
@@ -70,12 +70,12 @@ class Environment(gym.Env):
     def reset(self):
         # the initial time will be the window_size-th index plus one (so the window already fits; time starts with 1)
         self.time = self.window_size
-        self.active_position = Positions.Long
+        self.active_position = Positions.Short
         self._total_profit = 1.0
         self._total_reward = 0.0
         self.close_prices = dict(date=[], price=[])
         # avoid division by 0 if data is normalized
-        self.last_trade_price = self.data.item(self.time).value("close") + np.nextafter(
+        self.last_trade_price = self.data.item(self.time - 1).value("close") + np.nextafter(
             0, 1
         )
         self.done = False
@@ -84,6 +84,7 @@ class Environment(gym.Env):
         return self._get_obs()
 
     def step(self, action: int):
+        self.time += 1
         curr_observation = self.data.item(self.time)
 
         step_reward = 0.0
@@ -111,7 +112,6 @@ class Environment(gym.Env):
         # logger.debug(f"Total Reward: {self._total_reward}")
         # logger.debug(f"Total Profit: {self._total_profit}")
 
-        self.time += 1
         done = not self.data.has_next(self.time)
 
         self.current_info = self._get_info(curr_observation.to_dict())
@@ -122,7 +122,7 @@ class Environment(gym.Env):
             self.current_info,
         )
 
-    def render(self, **kwargs):
+    def render(self, mode='human', **kwargs):
         if not self.enable_render:
             return
 
@@ -162,25 +162,13 @@ class Environment(gym.Env):
         # TODO render the evolution of the _total_profit
 
     def _get_obs(self):
-        obs = []
         # apply window on the data to get the observation
-        for i in range(self.window_size):
-            # apply window from the very left to the very right relative to the current time using i
-            window_index = self.time - self.window_size + i
+        obs = self.data.batch(self.time - self.window_size + 1, self.time + 1)
+        # remove timesteps from observations
+        if not self._use_time:
+            obs = obs.drop('time', axis=1)
 
-            # add fix data to observation
-            curr_observation = self.data.item(window_index)
-
-            # remove timesteps from observations
-            if not self._use_time:
-                curr_observation.remove(keys=["time"])
-
-            # add dynamic data to observation
-            curr_observation = curr_observation.all()
-            curr_observation.extend([float(self.active_position)])
-            obs.append(curr_observation)
-        obs = np.array(obs)
-        return obs
+        return np.array(obs)
 
     def _get_info(self, observation: dict) -> dict:
         return {

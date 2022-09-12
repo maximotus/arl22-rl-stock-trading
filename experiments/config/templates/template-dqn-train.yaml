@@ -1,0 +1,44 @@
+mode: train # (train / eval)
+logger:
+  level: 20 # CRITICAL = 50, ERROR = 40, WARNING = 30, INFO = 20, DEBUG = 10, NOTSET = 0
+  format: "%(asctime)s - %(levelname)s - %(module)s - %(message)s"
+experiment_path: ./results
+test_policy: true # whether to test / apply the policy after training or not
+
+# define gym environment that will be injected to the agent
+gym_environment:
+  enable_render: false # whether to render the policy application or not
+  window_size: 30
+  scale_reward: 1
+  data:
+    train_path: ./experiments/data/minmax/train.csv
+    test_path: ./experiments/data/minmax/test.csv
+    attributes: [ "time", "open", "close", "low", "high" ]
+
+# define the rl agent (using the above gym environment)
+agent:
+  episodes: 2
+  log_interval: 5
+  save_model_interval: 1
+  sb_logger: ["stdout", "csv", "tensorboard"] # format options are: "stdout", "csv", "log", "tensorboard", "json"
+
+  # define model with its specific parameters
+  model:
+    name: DQN # compare https://stable-baselines3.readthedocs.io/en/master/modules/dqn.html
+    pretrained_path: # empty if start from scratch TODO implement
+    policy: MlpPolicy
+    device: cuda # (cuda / cpu / auto)
+    verbose: 1 # 0 none, 1 training information, 2 debug
+    learning_rate: 0.0001
+    gamma: 0.99
+    seed: null
+    buffer_size: 1000000
+    learning_starts: 50000
+    batch_size: 32
+    tau: 1.0
+    train_freq: 4
+    gradient_steps: 1
+    exploration_fraction: 0.1
+    exploration_initial_eps: 1.0
+    exploration_final_eps: 0.05
+    predict_deterministic: true # only for testing

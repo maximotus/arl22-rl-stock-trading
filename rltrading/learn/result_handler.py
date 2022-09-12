@@ -1,8 +1,9 @@
+import os
+
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
 import pandas as pd
-from rltrading.gym.environment import Actions, Positions
 
 
 def plot_result(result_memory, save_path=None):
@@ -67,9 +68,10 @@ def plot_result(result_memory, save_path=None):
     plt.show()
 
     if save_path:
-        plt.savefig(save_path + "\\result_graph.png")
+        path = os.path.join(save_path, "result_graph.png")
+        plt.savefig(path)
 
 
 def save_result(result_memory, save_path: str):
-    path = save_path + "\\result.csv"
+    path = os.path.join(save_path, "result.csv")
     pd.DataFrame(result_memory).to_csv(path)

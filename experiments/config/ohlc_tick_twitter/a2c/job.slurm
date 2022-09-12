@@ -1,8 +1,8 @@
 #!/bin/sh
 #SBATCH --nodes=1
 #SBATCH --job-name=a2c_ohlc_tick_twitter
-#SBATCH --output=a2c_ohlc_tick_twitter.out
-#SBATCH --error=a2c_ohlc_tick_twitter.err
+#SBATCH --output=./logs/ohlc_tick_twitter/a2c/a2c_ohlc_tick_twitter.out
+#SBATCH --error=./logs/ohlc_tick_twitter/a2c/a2c_ohlc_tick_twitter.err
 #SBATCH --partition=All
 echo "Starting multi-experiment..."
 conda activate arl22

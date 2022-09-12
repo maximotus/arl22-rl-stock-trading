@@ -166,3 +166,7 @@ experiments/results
 results/
 
 !experiments/data/example/AAPL.csv
+
+plotting/data/
+intermediate/
+logs

@@ -7,7 +7,7 @@ import yaml as yaml
 from datetime import datetime
 
 
-def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
+def create_experiment_dir(conf_file, exp_path, run_mode):
     """
     Creates a directory for all the outputs of the experiment (i.e. program execution).
 
@@ -21,8 +21,6 @@ def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
         Path / name of the configuration file.
     exp_path : string
         Path of the experiment directory.
-    pretrained_path : string
-        Path of any pretrained model.
     run_mode : string
         Run mode (has to be in [train, eval]).
 
@@ -31,13 +29,10 @@ def create_experiment_dir(conf_file, exp_path, pretrained_path, run_mode):
     base_path : string
         The base path of the experiment directory.
     """
-    if pretrained_path is not None:
-        base_path = pretrained_path.replace("train", run_mode, 1)
-    else:
-        dot_yaml_removal_index = 5
-        config_name = os.path.basename(conf_file)[:-dot_yaml_removal_index]
-        now = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-        base_path = os.path.join(exp_path, run_mode, config_name, now)
+    dot_yaml_removal_index = 5
+    config_name = os.path.basename(conf_file)[:-dot_yaml_removal_index]
+    now = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    base_path = os.path.join(exp_path, run_mode, config_name, now)
 
     paths = [
         os.path.join(base_path, "stats"),
