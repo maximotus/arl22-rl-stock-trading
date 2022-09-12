@@ -8,7 +8,11 @@ from functools import partial
 from collections import namedtuple
 from stable_baselines3 import DQN, PPO, A2C
 from stable_baselines3.common.logger import configure
-from stable_baselines3.common.callbacks import EvalCallback, CheckpointCallback, CallbackList
+from stable_baselines3.common.callbacks import (
+    EvalCallback,
+    CheckpointCallback,
+    CallbackList,
+)
 
 from rltrading.learn.result_handler import plot_result, save_result
 
@@ -25,7 +29,7 @@ class Agent:
         save_path: str,
         training_gym_env: gym.Env,
         testing_gym_env: gym.Env,
-        save_model_interval: int = -1,
+        # save_model_interval: int = -1,
         episodes: int = -1,
         timesteps: int = -1,
         log_interval: int = 5,
@@ -39,8 +43,14 @@ class Agent:
         self.episodes = episodes
         self.timesteps = timesteps
         self.log_interval = log_interval
-        self.save_model_interval = save_model_interval
-        self.predict_deterministic = model_config.get("predict_deterministic")
+        # TODO own hyper-parameter in future
+        self.save_model_interval = self.log_interval
+        self.predict_deterministic = (
+            model_config.get("predict_deterministic")
+            if model_config.get("predict_deterministic")
+            else True
+        )
+        logger.info(f"Using predict_deterministic={self.predict_deterministic}")
         self.model_save_path = os.path.join(save_path, "model")
         self.stats_save_path = os.path.join(save_path, "stats")
         self.sb_logger = (
@@ -48,20 +58,26 @@ class Agent:
         )
         self.best_save_path = os.path.join(self.model_save_path, "best")
 
-        self.callbacklist = CallbackList([
-            CheckpointCallback(
-                save_freq=int((self.timesteps / self.episodes) * self.save_model_interval),
-                save_path=self.model_save_path,
-            ),
-            EvalCallback(
-                self.testing_gym_env,
-                best_model_save_path=self.best_save_path,
-                log_path=self.model_save_path,
-                eval_freq=int((self.timesteps / self.episodes) * self.save_model_interval),
-                deterministic=self.predict_deterministic,
-                render=False,
-            )
-        ])
+        self.callbacklist = CallbackList(
+            [
+                CheckpointCallback(
+                    save_freq=int(
+                        (self.timesteps / self.episodes) * self.save_model_interval
+                    ),
+                    save_path=self.model_save_path,
+                ),
+                EvalCallback(
+                    self.testing_gym_env,
+                    best_model_save_path=self.best_save_path,
+                    log_path=self.model_save_path,
+                    eval_freq=int(
+                        (self.timesteps / self.episodes) * self.save_model_interval
+                    ),
+                    deterministic=self.predict_deterministic,
+                    render=False,
+                ),
+            ]
+        )
 
         # initialize device if it is known
         device_name = model_config.get("device")
@@ -105,7 +121,9 @@ class Agent:
     def _init_pretrained_model(self, model_path):
         rl_model_aliases = {"PPO": PPO, "DQN": DQN, "A2C": A2C}
 
-        self.model = rl_model_aliases[self.rl_model_id].load(path=model_path, device=self.device)
+        self.model = rl_model_aliases[self.rl_model_id].load(
+            path=model_path, device=self.device
+        )
 
     def _init_new_model(self, model_config):
         # initialize model if policy_id is known
@@ -173,12 +191,18 @@ class Agent:
 
     def learn(self):
         self.model.set_logger(self.sb_logger)
-        self.model.learn(total_timesteps=self.timesteps, log_interval=self.log_interval, callback=self.callbacklist)
-        #eval callback always calls the best model best_model.zip"
+        self.model.learn(
+            total_timesteps=self.timesteps,
+            log_interval=self.log_interval,
+            callback=self.callbacklist,
+        )
+        # eval callback always calls the best model best_model.zip"
         best_model_file = os.path.join(self.best_save_path, "best_model.zip")
         del self.model
         self._init_pretrained_model(best_model_file)
-        logger.info(f"Saved the models at {self.model_save_path}, using best model from {self.best_save_path}")
+        logger.info(
+            f"Saved the models at {self.model_save_path}, using best model from {self.best_save_path}"
+        )
 
     def test(self, envs: List[str]):
         env_aliases = {"test": self.testing_gym_env, "train": self.training_gym_env}

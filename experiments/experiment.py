@@ -114,7 +114,7 @@ class TrainExperiment(Experiment):
 
         agent_config = config.get("agent")
         episodes = agent_config.get("episodes")
-        save_model_interval = agent_config.get("save_model_interval")
+        # save_model_interval = agent_config.get("save_model_interval")
         timesteps = episodes * len(self.training_data)
         log_interval = agent_config.get("log_interval")
         sb_logger = agent_config.get("sb_logger")
@@ -125,7 +125,7 @@ class TrainExperiment(Experiment):
             testing_gym_env=self.testing_gym,
             episodes=episodes,
             timesteps=timesteps,
-            save_model_interval=save_model_interval,
+            # save_model_interval=save_model_interval,
             log_interval=log_interval,
             sb_logger=sb_logger,
             model_config=self.model_config,
