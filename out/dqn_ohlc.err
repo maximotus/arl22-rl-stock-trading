@@ -1,0 +1,39 @@
+slurmstepd-ecknach: error: Unable to create TMPDIR [/tmp/user/31423]: Permission denied
+slurmstepd-ecknach: error: Setting TMPDIR to /tmp
+
+CommandNotFoundError: Your shell has not been properly configured to use 'conda activate'.
+To initialize your shell, run
+
+    $ conda init <SHELL_NAME>
+
+Currently supported shells are:
+  - bash
+  - fish
+  - tcsh
+  - xonsh
+  - zsh
+  - powershell
+
+See 'conda init --help' for more information and options.
+
+IMPORTANT: You may need to close and restart your shell after running 'conda init'.
+
+
+Traceback (most recent call last):
+  File "/home/b/blenninger/arl22-rl-stock-trading/experiments/main.py", line 3, in <module>
+    from experiment import TrainExperiment
+  File "/home/b/blenninger/arl22-rl-stock-trading/experiments/experiment.py", line 4, in <module>
+    from rltrading import Data, Environment, Agent
+ModuleNotFoundError: No module named 'rltrading'
+Traceback (most recent call last):
+  File "/home/b/blenninger/arl22-rl-stock-trading/experiments/main.py", line 3, in <module>
+    from experiment import TrainExperiment
+  File "/home/b/blenninger/arl22-rl-stock-trading/experiments/experiment.py", line 4, in <module>
+    from rltrading import Data, Environment, Agent
+ModuleNotFoundError: No module named 'rltrading'
+Traceback (most recent call last):
+  File "/home/b/blenninger/arl22-rl-stock-trading/experiments/main.py", line 3, in <module>
+    from experiment import TrainExperiment
+  File "/home/b/blenninger/arl22-rl-stock-trading/experiments/experiment.py", line 4, in <module>
+    from rltrading import Data, Environment, Agent
+ModuleNotFoundError: No module named 'rltrading'
