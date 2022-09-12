@@ -52,7 +52,7 @@ class Environment(gym.Env):
         # Moreover, since the active position is always added to the observation,
         # one has to be added in every case.
         dim_1 = (
-            (self.data.shape[1] + 1) if self._use_time else (self.data.shape[1] - 1 + 1)
+            (self.data.shape[1]) if self._use_time else (self.data.shape[1] - 1)
         )
         dim_0 = window_size
 
@@ -162,25 +162,13 @@ class Environment(gym.Env):
         # TODO render the evolution of the _total_profit
 
     def _get_obs(self):
-        obs = []
         # apply window on the data to get the observation
-        for i in range(self.window_size):
-            # apply window from the very left to the very right relative to the current time using i
-            window_index = self.time - self.window_size + i
+        obs = self.data.batch(self.time - self.window_size, self.time)
+        # remove timesteps from observations
+        if not self._use_time:
+            obs = obs.drop('time', axis=1)
 
-            # add fix data to observation
-            curr_observation = self.data.item(window_index)
-
-            # remove timesteps from observations
-            if not self._use_time:
-                curr_observation.remove(keys=["time"])
-
-            # add dynamic data to observation
-            curr_observation = curr_observation.all()
-            curr_observation.extend([float(self.active_position)])
-            obs.append(curr_observation)
-        obs = np.array(obs)
-        return obs
+        return np.array(obs)
 
     def _get_info(self, observation: dict) -> dict:
         return {

@@ -163,6 +163,9 @@ class Data(BaseModel):
         observation = Observation(_data=self._data_frame.iloc[time_step])
         return observation
 
+    def batch(self: "Data", start_timestep: int, end_timestep: int):
+        return self._data_frame.iloc[start_timestep:end_timestep]
+
     def has_next(self: "Data", time_step: int) -> bool:
         """_summary_
 
