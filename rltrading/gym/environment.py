@@ -1,5 +1,3 @@
-import datetime
-
 import gym
 import logging
 import matplotlib.pyplot as plt
