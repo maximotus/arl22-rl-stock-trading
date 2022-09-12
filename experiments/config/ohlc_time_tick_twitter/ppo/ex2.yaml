@@ -18,7 +18,7 @@ gym_environment:
 # define the rl agent (using the above gym environment)
 agent:
   episodes: 100
-  log_interval: 5
+  log_interval: 1
   sb_logger: [ "stdout", "csv", "tensorboard" ] # format options are: "stdout", "csv", "log", "tensorboard", "json"
 
   # define model with its specific parameters
@@ -41,3 +41,4 @@ agent:
     ent_coef: 0.0
     vf_coef: 0.5
     target_kl: null
+    predict_deterministic: true # only for testing
