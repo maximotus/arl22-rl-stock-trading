@@ -15,6 +15,7 @@ paho-mqtt = "^1.6.1"
 plotly = "^5.9.0"
 dash = "^2.6.1"
 plotext = "^5.0.2"
+MetaTrader5 = "^5.0.37"
 matplotlib = "^3.5.3"
 Nasdaq-Data-Link = "^1.0.3"
 beautifulsoup4 = "^4.11.1"
@@ -27,7 +28,7 @@ numpy = "^1.23.2"
 stable-baselines3 = "^1.6.0"
 pyglet = "^1.5.26"
 tensorboard = "^2.10.0"
-seaborn = "^0.12.0"
+sklearn = "^0.0"
 
 [tool.poetry.dev-dependencies]
 
