@@ -108,7 +108,15 @@ Voll da ab 03.09.
 # TODO
 
 ## Max
-- [ ] Email an Tokic mit Bitte um Aufschiebung
-- [ ] Problem mit  linear steigenden Preisen in Historie lösen
-- [ ] Experimente auf Cluster starten
-- [ ] Bericht schreiben
+- [x] Email an Tokic mit Bitte um Aufschiebung
+- [x] Problem mit  linear steigenden Preisen in Historie lösen
+- [x] Experimente auf Cluster starten
+- [x] Bericht schreiben
+  - [x] Evaluation Introduction vor 6.1
+  - [x] Results Introduction vor Results
+  - [x] Experiment Setup nur textuell beschreiben, auf Appendix verweisen
+  - [x] @s an jonas
+  - [x] Abstract
+  - [s] Introduction
+  - [x] Tabellen in Appendix fixen
+  - [x] Tabellenreihenfolge 5, 4, 2, 3
