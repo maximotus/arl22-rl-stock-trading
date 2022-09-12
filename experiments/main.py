@@ -34,6 +34,7 @@ def main():
 
     # logger setup
     logger = setup_logger(experiment_path, log_lvl, log_fmt)
+    logger.info("Using the up-to-date code version verified in team, Monday, 12.09.2022 18:50")
     logger.info(
         "Successfully read the given configuration file, created experiment directory and set up logger."
     )
