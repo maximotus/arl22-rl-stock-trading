@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Iterable, List, Tuple, Optional
@@ -55,6 +56,7 @@ class Data(BaseModel):
     _symbol: str = PrivateAttr(default_factory=None)
     _data_frame: pd.DataFrame = PrivateAttr(default_factory=pd.DataFrame)
 
+
     # _curr_pos: int = PrivateAttr(default_factory=0)
 
     # def fetch(self: "Data", config: Config, dir_path: Optional[str], store: str = True):
@@ -101,6 +103,8 @@ class Data(BaseModel):
             Path to the ``.csv`` file containing the ``pd.DataFrame``.
         """
         self._data_frame = pd.read_csv(Path(file_path))
+        # @todo -> move creation of diff attribute to csv or somewhere else
+        self._data_frame['diff'] = np.insert(np.diff(self._data_frame.loc[:, 'close'].to_numpy()), 0, 0)
 
     def observations(self: "Data", columns: List[str] = None) -> Iterable[List[float]]:
         """Iterate over all observations.
@@ -145,6 +149,9 @@ class Data(BaseModel):
         """
         self._data_frame = self._data_frame[selection]
 
+    def getPrices(self: "Data"):
+        return self._data_frame.loc[:, 'close'].to_numpy()
+
     def item(self: "Data", time_step: int) -> Observation:
         """_summary_
 
@@ -165,6 +172,8 @@ class Data(BaseModel):
 
     def batch(self: "Data", start_timestep: int, end_timestep: int):
         return self._data_frame.iloc[start_timestep:end_timestep]
+
+    
 
     def has_next(self: "Data", time_step: int) -> bool:
         """_summary_

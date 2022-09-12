@@ -1,5 +1,7 @@
 import logging
 import os
+import gym
+import gym_anytrading
 
 from rltrading import Data, Environment, Agent
 from stable_baselines3.common.monitor import Monitor
@@ -67,6 +69,9 @@ class Experiment:
             + f" and using testing data located in {testing_data_path} with length={len(self.testing_data)} and shape={self.testing_data.shape}"
         )
 
+        #self.training_gym = Monitor(gym.make('forex-v0', df=self.training_data.getDataframe(), window_size=window_size, frame_bound=(window_size, self.training_data.shape[0])))
+        #self.testing_gym = Monitor(gym.make('forex-v0', df=self.testing_data.getDataframe(), window_size=window_size, frame_bound=(window_size, self.testing_data.shape[0])))
+
         # initialize training gym environment
         self.training_gym = Monitor(Environment(
             data=self.training_data,
@@ -81,6 +86,7 @@ class Experiment:
             data=self.testing_data,
             window_size=window_size,
             enable_render=enable_render,
+            scale_reward=scale_reward,
             use_time=use_time,
         ))
 
