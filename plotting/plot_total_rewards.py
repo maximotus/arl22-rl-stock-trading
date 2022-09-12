@@ -17,15 +17,8 @@ class InfDecoder(json.JSONDecoder):
         json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
 
     def object_hook(self, dct):
-        # print(dct)
         if "total_profit" in dct:
-            # print('here', dct['total_profit'])
-            # dct['total_profit'] = float(f'{dct["total_profit"]}')
             dct['total_profit'] = float(f"{dct['total_profit']}")
-        # if 'Actor' in dct:
-        #     actor = Actor(dct['Actor']['Name'], dct['Actor']['Age'], '')
-        #     movie = Movie(dct['Movie']['Title'], dct['Movie']['Gross'], '', dct['Movie']['Year'])
-        #     return Edge(actor, movie)
         return dct
 
 
