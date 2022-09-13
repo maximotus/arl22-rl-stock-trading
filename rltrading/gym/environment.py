@@ -30,8 +30,8 @@ class Environment(gym.Env):
         self: "Environment",
         data: Data,
         window_size: int,
-        norm_min: float,
-        norm_max: float,
+        norm_min: float = 130.01,
+        norm_max: float = 182.84,
         enable_render: bool = False,
         scale_reward: int = 10000,
         use_time: bool = True,
@@ -65,15 +65,19 @@ class Environment(gym.Env):
         logger.info(f"Using action space: {self.action_space}")
         logger.info(f"Using observation space of shape: {self.observation_space.shape}")
 
-        self.rescale = lambda x: x * (norm_max - norm_min) + norm_min
+        self.norm_min = norm_min
+        self.norm_max = norm_max
 
         self.reset()
+    
+    def __rescale(self, val: float) -> float:
+        return val * (self.norm_max - self.norm_min) + self.norm_min
 
     def reset(self):
         # the initial time will be the window_size-th index plus one (so the window already fits; time starts with 1)
         self.time = self.window_size
         self.active_position = Positions.Short
-        self._total_profit = 0.0
+        self._total_profit = 1.0
         self._total_reward = 0.0
         self.close_prices = dict(date=[], price=[])
         # avoid division by 0 if data is normalized
@@ -94,7 +98,7 @@ class Environment(gym.Env):
             curr_close = curr_observation.value("close")
             step_reward = (curr_close - self.last_trade_price) * self.scale_reward
             self.active_position = Positions.Short            
-            self._total_profit *= self.rescale(curr_close) / self.rescale(self.last_trade_price)
+            self._total_profit *= self.__rescale(curr_close) / self.__rescale(self.last_trade_price)
             self.last_trade_price = curr_close
 
         if (self.active_position == Positions.Short) and (action == Actions.Buy.value):
@@ -102,7 +106,7 @@ class Environment(gym.Env):
             curr_close = curr_observation.value("close")
             step_reward = (self.last_trade_price - curr_close) * self.scale_reward
             self.active_position = Positions.Long            
-            self._total_profit *= self.rescale(self.last_trade_price) / self.rescale(curr_close)
+            self._total_profit *= self.__rescale(self.last_trade_price) / self.__rescale(curr_close)
             self.last_trade_price = curr_close
 
         self._total_reward += step_reward

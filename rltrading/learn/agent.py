@@ -199,7 +199,7 @@ class Agent:
         )
         self.model.save(self.model_save_path)
         # eval callback always calls the best model best_model.zip"
-        best_model_file = os.path.join(self.best_save_path, "best_model.zip")
+        best_model_file = os.path.join(self.best_save_path, "best_model")
         del self.model
         self._init_pretrained_model(best_model_file)
         logger.info(
