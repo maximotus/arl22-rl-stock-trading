@@ -43,3 +43,4 @@ agent:
     ent_coef: 0.0
     vf_coef: 0.5
     target_kl: null
+    predict_deterministic: true

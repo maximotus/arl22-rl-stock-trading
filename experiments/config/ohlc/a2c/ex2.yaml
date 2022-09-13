@@ -40,3 +40,4 @@ agent:
     rms_prop_eps: 0.00001 # 1e-05
     use_rms_prop: true
     normalize_advantage: false
+    predict_deterministic: true
