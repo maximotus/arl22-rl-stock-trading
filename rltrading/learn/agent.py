@@ -36,6 +36,7 @@ class Agent:
         sb_logger: List[str] = None,
         model_config: dict = None,
     ):
+        logger.warning("Using the up-to-date RLTRADING code version verified in team, Monday, 12.09.2022 18:50")
         logger.info("Initializing agent...")
 
         self.training_gym_env = training_gym_env
