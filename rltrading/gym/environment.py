@@ -30,6 +30,8 @@ class Environment(gym.Env):
         self: "Environment",
         data: Data,
         window_size: int,
+        norm_min: float,
+        norm_max: float,
         enable_render: bool = False,
         scale_reward: int = 10000,
         use_time: bool = True,
@@ -63,19 +65,19 @@ class Environment(gym.Env):
         logger.info(f"Using action space: {self.action_space}")
         logger.info(f"Using observation space of shape: {self.observation_space.shape}")
 
+        self.rescale = lambda x: x * (norm_max - norm_min) + norm_min
+
         self.reset()
 
     def reset(self):
         # the initial time will be the window_size-th index plus one (so the window already fits; time starts with 1)
         self.time = self.window_size
         self.active_position = Positions.Short
-        self._total_profit = 1.0
+        self._total_profit = 0.0
         self._total_reward = 0.0
         self.close_prices = dict(date=[], price=[])
         # avoid division by 0 if data is normalized
-        self.last_trade_price = self.data.item(self.time - 1).value("close") + np.nextafter(
-            0, 1
-        )
+        self.last_trade_price = self.data.item(self.time - 1).value("close")
         self.done = False
         self._rendering = False
         self.current_info = None
@@ -89,20 +91,18 @@ class Environment(gym.Env):
         # logger.debug(f"Action choosen: {action}")
         if (self.active_position == Positions.Long) and (action == Actions.Sell.value):
             # avoid division by 0 if data is normalized
-            curr_close = curr_observation.value("close") + np.nextafter(0, 1)
+            curr_close = curr_observation.value("close")
             step_reward = (curr_close - self.last_trade_price) * self.scale_reward
-            self.active_position = Positions.Short
-            quantity = self._total_profit / self.last_trade_price
-            self._total_profit = quantity * curr_close
+            self.active_position = Positions.Short            
+            self._total_profit *= self.rescale(curr_close) / self.rescale(self.last_trade_price)
             self.last_trade_price = curr_close
 
         if (self.active_position == Positions.Short) and (action == Actions.Buy.value):
             # avoid division by 0 if data is normalized
-            curr_close = curr_observation.value("close") + np.nextafter(0, 1)
+            curr_close = curr_observation.value("close")
             step_reward = (self.last_trade_price - curr_close) * self.scale_reward
-            self.active_position = Positions.Long
-            quantity = self._total_profit * self.last_trade_price
-            self._total_profit = quantity / curr_close
+            self.active_position = Positions.Long            
+            self._total_profit *= self.rescale(self.last_trade_price) / self.rescale(curr_close)
             self.last_trade_price = curr_close
 
         self._total_reward += step_reward
