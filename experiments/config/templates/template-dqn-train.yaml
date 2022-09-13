@@ -19,8 +19,8 @@ gym_environment:
 
 # define the rl agent (using the above gym environment)
 agent:
-  episodes: 100
-  log_interval: 5
+  episodes: 2
+  log_interval: 1
   sb_logger: ["stdout", "csv", "tensorboard"] # format options are: "stdout", "csv", "log", "tensorboard", "json"
 
   # define model with its specific parameters
@@ -32,7 +32,7 @@ agent:
     verbose: 1 # 0 none, 1 training information, 2 debug
     learning_rate: 0.0001
     gamma: 0.99
-    seed: null
+    seed: 1
     buffer_size: 1000000
     learning_starts: 50000
     batch_size: 32
