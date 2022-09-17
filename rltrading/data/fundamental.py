@@ -138,4 +138,5 @@ def __get_social_sentiment_df(fh_client, symbol, from_, to_):
         return fh_client.stock_social_sentiment(symbol, _from=from_, to=to_)
     except FinnhubAPIException:
         sleep(2.0)
+        print('failed to get social sentiment, trying again ...')
         return __get_social_sentiment_df(fh_client, symbol, from_, to_)
