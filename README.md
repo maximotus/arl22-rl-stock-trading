@@ -168,7 +168,7 @@ agent:
 - `seed`: The random number seed that is used throughout all random number generators, a experiment run with the same seed 2 times will have the same outputs twice 
 - `predict_deterministic`: either true or false, if true only the policy is used for prediction if false also a random factor is involved
 
-The remaining parameters are special to their respective algorithms, to find our more look at them at the stable baseline documentation: [DQN](https://stable-baselines3.readthedocs.io/en/master/modules/dqn.html), [A2C](https://stable-baselines3.readthedocs.io/en/master/modules/a2c.html), [PPO](https://stable-baselines3.readthedocs.io/en/master/modules/ppo.html)
+The remaining parameters are special to their respective algorithms, to find out more look at them at the stable baseline documentation: [DQN](https://stable-baselines3.readthedocs.io/en/master/modules/dqn.html), [A2C](https://stable-baselines3.readthedocs.io/en/master/modules/a2c.html), [PPO](https://stable-baselines3.readthedocs.io/en/master/modules/ppo.html)
 ### Results
 The results will be in the specified folder by the .yaml file. 
 ```
