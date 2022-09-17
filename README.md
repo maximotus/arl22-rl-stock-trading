@@ -15,30 +15,47 @@ The install command reads the pyproject.toml file from the current project, reso
 ```bash
 poetry install
 ```
+Optinally, build the project: 
+```bash
+poetry build
+```
+
 
 ### *Step 3: Getting the data*
+To get the data for training and testing the agent, there are two possible ways. The first method is very simple and fast but it only allows one to train and test on the AAPL dataset. The second method requires more setup to fetch the data yourself, but it allows to use different kind of data and symbols.
+#### __1. Example data__
+The simplest way to test the project is to download the example data from the google drive:
+- [train](https://drive.google.com/file/d/1RSqUMMQNKMABYMBOX7xVJERLPZDmfYen/view?usp=sharing): The traings dataset normalized
+- [test](https://drive.google.com/file/d/1aKp1tIod9vNNJkMUAxp5OSjr482dgLV6/view?usp=sharing): The testing dataset normalized
+- [AAPL](https://drive.google.com/file/d/1aueBZKLYczKR9ZSSSzE0ZQHif4ijJfMd/view?usp=sharing): The original dataset
+- [scalars](https://drive.google.com/file/d/1BpxnkfyELDtNlUx0kXU1pCcIQAvP56_m/view?usp=sharing): The scalers the training dataset was normalized with
 
-<details>
-<summary>Getting fresh data</summary>
-In order to fetch data please make sure your `MetaTrader5` Terminal is running and has a registered and activated
-account with your broker.
+The important files here are the train.csv and the test.csv, the original dataset and the scalars are not needed to start an experiment. Move test.csv and train.csv into /experiments/data/minmax or an arbitrary folder, but than the path for test and train in the .yaml  files have to be changed accordingly. 
+#### __2. Fetch data yourself__
 
-The package was tested with an [Admiral Markets](https://admiralmarkets.com/) Investment Demo Account (_Sign up with
-Admirals, then go to the **Dashboard** and **ADD ACCOUNT** for the **Invest** option_)
+1. Install and run MetaTrader5: 
+	- To install `Metatrader5`, install it from [here](https://www.metatrader5.com/). In order to fetch data please make sure your `MetaTrader5` Terminal is running and has a registered and activated
+	account with your broker.
+	If everything worked out clicking on the top right user icon should show your user logged in like this: 
 
-You will also need an account for the [Finnhub](https://finnhub.io/) API.
-Add the finnhub API key to the .env file in /experiments/.env
+		![](resources/arlMarkdownMT5.PNG)
 
-While beeing in the root directory of the project execute the script:
+
+2. Log in or register at Admiral Markets
+	- The package was tested with an [Admiral Markets](https://admiralmarkets.com/) Investment Demo Account (_Sign up with
+	Admirals, then go to the **Dashboard** and **ADD ACCOUNT** for the **Invest** option_)
+
+		![](resources/AdmiralMarkets.png)
+
+3. Register for Finnhub and generate an API-Key
+	- You will also need an account for the [Finnhub](https://finnhub.io/) API.
+	Add the finnhub API key to the .env file in /experiments/.env
+
+After all those steps are done go to the root directory of the project execute the script:
 ```bash
 poetry run python ./experiments/fetch_data.py
 ```
-</details>
-<details>
-<summary>Pre-genereated data</summary>
-Download the train.csv and test.csv files from: [the google drive](todo->url here) and move them in the folder 
-./experiments/data/minimax
-</details>
+This script will generate two files called train.csv and test.csv, which paths have to be specified when using the .yaml files
 
 ## Usage
 ### Start an Experiment
