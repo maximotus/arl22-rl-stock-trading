@@ -1,5 +1,9 @@
 # arl22-rl-stock-trading
 
+## System Requirements
+
+This project requires the *Windows Operating System*.
+
 ## Installation
 
 ### *Step 1: Install Poetry*
