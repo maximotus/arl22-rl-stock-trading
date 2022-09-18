@@ -55,11 +55,11 @@ class Data(BaseModel):
     _symbol: str = PrivateAttr(default_factory=None)
     _data_frame: pd.DataFrame = PrivateAttr(default_factory=pd.DataFrame)
 
-    # _curr_pos: int = PrivateAttr(default_factory=0)
+    _curr_pos: int = PrivateAttr(default_factory=0)
 
     def fetch(self: "Data", config: Config, dir_path: Optional[str], store: str = True):
         """Fetch the data via the ``MetaTrader5`` and the ``Finnhub API``.
-
+    
         Parameters
         ----------
         self : Data
@@ -85,7 +85,7 @@ class Data(BaseModel):
             to=end,
             lookback=config.lookback,
         )
-
+    
         if store and (dir_path is not None):
             path = os.path.join(dir_path, f"{config.symbol}.csv")
             self._data_frame.to_csv(path, index=False)

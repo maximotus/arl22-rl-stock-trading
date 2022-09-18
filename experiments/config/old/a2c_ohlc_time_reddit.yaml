@@ -10,6 +10,8 @@ gym_environment:
   enable_render: false # whether to render the policy application or not
   window_size: 30
   scale_reward: 1
+  norm_min: 130.01
+  norm_max: 182.84
   data:
     train_path: .\experiments\data\AAPL\split\minmax\train.csv
     test_path: .\experiments\data\AAPL\split\minmax\test.csv
@@ -18,7 +20,7 @@ gym_environment:
 # define the rl agent (using the above gym environment)
 agent:
   episodes: 1
-  log_interval: 5
+  log_interval: 1
   sb_logger: ["stdout", "csv", "tensorboard"] # format options are: "stdout", "csv", "log", "tensorboard", "json"
 
   # define model with its specific parameters

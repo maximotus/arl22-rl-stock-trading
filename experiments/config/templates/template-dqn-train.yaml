@@ -10,6 +10,8 @@ gym_environment:
   enable_render: false # whether to render the policy application or not
   window_size: 30
   scale_reward: 1
+  norm_min: 130.01
+  norm_max: 182.84
   data:
     train_path: ./experiments/data/minmax/train.csv
     test_path: ./experiments/data/minmax/test.csv
@@ -30,7 +32,7 @@ agent:
     verbose: 1 # 0 none, 1 training information, 2 debug
     learning_rate: 0.0001
     gamma: 0.99
-    seed: null
+    seed: 1
     buffer_size: 1000000
     learning_starts: 50000
     batch_size: 32

@@ -36,6 +36,7 @@ class Agent:
         sb_logger: List[str] = None,
         model_config: dict = None,
     ):
+        logger.warning("Using the up-to-date RLTRADING code version verified in team, Monday, 12.09.2022 18:50")
         logger.info("Initializing agent...")
 
         self.training_gym_env = training_gym_env
@@ -60,12 +61,12 @@ class Agent:
 
         self.callbacklist = CallbackList(
             [
-                CheckpointCallback(
-                    save_freq=int(
-                        (self.timesteps / self.episodes) * self.save_model_interval
-                    ),
-                    save_path=self.model_save_path,
-                ),
+                #CheckpointCallback(
+                #    save_freq=int(
+                #        (self.timesteps / self.episodes) * self.save_model_interval
+                #    ),
+                #    save_path=self.model_save_path,
+                #),
                 EvalCallback(
                     self.testing_gym_env,
                     best_model_save_path=self.best_save_path,
@@ -196,8 +197,9 @@ class Agent:
             log_interval=self.log_interval,
             callback=self.callbacklist,
         )
+        self.model.save(self.model_save_path)
         # eval callback always calls the best model best_model.zip"
-        best_model_file = os.path.join(self.best_save_path, "best_model.zip")
+        best_model_file = os.path.join(self.best_save_path, "best_model")
         del self.model
         self._init_pretrained_model(best_model_file)
         logger.info(

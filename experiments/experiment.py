@@ -25,6 +25,8 @@ class Experiment:
         window_size = gym_environment_config.get("window_size")
         enable_render = gym_environment_config.get("enable_render")
         scale_reward = gym_environment_config.get("scale_reward")
+        norm_min = gym_environment_config.get("norm_min")
+        norm_max = gym_environment_config.get("norm_max")
 
         # access data related parameters
         data_config_raw = gym_environment_config.get("data")
@@ -71,6 +73,8 @@ class Experiment:
         self.training_gym = Monitor(Environment(
             data=self.training_data,
             window_size=window_size,
+            norm_max=norm_max,
+            norm_min=norm_min,
             enable_render=enable_render,
             scale_reward=scale_reward,
             use_time=use_time,
@@ -80,6 +84,8 @@ class Experiment:
         self.testing_gym = Monitor(Environment(
             data=self.testing_data,
             window_size=window_size,
+            norm_max=norm_max,
+            norm_min=norm_min,
             enable_render=enable_render,
             use_time=use_time,
         ))

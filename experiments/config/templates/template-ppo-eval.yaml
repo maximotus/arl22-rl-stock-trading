@@ -9,6 +9,8 @@ gym_environment:
   enable_render: false # whether to render the policy application or not
   window_size: 30
   scale_reward: 1
+  norm_min: 130.01
+  norm_max: 182.84
   data:
     train_path: ./experiments/data/minmax/train.csv # to evaluate also on training set (required)
     test_path: ./experiments/data/minmax/test.csv
