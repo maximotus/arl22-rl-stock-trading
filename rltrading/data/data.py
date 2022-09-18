@@ -55,7 +55,7 @@ class Data(BaseModel):
     _symbol: str = PrivateAttr(default_factory=None)
     _data_frame: pd.DataFrame = PrivateAttr(default_factory=pd.DataFrame)
 
-    _curr_pos: int = PrivateAttr(default_factory=0)
+    _curr_pos: int = 0
 
     def fetch(self: "Data", config: Config, dir_path: Optional[str], store: str = True):
         """Fetch the data via the ``MetaTrader5`` and the ``Finnhub API``.
