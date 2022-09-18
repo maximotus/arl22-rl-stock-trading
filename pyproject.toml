@@ -19,6 +19,7 @@ stable-baselines3 = "^1.6.0"
 pyglet = "^1.5.26"
 tensorboard = "^2.10.0"
 seaborn = "^0.12.0"
+MetaTrader5 = "^5.0.37"
 
 [tool.poetry.dev-dependencies]
 
